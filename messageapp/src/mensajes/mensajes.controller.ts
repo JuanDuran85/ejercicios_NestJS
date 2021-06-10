@@ -1,29 +1,53 @@
+import { MensajeService } from './services/mensaje.service';
 /* eslint-disable prettier/prettier */
 
-import { Body, Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import { CreateMensajeDto } from './dto/create-mensaje-dto';
 
 @Controller('mensajes')
 export class MensajesController {
+    
+    constructor(private mensajesSeervice: MensajeService){}
+
     @Post() 
-    create(@Body() createMensDto: CreateMensajeDto):any{
+    create(@Body() createMensDto: CreateMensajeDto, @Res() res: any):any{
         console.log(createMensDto);
-        return `mensaje creado`;
+        this.mensajesSeervice.createMsg(createMensDto).then(resp => {
+            res.status(HttpStatus.CREATED).json(resp)
+        }).catch(error => {
+            console.log(error)
+            res.status(HttpStatus.FORBIDDEN).json({error: "error al crear un mensaje"});
+        })
     }
 
     @Get()
-    getAll():any {
-        return `Todos los mensajes`;
+    getAll(@Res() res:any):any {
+       this.mensajesSeervice.getAll().then(resp =>{
+            res.status(HttpStatus.OK).json(resp);
+       }).catch(error => {
+            console.log(error);
+            res.status(HttpStatus.BAD_REQUEST).json({msg: "error en al solicitud"})
+       })
     }
 
     @Put(':id')
-    updateMsg(@Body() updateMsgDto: CreateMensajeDto):any{
+    updateMsg(@Body() updateMsgDto: CreateMensajeDto, @Res() res: any, @Param('id') idMsg: any):any{
         console.log(updateMsgDto);
-        return `update el mensaje`;
+        this.mensajesSeervice.updateMsg(idMsg,updateMsgDto).then(resp => {
+            res.status(HttpStatus.OK).json(resp);
+        }).catch(error => {
+            console.log(error);
+            res.status(HttpStatus.BAD_REQUEST).json({msg: 'error al actualizar'});
+        })
     }
 
-    @Delete()
-    deleteMsg():any{
-        return `Mensaje eliminado`;
+    @Delete(':id')
+    deleteMsg(@Res() res: any, @Param('id') idMsg: any):any{
+        this.mensajesSeervice.deleteMsg(idMsg).then(resp =>{
+            res.status(HttpStatus.OK).json(resp);
+        }).catch(error =>{
+            console.log(error);
+            res.status(HttpStatus.BAD_REQUEST).json({msg: "error al intentar borrar"});
+        })
     }
 }
