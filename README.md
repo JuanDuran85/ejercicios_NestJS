@@ -21,5 +21,14 @@ Ejercicios con NestJS
     ```
 4. Para iniciar un nuevo servicio
     ```
-        nest g service nomnbre...
+        nest g service name_file
+    ```
+
+5. Para generar un modulo
+    ```
+        nest g module name_file
+    ```
+6. Para generar un controlador
+    ```
+        nest g controller name_file
     ```
