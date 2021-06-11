@@ -1,19 +1,26 @@
 /* eslint-disable prettier/prettier */
 
-import { Res, HttpStatus, Patch, Put } from '@nestjs/common';
+import { Res, HttpStatus, Patch, Put, Query } from '@nestjs/common';
 import { Body, Delete, Get, Param, Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { Task, TaskStatus } from './interfaces/tasks.interface';
+import { Task } from './interfaces/tasks.interface';
 import { TasksService } from './services/tasks.service';
+import { TaskFilterDto } from './dto/tasks-filter.dto';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 
 @Controller('tasks')
 export class TasksController {
     constructor(private tastService: TasksService){}
 
     @Get()
-    getAllTasks(): Task[]{
-        return this.tastService.getAllTasks();
+    getTasks(@Query() taskFilterDto: TaskFilterDto): Task[]{
+
+        if (Object.keys(taskFilterDto).length) {
+            return this.tastService.getTasksByFilter(taskFilterDto);
+        } else {
+            return this.tastService.getAllTasks();
+        }
     }
 
     @Get(':id')
@@ -40,7 +47,7 @@ export class TasksController {
     @Patch(':id')
     updateStatusTask(
         @Param('id') id: string,
-        @Body('status') status: TaskStatus): Task {
-        return this.tastService.updateStatusTask(id,status);
+        @Body() updateTaskStatusDto: UpdateTaskStatusDto): Task {
+        return this.tastService.updateStatusTask(id,updateTaskStatusDto.status);
     }
 }
