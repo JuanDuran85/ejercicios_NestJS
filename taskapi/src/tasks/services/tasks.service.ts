@@ -1,16 +1,51 @@
 /* eslint-disable prettier/prettier */
 
+/* import { v4 as uuid} from 'uuid'; */
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuid} from 'uuid';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTaskDto } from '../dto/create-task.dto';
-import { TaskFilterDto } from './../dto/tasks-filter.dto';
-import { Task, TaskStatus } from '../interfaces/tasks.interface';
+import { TaskStatus } from '../interfaces/task-status.enum';
+import { TasksRepository } from '../repository/task.repository';
+import { TaskEntity } from '../entities/task.entity';
+import { TaskFilterDto } from '../dto/tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
-    private tasks: Task[] = [];
+    constructor(@InjectRepository(TasksRepository) private tasksRepository: TasksRepository){}
 
-    getAllTasks(): Task[] {
+    getAllTasks(taskFilterDto: TaskFilterDto): Promise<TaskEntity[]> {
+        return this.tasksRepository.getTasks(taskFilterDto);
+    }
+
+    async getAllTasksById(id:string): Promise<TaskEntity> {
+        const found = await this.tasksRepository.findOne(id);
+        if (!found) throw new NotFoundException(`Task with the id: ${id} not found`);
+        return found;
+    }
+
+    createTasks(createTaskDto: CreateTaskDto): Promise<TaskEntity> {
+        return this.tasksRepository.createTasks(createTaskDto);
+    }
+
+    async deleteTask(id:string): Promise<any>{
+        const result  =await this.tasksRepository.delete(id)
+        if (result.affected === 0) {
+            throw new NotFoundException(`Task with the id: ${id} not found`);
+        }
+        return `The task with the id: ${id} was deleted successfully.`;
+    }
+
+    async updateStatusTask(id: string, status: TaskStatus): Promise<TaskEntity> {
+        const taskToUpdate = await this.getAllTasksById(id);
+        taskToUpdate.status = status;
+        await this.tasksRepository.save(taskToUpdate);
+        return taskToUpdate;
+    }
+
+
+/*     private tasks: Task[] = []; */
+
+/*     getAllTasks(): Task[] {
         return this.tasks;
     }
 
@@ -73,5 +108,5 @@ export class TasksService {
         const taskToUpdate = this.getAllTasksById(id);
         taskToUpdate.status = status;
         return taskToUpdate;
-    }
+    } */
 }

@@ -1,19 +1,46 @@
 /* eslint-disable prettier/prettier */
 
-import { Res, HttpStatus, Patch, Put, Query } from '@nestjs/common';
-import { Body, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Patch, Query } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { Task } from './interfaces/tasks.interface';
 import { TasksService } from './services/tasks.service';
-import { TaskFilterDto } from './dto/tasks-filter.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { TaskEntity } from './entities/task.entity';
+import { TaskFilterDto } from './dto/tasks-filter.dto';
 
 @Controller('tasks')
 export class TasksController {
     constructor(private tastService: TasksService){}
 
     @Get()
+    getTasks(@Query() taskFilterDto: TaskFilterDto): Promise<TaskEntity[]>{
+        return this.tastService.getAllTasks(taskFilterDto);
+    }
+
+    @Get(':id')
+    getAllTasksById(@Param('id') id: string): Promise<TaskEntity>{
+        return this.tastService.getAllTasksById(id);
+    }
+
+    @Post()
+    createTask(@Body() createTaskDto: CreateTaskDto): Promise<TaskEntity>{
+        return this.tastService.createTasks(createTaskDto);
+    }
+
+    @Delete(':id')
+    deleteTask(@Param('id') id:string): Promise<any>{
+        return this.tastService.deleteTask(id);
+    }
+
+    @Patch(':id')
+    updateStatusTask(
+        @Param('id') id: string,
+        @Body() updateTaskStatusDto: UpdateTaskStatusDto): Promise<TaskEntity> {
+        return this.tastService.updateStatusTask(id,updateTaskStatusDto.status);
+    }
+
+
+    /* @Get()
     getTasks(@Query() taskFilterDto: TaskFilterDto): Task[]{
 
         if (Object.keys(taskFilterDto).length) {
@@ -49,5 +76,5 @@ export class TasksController {
         @Param('id') id: string,
         @Body() updateTaskStatusDto: UpdateTaskStatusDto): Task {
         return this.tastService.updateStatusTask(id,updateTaskStatusDto.status);
-    }
+    } */
 }
