@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 /* eslint-disable prettier/prettier */
 
 import { Body, Delete, Get, Param, Post, Patch, Query } from '@nestjs/common';
@@ -7,8 +8,10 @@ import { TasksService } from './services/tasks.service';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskEntity } from './entities/task.entity';
 import { TaskFilterDto } from './dto/tasks-filter.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('tasks')
+@UseGuards(AuthGuard())
 export class TasksController {
     constructor(private tastService: TasksService){}
 
