@@ -8,35 +8,36 @@ import { TaskStatus } from '../interfaces/task-status.enum';
 import { TasksRepository } from '../repository/task.repository';
 import { TaskEntity } from '../entities/task.entity';
 import { TaskFilterDto } from '../dto/tasks-filter.dto';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class TasksService {
     constructor(@InjectRepository(TasksRepository) private tasksRepository: TasksRepository){}
 
-    getAllTasks(taskFilterDto: TaskFilterDto): Promise<TaskEntity[]> {
-        return this.tasksRepository.getTasks(taskFilterDto);
+    getAllTasks(taskFilterDto: TaskFilterDto, user: User): Promise<TaskEntity[]> {
+        return this.tasksRepository.getTasks(taskFilterDto, user);
     }
 
-    async getAllTasksById(id:string): Promise<TaskEntity> {
-        const found = await this.tasksRepository.findOne(id);
+    async getAllTasksById(id:string, user: User): Promise<TaskEntity> {
+        const found = await this.tasksRepository.findOne({where: {id, user} });
         if (!found) throw new NotFoundException(`Task with the id: ${id} not found`);
         return found;
     }
 
-    createTasks(createTaskDto: CreateTaskDto): Promise<TaskEntity> {
-        return this.tasksRepository.createTasks(createTaskDto);
+    createTasks(createTaskDto: CreateTaskDto, user: User): Promise<TaskEntity> {
+        return this.tasksRepository.createTasks(createTaskDto, user);
     }
 
-    async deleteTask(id:string): Promise<any>{
-        const result = await this.tasksRepository.delete(id)
+    async deleteTask(id:string, user: User): Promise<any>{
+        const result = await this.tasksRepository.delete({id, user});
         if (result.affected === 0) {
             throw new NotFoundException(`Task with the id: ${id} not found`);
         }
         return `The task with the id: ${id} was deleted successfully.`;
     }
 
-    async updateStatusTask(id: string, status: TaskStatus): Promise<TaskEntity> {
-        const taskToUpdate = await this.getAllTasksById(id);
+    async updateStatusTask(id: string, status: TaskStatus, user: User): Promise<TaskEntity> {
+        const taskToUpdate = await this.getAllTasksById(id, user);
         taskToUpdate.status = status;
         await this.tasksRepository.save(taskToUpdate);
         return taskToUpdate;

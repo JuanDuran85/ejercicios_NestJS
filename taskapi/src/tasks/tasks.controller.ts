@@ -9,6 +9,8 @@ import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskEntity } from './entities/task.entity';
 import { TaskFilterDto } from './dto/tasks-filter.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/decorators/get_user.decorator';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
@@ -16,30 +18,32 @@ export class TasksController {
     constructor(private tastService: TasksService){}
 
     @Get()
-    getTasks(@Query() taskFilterDto: TaskFilterDto): Promise<TaskEntity[]>{
-        return this.tastService.getAllTasks(taskFilterDto);
+    getTasks(@Query() taskFilterDto: TaskFilterDto, @GetUser() user: User): Promise<TaskEntity[]>{
+        return this.tastService.getAllTasks(taskFilterDto, user);
     }
 
     @Get(':id')
-    getAllTasksById(@Param('id') id: string): Promise<TaskEntity>{
-        return this.tastService.getAllTasksById(id);
+    getAllTasksById(@Param('id') id: string, @GetUser() user: User): Promise<TaskEntity>{
+        return this.tastService.getAllTasksById(id, user);
     }
 
     @Post()
-    createTask(@Body() createTaskDto: CreateTaskDto): Promise<TaskEntity>{
-        return this.tastService.createTasks(createTaskDto);
+    createTask(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User): Promise<TaskEntity>{
+        return this.tastService.createTasks(createTaskDto, user);
     }
 
     @Delete(':id')
-    deleteTask(@Param('id') id:string): Promise<any>{
-        return this.tastService.deleteTask(id);
+    deleteTask(@Param('id') id:string, @GetUser() user: User): Promise<any>{
+        return this.tastService.deleteTask(id, user);
     }
 
     @Patch(':id')
     updateStatusTask(
         @Param('id') id: string,
-        @Body() updateTaskStatusDto: UpdateTaskStatusDto): Promise<TaskEntity> {
-        return this.tastService.updateStatusTask(id,updateTaskStatusDto.status);
+        @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+        @GetUser() user: User
+        ): Promise<TaskEntity> {
+        return this.tastService.updateStatusTask(id,updateTaskStatusDto.status, user);
     }
 
 
