@@ -1,24 +1,26 @@
-import { UseGuards } from '@nestjs/common';
 /* eslint-disable prettier/prettier */
 
+import { UseGuards, Logger } from '@nestjs/common';
 import { Body, Delete, Get, Param, Post, Patch, Query } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksService } from './services/tasks.service';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskEntity } from './entities/task.entity';
 import { TaskFilterDto } from './dto/tasks-filter.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get_user.decorator';
 import { User } from 'src/auth/entities/user.entity';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
+    private logger = new Logger('TasksController');
     constructor(private tastService: TasksService){}
 
     @Get()
     getTasks(@Query() taskFilterDto: TaskFilterDto, @GetUser() user: User): Promise<TaskEntity[]>{
+        this.logger.verbose(`El usuario es: "${user.username}". Los filtros son: ${taskFilterDto.search} y ${taskFilterDto.status}. Los filtros son: ${JSON.stringify(taskFilterDto)}`);
         return this.tastService.getAllTasks(taskFilterDto, user);
     }
 
@@ -29,6 +31,7 @@ export class TasksController {
 
     @Post()
     createTask(@Body() createTaskDto: CreateTaskDto, @GetUser() user: User): Promise<TaskEntity>{
+        this.logger.verbose(`El usuario es: ${user.username} y la tarea a crear es: ${JSON.stringify(createTaskDto)}`);
         return this.tastService.createTasks(createTaskDto, user);
     }
 
