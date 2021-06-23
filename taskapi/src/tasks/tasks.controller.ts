@@ -9,8 +9,8 @@ import { TasksService } from './services/tasks.service';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskEntity } from './entities/task.entity';
 import { TaskFilterDto } from './dto/tasks-filter.dto';
-import { GetUser } from 'src/auth/decorators/get_user.decorator';
-import { User } from 'src/auth/entities/user.entity';
+import { GetUser } from '../auth/decorators/get_user.decorator';
+import { User } from '../auth/entities/user.entity';
 
 @Controller('tasks')
 @UseGuards(AuthGuard())

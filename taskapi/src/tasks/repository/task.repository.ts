@@ -6,7 +6,7 @@ import { CreateTaskDto } from '../dto/create-task.dto';
 import { TaskFilterDto } from '../dto/tasks-filter.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { TaskStatus } from '../interfaces/task-status.enum';
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
 
 
 @EntityRepository(TaskEntity)
