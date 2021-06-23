@@ -33,23 +33,41 @@ Ejercicios con NestJS
         nest g controller name_file
     ```
 
- # Usando Docker PostgreSQL
+# Usando Docker PostgreSQL
 1. Inicar contenedor
-```
-docker run --name nombre_contenedor -p 5432:5432 -e POSTGRES_PASSWORD=clave -d postgres
-```
+    ```
+        docker run --name nombre_contenedor -p 5432:5432 -e POSTGRES_PASSWORD=clave -d postgres
+    ```
 
 2. Verificar los contenedores en ejecucion
-```
- docker container ls
-```
+    ```
+        docker container ls
+    ```
 
 3. Detener un contenedor
-```
-docker container stop nombre_contenedor
-```
+    ```
+        docker container stop nombre_contenedor
+    ```
 
 4. Eliminar un contenedor
-```
-docker container rm nombre_contenedor
-```
+    ```
+        docker container rm nombre_contenedor
+    ```
+
+# Windows: Environment Variables
+
+Windows users only: Environment Variables
+
+In the upcoming lectures I will set up environment variables via NPM scripts. This is not supported in Windows by default.
+
+To overcome this, please install the [win-node-env](https://www.npmjs.com/package/win-node-env) NPM package globally.
+
+If you are using NPM:
+    ```
+        npm install -g win-node-env
+    ```
+
+If you are using Yarn:
+    ```
+        yarn global add win-node-env
+    ```
