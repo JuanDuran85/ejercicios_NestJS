@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Delete, Get, Param, Patch, Post, Body, HttpCode } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Post, Body, HttpCode, ParseIntPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -37,7 +37,7 @@ export class EventsController {
     }
     
     @Get(':id')
-    async findOne(@Param('id') id: string ){
+    async findOne(@Param('id', ParseIntPipe) id: number ){
         return await this.repository.findOne(id);
     }
     
@@ -50,7 +50,7 @@ export class EventsController {
     }
     
     @Patch(':id')
-    async update(@Param('id') id: string, @Body() input: UpdateEventDto){
+    async update(@Param('id', ParseIntPipe) id: number, @Body() input: UpdateEventDto){
         const event = await this.repository.findOne(id);
         return await this.repository.save({
             ...event,
@@ -61,7 +61,7 @@ export class EventsController {
     
     @Delete(':id')
     @HttpCode(204)
-    async remove(@Param('id') id: string ){
+    async remove(@Param('id', ParseIntPipe) id: number ){
         const event = await this.repository.findOne(id);
         await this.repository.remove(event);
     }
