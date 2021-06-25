@@ -1,5 +1,7 @@
 /* eslint-disable prettier/prettier */
+import { NotFoundException } from '@nestjs/common';
 import { Controller, Delete, Get, Param, Patch, Post, Body, HttpCode, ParseIntPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -9,6 +11,8 @@ import { Like, MoreThan, Repository } from 'typeorm';
 @Controller('/events')
 export class EventsController {
 
+    private readonly logger = new Logger(EventsController.name);
+
     constructor(
         @InjectRepository(Event)
         private readonly repository: Repository<Event>
@@ -16,7 +20,10 @@ export class EventsController {
 
     @Get()
     async findAll(){
-        return await this.repository.find();
+        this.logger.log("Activando el metodo findAll");
+        const event = await this.repository.find();
+        this.logger.debug(`Encontrados ${event.length} eventos`);
+        return event;
     }
 
     @Get('/practice')
@@ -31,14 +38,21 @@ export class EventsController {
             }],
             take: 2,
             order: {
-                id: 'DESC'
+                name: 'DESC'
             }
         })
     }
     
     @Get(':id')
-    async findOne(@Param('id', ParseIntPipe) id: number ){
-        return await this.repository.findOne(id);
+    async findOne(@Param('id', ParseIntPipe) id: any ){
+        console.log(id);
+        console.log(typeof id);
+        
+        const event = await this.repository.findOne(Number(id));
+        if (!event) {
+            throw new NotFoundException(`No se encontro nada para ese id: ${id}`);
+        }
+        return event;
     }
     
     @Post()
