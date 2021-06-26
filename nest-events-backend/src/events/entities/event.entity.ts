@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Attendee } from './attendee.entity';
 
 @Entity()
 export class Event {
@@ -17,4 +18,7 @@ export class Event {
     
     @Column()
     address: string;
+    
+    @OneToMany(()=>Attendee, (attendee)=> attendee.event)
+    attendees: Attendee[];
 }
