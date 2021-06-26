@@ -32,6 +32,10 @@ Ejercicios con NestJS
     ```
         nest g controller name_file
     ```
+7. Generar todo un recurso CRUD
+   ```
+        nest g resource
+   ```
 
 # Usando Docker PostgreSQL
 1. Inicar contenedor
@@ -71,3 +75,29 @@ If you are using Yarn:
     ```
         yarn global add win-node-env
     ```
+
+# Instalaciones adicionales
+
+1. Para aprovechar las tipificaciones de express  (como en el request: Request), se puede instalar el package @types/express.
+   ```
+        yarn add @types/express
+   ```
+   ```
+        npm install --save @types/express
+   ```
+
+2. Para validaciones en la entrada de datos en los DTO
+   ```
+        npm install class-validator class-transformer --save
+   ```
+   ```
+        yarn add class-validator class-transformer
+   ```
+
+3. Para utilizar datos de un DTO que no sean obligatorios
+   ```
+        npm install @nestjs/mapped-types --save
+   ```
+   ```
+        yarn add @nestjs/mapped-types
+   ```
