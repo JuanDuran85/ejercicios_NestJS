@@ -58,6 +58,12 @@ Ejercicios con NestJS
         docker container rm nombre_contenedor
     ```
 
+5. Usar portainer
+   ```
+        docker volume create portainer_data
+        docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+   ```
+
 # Windows: Environment Variables
 
 Windows users only: Environment Variables
@@ -116,4 +122,28 @@ If you are using Yarn:
    ```
    ```
         yarn add @nestjs/swagger swagger-ui-express
+   ```
+
+6. Para validar variables de entorno
+   ```
+        npm install --save joi
+   ```
+   ```
+        yarn add joi
+   ```
+
+7. Instalacion de base de datos postgres
+   ```
+        npm install --save pg
+   ```
+   ```
+        yarn add pg
+   ```
+
+8. Tipado para base de datos postgres
+   ```
+        npm install --save @types/pg
+   ```
+   ```
+        yarn add @types/pg
    ```
