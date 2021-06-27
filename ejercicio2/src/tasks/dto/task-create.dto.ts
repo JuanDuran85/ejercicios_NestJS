@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
-import { MinLength } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, MinLength } from "class-validator";
 
 export class TaskCreateDto {
     @IsNotEmpty({ message: 'El compo descripcion no puede estar vacio' })

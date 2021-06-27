@@ -1,34 +1,76 @@
 /* eslint-disable prettier/prettier */
-import { Body, Param, Query, ParseIntPipe } from '@nestjs/common';
-import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Param,
+  Query,
+  ParseIntPipe,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  HttpStatus,
+  HttpCode
+} from '@nestjs/common';
+
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
+import { TaskService } from './service/tasks.service';
 
 @Controller('tasks')
 export class TasksController {
-    @Get()
-    findTasks(@Query() query: any): string{
-        const queryParams = query;
-        return `Tasks found ${queryParams.limit}`;
-    }
+  constructor(private taskService: TaskService) {}
 
-    @Get(':id')
-    findOneTask(@Param('id', ParseIntPipe) id:number): string{
-        return `Task found by ${id}`;
-    }
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  findTasks(@Query() query: any): any {
+    return {
+      success: true,
+      message: 'Tasks founds',
+      tasks: this.taskService.findTasks(query)
+    };
+  }
 
-    @Post()
-    createTask(@Body() taskCreateDto: TaskCreateDto): string{
-        return `Task created: ${taskCreateDto.description}`;
-    }
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  findOneTask(@Param('id', ParseIntPipe) id: number): any {
+    return {
+      success: true,
+      message: 'Task found',
+      tasks: this.taskService.findOneTask(id)
+    };
+  }
 
-    @Delete(':id')
-    deleteTask(@Param('id') id: string): string{
-        return `Task deleted by ${id}`;
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  createTask(@Body() taskCreateDto: TaskCreateDto): any {
+    return {
+      success: true,
+      message: 'Task create successfully',
+      tasks: this.taskService.createTask(taskCreateDto)
     }
+  }
 
-    @Put(':id')
-    updateTask(@Param('id') id: string, @Body() taskUpdateDto: TaskUpdateDto): string{
-        return `Task update ${id}, ${taskUpdateDto.description}`;
+  @Delete(':id')
+  @HttpCode(HttpStatus.ACCEPTED)
+  deleteTask(@Param('id', ParseIntPipe) id: number): any {
+    return {
+      success: true,
+      message: 'Task deleted successfully',
+      task: this.taskService.deleteTask(id)
+    };
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.ACCEPTED)
+  updateTask(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() taskUpdateDto: TaskUpdateDto,
+  ): any {
+    return {
+      success: true,
+      message: 'Task updated successfully',
+      task: this.taskService.updateTask(id, taskUpdateDto)
     }
+  }
 }
