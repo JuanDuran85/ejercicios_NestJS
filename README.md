@@ -101,3 +101,19 @@ If you are using Yarn:
    ```
         yarn add @nestjs/mapped-types
    ```
+
+4. Para realizar configuraciones globales sobre nestJS como las variables de entorno
+   ```
+        npm i --save @nestjs/config
+   ```
+   ```
+        yarn add @nestjs/config
+   ```
+
+5. Para auto documentacion
+   ```
+        npm install --save @nestjs/swagger swagger-ui-express
+   ```
+   ```
+        yarn add @nestjs/swagger swagger-ui-express
+   ```

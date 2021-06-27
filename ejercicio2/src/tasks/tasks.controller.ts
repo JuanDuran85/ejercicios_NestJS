@@ -10,24 +10,34 @@ import {
   Post,
   Put,
   HttpStatus,
-  HttpCode
+  HttpCode,
+  Inject,
 } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
+import { ApiTags } from "@nestjs/swagger";
 
+import configFile from '../config';
 import { TaskCreateDto } from './dto/task-create.dto';
 import { TaskUpdateDto } from './dto/task-update.dto';
 import { TaskService } from './service/tasks.service';
 
+@ApiTags('Tasks')
 @Controller('tasks')
 export class TasksController {
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    @Inject(configFile.KEY)
+    private configFileService: ConfigType<typeof configFile>,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
   findTasks(@Query() query: any): any {
+    console.log(this.configFileService.secretKey);
     return {
       success: true,
       message: 'Tasks founds',
-      tasks: this.taskService.findTasks(query)
+      tasks: this.taskService.findTasks(query),
     };
   }
 
@@ -37,7 +47,7 @@ export class TasksController {
     return {
       success: true,
       message: 'Task found',
-      tasks: this.taskService.findOneTask(id)
+      tasks: this.taskService.findOneTask(id),
     };
   }
 
@@ -47,8 +57,8 @@ export class TasksController {
     return {
       success: true,
       message: 'Task create successfully',
-      tasks: this.taskService.createTask(taskCreateDto)
-    }
+      tasks: this.taskService.createTask(taskCreateDto),
+    };
   }
 
   @Delete(':id')
@@ -57,7 +67,7 @@ export class TasksController {
     return {
       success: true,
       message: 'Task deleted successfully',
-      task: this.taskService.deleteTask(id)
+      task: this.taskService.deleteTask(id),
     };
   }
 
@@ -70,7 +80,7 @@ export class TasksController {
     return {
       success: true,
       message: 'Task updated successfully',
-      task: this.taskService.updateTask(id, taskUpdateDto)
-    }
+      task: this.taskService.updateTask(id, taskUpdateDto),
+    };
   }
 }

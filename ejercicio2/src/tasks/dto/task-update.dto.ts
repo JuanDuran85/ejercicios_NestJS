@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { PartialType } from '@nestjs/mapped-types';
+
+import { PartialType } from "@nestjs/swagger";
 
 import { TaskCreateDto } from './task-create.dto';
 
