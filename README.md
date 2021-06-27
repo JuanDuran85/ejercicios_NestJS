@@ -147,3 +147,12 @@ If you are using Yarn:
    ```
         yarn add @types/pg
    ```
+
+9. TypeORM para base de datos
+
+   ```
+        npm install --save @nestjs/typeorm typeorm
+   ```
+   ```
+        yarn add @nestjs/typeorm typeorm
+   ```
