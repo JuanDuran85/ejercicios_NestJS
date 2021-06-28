@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   ParseIntPipe,
@@ -17,27 +17,50 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    return {
+      status: 'Ok',
+      messages: 'Task created successfully',
+      tasks: await this.tasksService.create(createTaskDto),
+    };
   }
 
-  @Get()
-  findAll(@Param('userId', ParseIntPipe) userId: number) {
-    return this.tasksService.findAll(userId);
+  @Get('/user/:id')
+  async findAll(@Param('id', ParseIntPipe) id: number) {
+    return {
+      status: 'Ok',
+      messages: 'Task found successfully',
+      tasks: await this.tasksService.findAll(id),
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return {
+      status: 'Ok',
+      messages: 'Task found successfully',
+      tasks: await this.tasksService.findOne(id),
+    };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
+  @Put(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ) {
+    return {
+      status: 'Ok',
+      messages: 'Task updated successfully',
+      tasks: await this.tasksService.update(id, updateTaskDto),
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return {
+      status: 'Ok',
+      messages: 'Task deleted successfully',
+      tasks: await this.tasksService.remove(+id),
+    };
   }
 }

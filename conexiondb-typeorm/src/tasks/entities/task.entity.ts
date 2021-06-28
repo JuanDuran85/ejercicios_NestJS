@@ -23,7 +23,7 @@ export class TaskEntity {
   @ManyToOne(() => UserEntity, (userEntity) => userEntity.task)
   user: UserEntity;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: false })
   status: boolean;
 
   @CreateDateColumn()
