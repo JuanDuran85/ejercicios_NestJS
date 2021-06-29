@@ -2,6 +2,8 @@
 /dist
 /node_modules
 .env
+.env.stage.prod
+.env.stage.dev
 
 # Logs
 logs

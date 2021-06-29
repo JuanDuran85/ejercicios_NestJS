@@ -32,24 +32,135 @@ Ejercicios con NestJS
     ```
         nest g controller name_file
     ```
+7. Generar todo un recurso CRUD
+   ```
+        nest g resource
+   ```
 
- # Usando Docker PostgreSQL
+# Usando Docker PostgreSQL
 1. Inicar contenedor
-```
-docker run --name nombre_contenedor -p 5432:5432 -e POSTGRES_PASSWORD=clave -d postgres
-```
+    ```
+        docker run --name nombre_contenedor -p 5432:5432 -e POSTGRES_PASSWORD=clave -d postgres
+    ```
 
 2. Verificar los contenedores en ejecucion
-```
- docker container ls
-```
+    ```
+        docker container ls
+    ```
 
 3. Detener un contenedor
-```
-docker container stop nombre_contenedor
-```
+    ```
+        docker container stop nombre_contenedor
+    ```
 
 4. Eliminar un contenedor
-```
-docker container rm nombre_contenedor
-```
+    ```
+        docker container rm nombre_contenedor
+    ```
+
+5. Usar portainer
+   ```
+        docker volume create portainer_data
+        docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+   ```
+
+# Windows: Environment Variables
+
+Windows users only: Environment Variables
+
+In the upcoming lectures I will set up environment variables via NPM scripts. This is not supported in Windows by default.
+
+To overcome this, please install the [win-node-env](https://www.npmjs.com/package/win-node-env) NPM package globally.
+
+If you are using NPM:
+    ```
+        npm install -g win-node-env
+    ```
+
+If you are using Yarn:
+    ```
+        yarn global add win-node-env
+    ```
+
+# Instalaciones adicionales
+
+1. Para aprovechar las tipificaciones de express  (como en el request: Request), se puede instalar el package @types/express.
+   ```
+        yarn add @types/express
+   ```
+   ```
+        npm install --save @types/express
+   ```
+
+2. Para validaciones en la entrada de datos en los DTO
+   ```
+        npm install class-validator class-transformer --save
+   ```
+   ```
+        yarn add class-validator class-transformer
+   ```
+
+3. Para utilizar datos de un DTO que no sean obligatorios
+   ```
+        npm install @nestjs/mapped-types --save
+   ```
+   ```
+        yarn add @nestjs/mapped-types
+   ```
+
+4. Para realizar configuraciones globales sobre nestJS como las variables de entorno
+   ```
+        npm i --save @nestjs/config
+   ```
+   ```
+        yarn add @nestjs/config
+   ```
+
+5. Para auto documentacion
+   ```
+        npm install --save @nestjs/swagger swagger-ui-express
+   ```
+   ```
+        yarn add @nestjs/swagger swagger-ui-express
+   ```
+
+6. Para validar variables de entorno
+   ```
+        npm install --save joi
+   ```
+   ```
+        yarn add joi
+   ```
+
+7. Instalacion de base de datos postgres
+   ```
+        npm install --save pg
+   ```
+   ```
+        yarn add pg
+   ```
+
+8. Tipado para base de datos postgres
+   ```
+        npm install --save @types/pg
+   ```
+   ```
+        yarn add @types/pg
+   ```
+
+9. TypeORM para base de datos
+
+   ```
+        npm install --save @nestjs/typeorm typeorm
+   ```
+   ```
+        yarn add @nestjs/typeorm typeorm
+   ```
+
+10. Encriptar claves y typado
+    ```
+        npm install --save bcryptjs @types/bcryptjs
+    ```
+    ```
+        yarn add bcryptjs @types/bcryptjs
+    ```
