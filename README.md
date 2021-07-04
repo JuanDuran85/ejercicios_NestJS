@@ -164,3 +164,19 @@ If you are using Yarn:
     ```
         yarn add bcryptjs @types/bcryptjs
     ```
+
+11. Para trabajar con mongoose
+    ```
+        npm install -D @types/mongoose
+    ```
+    ```
+        yarn add @types/mongoose -D
+    ```
+
+11. Para trabajar con variable de entorno y su tipado
+    ```
+        npm install dotenv @types/dotenv -D
+    ```
+    ```
+        yarn add dotenv @types/dotenv -D
+    ```
