@@ -12,10 +12,11 @@ export const dataBaseProvider = [
     inject: [ConfigService],
     async useFactory(config: ConfigService) {
       return {
-        ssl: true,
+        ssl: false,
         type: 'postgres' as 'postgres',
+        port: parseInt(config.get(Configuration.DATABASE_PORT)),
         host: config.get(Configuration.DB_HOST),
-        username: config.get(Configuration.DB_USER),
+        username: config.get((Configuration.DB_USER)),
         password: config.get(Configuration.DB_PASSWORD),
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],

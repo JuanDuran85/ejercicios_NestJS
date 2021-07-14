@@ -4,4 +4,5 @@ export enum Configuration {
   DB_HOST = 'DB_HOST',
   DB_PASSWORD = 'DB_PASSWORD',
   DB_NAME = 'DB_NAME',
+  DATABASE_PORT = 'DATABASE_PORT'
 }
