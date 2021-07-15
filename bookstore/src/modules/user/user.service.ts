@@ -45,7 +45,21 @@ export class UserService {
         return this._mapperService.map<User, UserDto>(savedUser, new UserDto());
     }
 
-    async update(id: number, user: User): Promise<void>{
+    async update(id: number, user: User): Promise<string>{
         await this._userRepository.update(id, user);
+        return 'UPDATED';
+    }
+
+    async delete(id: number): Promise<string>{
+        const userExist: User = await this._userRepository.findOne(id, {
+            where: {status: 'ACTIVE'}
+        });
+
+        if (!userExist) {
+            throw new NotFoundException('el usuario no existe');
+        }
+
+        await this._userRepository.update(id, {status: 'INACTIVE'});
+        return 'DELETED';
     }
 }

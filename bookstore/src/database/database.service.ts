@@ -20,6 +20,7 @@ export const dataBaseProvider = [
         password: config.get(Configuration.DB_PASSWORD),
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
+        synchronize : true,
       } as ConnectionOptions;
     },
   }),

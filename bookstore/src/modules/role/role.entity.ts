@@ -1,7 +1,5 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, ManyToMany, Column, JoinColumn } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, ManyToMany, Column, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../user/user.entity';
-
-
 @Entity('roles')
 export class Role extends BaseEntity {
     @PrimaryGeneratedColumn('increment')
@@ -20,10 +18,9 @@ export class Role extends BaseEntity {
     @JoinColumn()
     users: User[]
     
-    @Column({ type: 'timestamp', name: 'created_at' })
+    @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     createdAt: Date;
   
-    @Column({ type: 'timestamp', name: 'updated_at' })
+    @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
     updatedAt: Date;
-
 }
