@@ -1,5 +1,3 @@
-import { UserDto } from 'src/modules/user/dto/user.dto';
-
 import {
   Body,
   Controller,
@@ -18,19 +16,19 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':id')
-  async getUser(@Param('id', ParseIntPipe) id: number): Promise<UserDto> {
+  async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     const user = await this.userService.get(id);
     return user;
   }
 
   @Get()
-  async getUsers(): Promise<UserDto[]> {
+  async getUsers(): Promise<User[]> {
     const users = await this.userService.getAll();
     return users;
   }
 
   @Post('create')
-  async createUser(@Body() user: User): Promise<UserDto> {
+  async createUser(@Body() user: User): Promise<User> {
     const newUser = await this.userService.create(user);
     return newUser;
   }
