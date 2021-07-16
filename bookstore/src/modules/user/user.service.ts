@@ -1,3 +1,4 @@
+import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './../role/role.entity';
 import { UserDetails } from './user.details.entity';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
@@ -10,14 +11,13 @@ import { getConnection } from 'typeorm';
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(UserRepository)
     private readonly _userRepository: UserRepository,
     private readonly _mapperService: MapperService,
   ) {}
 
     async get(id: number): Promise<UserDto>{
-        console.log('get id', id);
-        console.log(typeof id);
-        
+      
         if (!id) {
             throw new BadRequestException('el id debe existir');
         }
