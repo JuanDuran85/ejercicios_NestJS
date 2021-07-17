@@ -1,12 +1,12 @@
-import { UserDetails } from './../user/user.details.entity';
+import { genSalt, hash } from 'bcryptjs';
 import { EntityRepository, getConnection, Repository } from 'typeorm';
 
 import { Role } from '../role/role.entity';
 import { RoleRepository } from '../role/role.repository';
+import { RoleType } from '../role/roletype.enum';
+import { UserDetails } from '../user/user.details.entity';
 import { User } from '../user/user.entity';
 import { SingUpDto } from './dto';
-import { RoleType } from '../role/roletype.enum';
-import { genSalt, hash } from 'bcryptjs';
 
 @EntityRepository(User)
 export class AuthRepository extends Repository<User> {
