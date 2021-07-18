@@ -183,8 +183,8 @@ If you are using Yarn:
 
 12. Libreria passport para nestJS con jwt (jsonwebtoken) incluyendo los tipados para typescript
     ```
-        npm install @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport
+        npm install @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport passport
     ```
     ```
-        yarn add @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport
+        yarn add @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport passport
     ```

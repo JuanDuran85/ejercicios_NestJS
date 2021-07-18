@@ -1,10 +1,7 @@
-import { IsNotEmpty, IsString, Min, IsEmail } from 'class-validator';
-
-
+import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
 export class SingUpDto {
     @IsNotEmpty()
     @IsString()
-    @Min(3)
     username: string;
 
     @IsNotEmpty()
@@ -14,6 +11,5 @@ export class SingUpDto {
 
     @IsNotEmpty()
     @IsString()
-    @Min(6)
     password: string;
 }
