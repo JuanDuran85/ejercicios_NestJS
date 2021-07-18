@@ -1,7 +1,7 @@
 import { RoleType } from '../role/roletype.enum';
 
 export interface JwtPayloadInterface {
-    id: string;
+    id: number;
     username: string;
     email: string;
     roles: RoleType[];
