@@ -4,13 +4,16 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
-  ParseIntPipe
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 import { User } from './user.entity';
 import { UserService } from './user.service';
+
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,6 +24,7 @@ export class UserController {
     return user;
   }
 
+  @UseGuards(AuthGuard())
   @Get()
   async getUsers(): Promise<User[]> {
     const users = await this.userService.getAll();
