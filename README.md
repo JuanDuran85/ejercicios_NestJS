@@ -10,6 +10,11 @@ Ejercicios con NestJS
         nest new nombre_proyecto
     ```
 
+    - Para no iniciar git con el proyecto.
+    ```
+        nest new nombre_proyecto --skip-git
+    ```
+
 2. Para iniciar el servidor local
     ```
         npm run start:dev
@@ -36,7 +41,6 @@ Ejercicios con NestJS
    ```
         nest g resource
    ```
-
 # Usando Docker PostgreSQL
 1. Inicar contenedor
     ```
