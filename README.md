@@ -161,7 +161,7 @@ If you are using Yarn:
         yarn add @nestjs/typeorm typeorm
    ```
 
-10. Encriptar claves y typado
+10. Encriptar claves y tipado
     ```
         npm install --save bcryptjs @types/bcryptjs
     ```
