@@ -166,11 +166,4 @@ vite.config.ts.timestamp-*
 .vite/
 
 # project-specific
-./car-dealership/node_modules
-./car-dealership/.env
-./car-dealership/.env.*
-./car-dealership/.env.local
-./car-dealership/.env.development.local
-./car-dealership/.env.test.local
-./car-dealership/.env.production.local
 .vscode/settings.json
