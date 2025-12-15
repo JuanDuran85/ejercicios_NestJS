@@ -8,11 +8,27 @@ Exercises with NestJS
 
 ## Modules
 
-A module is a class that is annotated with the @Module() decorator. This decorator provides metadata that Nest uses to organize and manage the application structure efficiently.
+- A module is a class that is annotated with the @Module() decorator. This decorator provides metadata that Nest uses to organize and manage the application structure efficiently.
 
 ## Controllers
 
-Controllers are responsible for handling incoming requests and sending responses back to the client.
+- Controllers are responsible for handling incoming requests and sending responses back to the client.
+
+## Providers
+
+- Providers are a core concept in Nest. Many of the basic Nest classes, such as services, repositories, factories, and helpers, can be treated as providers. The key idea behind a provider is that it can be injected as a dependency, allowing objects to form various relationships with each other. The responsibility of "wiring up" these objects is largely handled by the Nest runtime system.
+
+## Services
+
+- Services are a core concept in Nest. They are used to perform business logic and provide data to controllers.
+
+## Pipes
+
+A pipe is a class annotated with the @Injectable() decorator, which implements the PipeTransform interface.
+
+## Exception filters
+
+- Nest comes with a built-in exceptions layer which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
 
 1. Create a new project
 
