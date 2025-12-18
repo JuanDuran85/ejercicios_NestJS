@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { Pokemon } from './entities/pokemon.entity';
 import { PokemonService } from './pokemon.service';
 
 @Controller('pokemon')
@@ -28,18 +29,21 @@ export class PokemonController {
     return this.pokemonService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pokemonService.findOne(+id);
+  @Get(':searchParam')
+  findOne(@Param('searchParam') searchParam: string): Promise<Pokemon> {
+    return this.pokemonService.findOne(searchParam);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
-    return this.pokemonService.update(+id, updatePokemonDto);
+  @Patch(':searchParam')
+  update(
+    @Param('searchParam') searchParam: string,
+    @Body() updatePokemonDto: UpdatePokemonDto,
+  ) {
+    return this.pokemonService.update(+searchParam, updatePokemonDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokemonService.remove(+id);
+  @Delete(':searchParam')
+  remove(@Param('searchParam') searchParam: string) {
+    return this.pokemonService.remove(+searchParam);
   }
 }
