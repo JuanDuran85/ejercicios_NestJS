@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { Pokemon } from './entities/pokemon.entity';
 
 @Injectable()
 export class PokemonService {
-  create(createPokemonDto: CreatePokemonDto) {
-    return 'This action adds a new pokemon';
+  constructor(
+    @InjectModel(Pokemon.name)
+    private readonly pokemonModel: Model<Pokemon>,
+  ) {}
+
+  public async create(
+    createPokemonDto: CreatePokemonDto,
+  ): Promise<CreatePokemonDto> {
+    try {
+      createPokemonDto.name = createPokemonDto.name.toLowerCase();
+
+      return await this.pokemonModel.create(createPokemonDto);
+    } catch (error) {
+      console.error(String(error));
+      if (error.code === 11_000)
+        throw new BadRequestException(
+          `Pokemon already exists. ${JSON.stringify(error.keyValue)}`,
+        );
+      throw new InternalServerErrorException(
+        `Can't create pokemon - Check server logs`,
+      );
+    }
   }
 
-  findAll() {
+  public findAll() {
     return `This action returns all pokemon`;
   }
 
-  findOne(id: number) {
+  public findOne(id: number) {
     return `This action returns a #${id} pokemon`;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
+  public update(id: number, updatePokemonDto: UpdatePokemonDto) {
     return `This action updates a #${id} pokemon`;
   }
 
-  remove(id: number) {
+  public remove(id: number) {
     return `This action removes a #${id} pokemon`;
   }
 }
