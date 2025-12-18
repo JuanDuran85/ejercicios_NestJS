@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
@@ -20,30 +21,32 @@ export class PokemonController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createPokemonDto: CreatePokemonDto) {
+  public create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
   }
 
   @Get()
-  findAll() {
+  public findAll(): Promise<Pokemon[]> {
     return this.pokemonService.findAll();
   }
 
   @Get(':searchParam')
-  findOne(@Param('searchParam') searchParam: string): Promise<Pokemon> {
+  public findOne(@Param('searchParam') searchParam: string): Promise<Pokemon> {
     return this.pokemonService.findOne(searchParam);
   }
 
   @Patch(':searchParam')
-  update(
+  public update(
     @Param('searchParam') searchParam: string,
     @Body() updatePokemonDto: UpdatePokemonDto,
   ) {
-    return this.pokemonService.update(+searchParam, updatePokemonDto);
+    return this.pokemonService.update(searchParam, updatePokemonDto);
   }
 
-  @Delete(':searchParam')
-  remove(@Param('searchParam') searchParam: string) {
-    return this.pokemonService.remove(+searchParam);
+  @Delete(':deleteParam')
+  public remove(
+    @Param('deleteParam', ParseMongoIdPipe) deleteParam: string,
+  ): Promise<Pokemon> {
+    return this.pokemonService.remove(deleteParam);
   }
 }
