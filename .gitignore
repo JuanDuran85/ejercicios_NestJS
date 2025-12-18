@@ -167,3 +167,5 @@ vite.config.ts.timestamp-*
 
 # project-specific
 .vscode/settings.json
+
+pokedex/mongo
