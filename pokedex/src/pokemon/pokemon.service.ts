@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { isValidObjectId, Model } from 'mongoose';
+import { isValidObjectId, Model, DeleteResult } from 'mongoose';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
@@ -24,6 +24,15 @@ export class PokemonService {
       createPokemonDto.name = createPokemonDto.name.toLowerCase();
 
       return await this.pokemonModel.create(createPokemonDto);
+    } catch (error) {
+      console.error(String(error));
+      this.handleExceptions(error);
+    }
+  }
+
+  public async createMany(createPokemonDto: CreatePokemonDto[]) {
+    try {
+      return await this.pokemonModel.insertMany(createPokemonDto);
     } catch (error) {
       console.error(String(error));
       this.handleExceptions(error);
@@ -90,6 +99,10 @@ export class PokemonService {
     }
 
     return resultDelete;
+  }
+
+  public async removeAll(): Promise<DeleteResult> {
+    return await this.pokemonModel.deleteMany({});
   }
 
   private handleExceptions(error: any) {

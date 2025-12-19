@@ -25,6 +25,12 @@ export class PokemonController {
     return this.pokemonService.create(createPokemonDto);
   }
 
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  public createMany(@Body() createPokemonDto: CreatePokemonDto[]) {
+    return this.pokemonService.createMany(createPokemonDto);
+  }
+
   @Get()
   public findAll(): Promise<Pokemon[]> {
     return this.pokemonService.findAll();
@@ -48,5 +54,10 @@ export class PokemonController {
     @Param('deleteParam', ParseMongoIdPipe) deleteParam: string,
   ): Promise<Pokemon> {
     return this.pokemonService.remove(deleteParam);
+  }
+
+  @Delete()
+  public removeAll() {
+    return this.pokemonService.removeAll();
   }
 }
