@@ -6,17 +6,16 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
 import { PokemonService } from './pokemon.service';
-import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Controller('pokemon')
 export class PokemonController {
