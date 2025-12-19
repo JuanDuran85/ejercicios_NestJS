@@ -1,34 +1,68 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PokemonService } from './pokemon.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id/parse-mongo-id.pipe';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { Pokemon } from './entities/pokemon.entity';
+import { PokemonService } from './pokemon.service';
 
 @Controller('pokemon')
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) {}
 
   @Post()
-  create(@Body() createPokemonDto: CreatePokemonDto) {
+  @HttpCode(HttpStatus.CREATED)
+  public create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
   }
 
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  public createMany(@Body() createPokemonDto: CreatePokemonDto[]) {
+    return this.pokemonService.createMany(createPokemonDto);
+  }
+
   @Get()
-  findAll() {
-    return this.pokemonService.findAll();
+  public findAll(
+    @Query()
+    paginationDto: PaginationDto,
+  ): Promise<Pokemon[]> {
+    return this.pokemonService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pokemonService.findOne(+id);
+  @Get(':searchParam')
+  public findOne(@Param('searchParam') searchParam: string): Promise<Pokemon> {
+    return this.pokemonService.findOne(searchParam);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
-    return this.pokemonService.update(+id, updatePokemonDto);
+  @Patch(':searchParam')
+  public update(
+    @Param('searchParam') searchParam: string,
+    @Body() updatePokemonDto: UpdatePokemonDto,
+  ) {
+    return this.pokemonService.update(searchParam, updatePokemonDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokemonService.remove(+id);
+  @Delete(':deleteParam')
+  public remove(
+    @Param('deleteParam', ParseMongoIdPipe) deleteParam: string,
+  ): Promise<Pokemon> {
+    return this.pokemonService.remove(deleteParam);
+  }
+
+  @Delete()
+  public removeAll() {
+    return this.pokemonService.removeAll();
   }
 }
