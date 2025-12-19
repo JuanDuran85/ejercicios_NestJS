@@ -6,13 +6,15 @@ import { CommonModule } from './common/common.module';
 import { AppEnvConfiguration } from './config/app.config';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { SeedModule } from './seed/seed.module';
+import { JoiValidationSchema } from './config/joi.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [AppEnvConfiguration],
       isGlobal: true,
-      cache: true
+      cache: true,
+      validationSchema: JoiValidationSchema,
     }),
     ServeStaticModule.forRoot({
       rootPath: `${__dirname}/../public`,
