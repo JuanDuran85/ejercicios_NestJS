@@ -70,6 +70,20 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
+## Using Docker
+
+1. Build
+
+```bash
+  docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
+```
+
+2. Run
+
+```bash
+  docker-compose -f docker-compose.prod.yaml --env-file .env.prod up
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
