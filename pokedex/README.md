@@ -84,6 +84,14 @@ With Mau, you can deploy your application in just a few clicks, allowing you to 
   docker-compose -f docker-compose.prod.yaml --env-file .env.prod up
 ```
 
+### Note:
+
+if you have the .env file in the same directory as the docker-compose file, you don't need to specify the --env-file flag. So, run:
+
+```bash
+  docker-compose -f docker-compose.prod.yaml up --build
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
