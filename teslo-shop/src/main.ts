@@ -8,7 +8,6 @@ async function main() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      transform: true,
       forbidNonWhitelisted: true,
     }),
   );
