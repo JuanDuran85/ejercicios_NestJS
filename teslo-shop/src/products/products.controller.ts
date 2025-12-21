@@ -17,7 +17,9 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  public create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+  public create(
+    @Body() createProductDto: CreateProductDto,
+  ): Promise<Product | undefined> {
     return this.productsService.create(createProductDto);
   }
 
