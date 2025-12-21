@@ -31,11 +31,11 @@ export class ProductsController {
     return this.productsService.findAll(paginationDto);
   }
 
-  @Get(':id')
+  @Get(':searchParam')
   public findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('searchParam') searchParam: string,
   ): Promise<Product | null> {
-    return this.productsService.findOne(id);
+    return this.productsService.findOne(searchParam);
   }
 
   @Patch(':id')
