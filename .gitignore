@@ -169,3 +169,5 @@ vite.config.ts.timestamp-*
 .vscode/settings.json
 
 pokedex/mongo
+
+teslo-shop/postgres-db/
