@@ -62,8 +62,25 @@ export class ProductsService {
     return productFound;
   }
 
-  public async update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  public async update(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    const productUpdated: Product | undefined =
+      await this.productRepository.preload({
+        id,
+        ...updateProductDto,
+      });
+
+    if (!productUpdated)
+      throw new NotFoundException(`Product with id: ${id} not found`);
+    try {
+      await this.productRepository.save(productUpdated);
+    } catch (error) {
+      this.handlerDbExceptions(error);
+    }
+
+    return productUpdated;
   }
 
   public async remove(searchParams: string): Promise<string> {
