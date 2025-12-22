@@ -5,13 +5,13 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from './entities/product.entity';
+
 import { Repository } from 'typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUuid } from 'uuid';
+import { Product, ProductImage } from './entities';
+import { CreateProductDto, UpdateProductDto } from './dto';
 
 @Injectable()
 export class ProductsService {
@@ -19,18 +19,24 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
   ) {}
 
   public async create(
     createProductDto: CreateProductDto,
   ): Promise<Product | undefined> {
     try {
-      const product: Product = this.productRepository.create(createProductDto);
+      const { images = [], ...productDetails } = createProductDto;
+      const product: Product = this.productRepository.create({
+        ...productDetails,
+        images: images.map((url) =>
+          this.productImageRepository.create({ url }),
+        ),
+      });
       await this.productRepository.save(product);
-      console.debug(product);
       return product;
     } catch (error) {
-      console.debug(error);
       this.handlerDbExceptions(error);
     }
   }
@@ -40,6 +46,9 @@ export class ProductsService {
     return await this.productRepository.find({
       take: limit,
       skip: offset,
+      relations: {
+        images: true,
+      },
     });
   }
 
@@ -70,6 +79,7 @@ export class ProductsService {
       await this.productRepository.preload({
         id,
         ...updateProductDto,
+        images: [],
       });
 
     if (!productUpdated)
@@ -90,6 +100,7 @@ export class ProductsService {
   }
 
   private handlerDbExceptions(error: any) {
+    console.error(error);
     if (error.code === '23505') throw new BadRequestException(error?.detail);
 
     this.logger.error(error);
