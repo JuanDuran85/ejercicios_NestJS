@@ -7,7 +7,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import {
+  DataSource,
+  DeleteResult,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUuid } from 'uuid';
 import { Product, ProductImage } from './entities';
@@ -126,6 +131,17 @@ export class ProductsService {
     const productFound = await this.findOne(searchParams);
     await this.productRepository.remove(productFound);
     return `This action removed a #${searchParams} product`;
+  }
+
+  public async deleteAllProducts(): Promise<DeleteResult | undefined> {
+    const query: SelectQueryBuilder<Product> =
+      this.productRepository.createQueryBuilder('product');
+
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      this.handlerDbExceptions(error);
+    }
   }
 
   private handlerDbExceptions(error: any) {
