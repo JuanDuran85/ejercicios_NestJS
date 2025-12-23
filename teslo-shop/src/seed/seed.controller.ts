@@ -6,7 +6,7 @@ export class SeedController {
   constructor(private readonly seedService: SeedService) {}
 
   @Get()
-  public executeSeed(): Promise<boolean> {
+  public executeSeed(): Promise<string> {
     return this.seedService.runSeed();
   }
 }
