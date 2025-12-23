@@ -12,6 +12,7 @@ import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUuid } from 'uuid';
 import { Product, ProductImage } from './entities';
 import { CreateProductDto, UpdateProductDto } from './dto';
+import { ProductResponse } from './interfaces/products-response.interface';
 
 @Injectable()
 export class ProductsService {
@@ -52,15 +53,16 @@ export class ProductsService {
     });
   }
 
-  public async findOne(searchParam: string): Promise<Product | null> {
+  public async findOne(searchParam: string): Promise<Product> {
     const productFound: Product | null = isUuid(searchParam)
       ? await this.productRepository.findOneBy({ id: searchParam })
       : await this.productRepository
-          .createQueryBuilder()
+          .createQueryBuilder('prod')
           .where('upper(title) =:title or slug =:slug', {
             title: searchParam.toUpperCase().trim(),
             slug: searchParam.toLowerCase().trim(),
           })
+          .leftJoinAndSelect('prod.images', 'prodImages')
           .getOne();
 
     if (!productFound)
@@ -69,6 +71,14 @@ export class ProductsService {
       );
 
     return productFound;
+  }
+
+  public async findOnePlain(searchParam: string): Promise<ProductResponse> {
+    const { images = [], ...product } = await this.findOne(searchParam);
+    return {
+      ...product,
+      images: images.map((image) => image.url),
+    };
   }
 
   public async update(

@@ -14,6 +14,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from '../common/dtos/pagination.dto';
+import { ProductResponse } from './interfaces/products-response.interface';
 
 @Controller('products')
 export class ProductsController {
@@ -34,8 +35,8 @@ export class ProductsController {
   @Get(':searchParam')
   public findOne(
     @Param('searchParam') searchParam: string,
-  ): Promise<Product | null> {
-    return this.productsService.findOne(searchParam);
+  ): Promise<ProductResponse> {
+    return this.productsService.findOnePlain(searchParam);
   }
 
   @Patch(':id')
