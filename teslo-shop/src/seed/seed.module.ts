@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsModule } from '../products/products.module';
+import { SeedController } from './seed.controller';
+import { SeedService } from './seed.service';
+
+@Module({
+  controllers: [SeedController],
+  providers: [SeedService],
+  exports: [SeedService],
+  imports: [ProductsModule, TypeOrmModule],
+})
+export class SeedModule {}
