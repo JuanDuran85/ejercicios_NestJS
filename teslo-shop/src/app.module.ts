@@ -5,6 +5,7 @@ import { ProductsModule } from './products/products.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { FilesModule } from './files/files.module';
+import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FilesModule } from './files/files.module';
     CommonModule,
     SeedModule,
     FilesModule,
+    CloudinaryModule
   ],
   controllers: [],
   providers: [],
