@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
+import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 
 @Injectable()
 export class FilesService {
