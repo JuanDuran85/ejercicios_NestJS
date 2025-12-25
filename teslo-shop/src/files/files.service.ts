@@ -5,7 +5,7 @@ import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 @Injectable()
 export class FilesService {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
-  public async uploadImageFile(file: Express.Multer.File) {
+  public async uploadImageFileRemote(file: Express.Multer.File) {
     const result: UploadApiResponse = await this.cloudinaryService.uploadImage(
       file,
       'products',
@@ -18,6 +18,10 @@ export class FilesService {
       height: result.height,
       format: result.format,
     };
+  }
+
+  public async uploadImageFileLocal(file: Express.Multer.File) {
+   return file;
   }
 
   public async getImageByPublicId(path: string): Promise<string> {
