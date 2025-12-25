@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UploadApiResponse } from 'cloudinary';
 import { CloudinaryService } from '../common/cloudinary/cloudinary.service';
 
@@ -18,5 +18,12 @@ export class FilesService {
       height: result.height,
       format: result.format,
     };
+  }
+
+  public async getImageByPublicId(path: string): Promise<string> {
+    if (!path) {
+      throw new NotFoundException('Public ID is required');
+    }
+    return await this.cloudinaryService.getImageUrl(path);
   }
 }

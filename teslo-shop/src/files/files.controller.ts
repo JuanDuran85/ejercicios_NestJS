@@ -1,24 +1,25 @@
 import {
   BadRequestException,
   Controller,
-  FileTypeValidator,
-  MaxFileSizeValidator,
+  Get,
+  Param,
   ParseFilePipe,
   Post,
+  Query,
+  Req,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesService } from './files.service';
 import { fileFilter } from './helpers/fileFilter.helper';
-import { fileNamer } from './helpers/fileNamer.helper';
-import { diskStorage } from 'multer';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @Post('product')
+  @Post('products')
   @UseInterceptors(
     FileInterceptor('file', {
       fileFilter,
@@ -26,12 +27,22 @@ export class FilesController {
     }),
   )
   public uploadProductImageFile(
-    @UploadedFile(
-      new ParseFilePipe(),
-    )
+    @UploadedFile(new ParseFilePipe())
     file: Express.Multer.File,
   ) {
     if (!file) throw new BadRequestException('File have to be an image');
     return this.filesService.uploadImageFile(file);
+  }
+
+  @Get('products/:publicId')
+  public async getProductImage(
+    @Req() req: Express.Request,
+    @Param('publicId') publicId: string,
+  ) {
+    //@ts-ignore
+    const folderPath: string = `${req.route.path.split('/')[3]}/${publicId}`;
+    const secureUrl: string =
+      await this.filesService.getImageByPublicId(folderPath);
+    return { secureUrl };
   }
 }
