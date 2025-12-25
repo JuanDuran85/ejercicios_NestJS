@@ -37,7 +37,7 @@ export class FilesService {
     if (!file) throw new BadRequestException('File have to be an image');
     const hostApi: string | undefined = this.configService.get('HOST_API');
     if (!hostApi) throw new BadRequestException('Host API is required');
-    const secureUrl: string = `${this.configService.get('HOST_API')}/files/products/${file.filename}`;
+    const secureUrl: string = `${this.configService.get('HOST_API')}/files/products/local/${file.filename}`;
     return { secureUrl };
   }
 
