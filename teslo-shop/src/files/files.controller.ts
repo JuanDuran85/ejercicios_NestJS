@@ -2,18 +2,22 @@ import {
   BadRequestException,
   Controller,
   Get,
+  Header,
   Param,
   ParseFilePipe,
   Post,
   Req,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FilesService } from './files.service';
-import { fileFilter } from './helpers/fileFilter.helper';
 import { diskStorage } from 'multer';
+import { createReadStream, ReadStream } from 'node:fs';
+import { FilesService } from './files.service';
 import { fileNamer } from './helpers';
+import { fileFilter } from './helpers/fileFilter.helper';
+import { UploadFileResponse } from './interfaces/uploadFileResponse.interface';
 
 @Controller('files')
 export class FilesController {
@@ -48,14 +52,12 @@ export class FilesController {
   public uploadProductImageFileLocal(
     @UploadedFile(new ParseFilePipe())
     file: Express.Multer.File,
-  ) {
-    if (!file) throw new BadRequestException('File have to be an image');
-    console.debug(file);
+  ): Partial<UploadFileResponse> {
     return this.filesService.uploadImageFileLocal(file);
   }
 
-  @Get('products/:publicId')
-  public async getProductImage(
+  @Get('products/remote/:publicId')
+  public async getProductImageRemote(
     @Req() req: Express.Request,
     @Param('publicId') publicId: string,
   ) {
@@ -64,5 +66,14 @@ export class FilesController {
     const secureUrl: string =
       await this.filesService.getImageByPublicId(folderPath);
     return { secureUrl };
+  }
+
+  @Get('products/local/:imageName')
+  @Header('Content-Type', 'image/jpeg')
+  public getProductImageLocal(@Param('imageName') imageName: string) {
+    const stream: ReadStream = createReadStream(
+      this.filesService.getStaticImageLocal(imageName),
+    );
+    return new StreamableFile(stream);
   }
 }
