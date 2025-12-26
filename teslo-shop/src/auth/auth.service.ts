@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { BcryptJsAdapter } from '../common/adapters/bcryptjs.adapter';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 
@@ -13,10 +14,16 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    private readonly encryptAdapter: BcryptJsAdapter,
   ) {}
   public async create(createUserDto: CreateUserDto): Promise<User | undefined> {
     try {
-      const user: User = this.userRepository.create(createUserDto);
+      const { password, ...userData } = createUserDto;
+      const user: User = this.userRepository.create({
+        ...userData,
+        password: this.encryptAdapter.hash(password),
+      });
       await this.userRepository.save(user);
       return user;
     } catch (error) {
