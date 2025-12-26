@@ -171,3 +171,4 @@ vite.config.ts.timestamp-*
 pokedex/mongo
 
 teslo-shop/postgres-db/
+teslo-shop/static/products/
