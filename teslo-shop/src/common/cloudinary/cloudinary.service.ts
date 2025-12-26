@@ -1,11 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
-    UploadApiErrorResponse,
-    UploadApiResponse,
-    UploadStream,
-    v2 as cloudinary,
+  UploadApiErrorResponse,
+  UploadApiResponse,
+  UploadStream,
+  v2 as cloudinary,
 } from 'cloudinary';
 import * as streamifier from 'streamifier';
+import { CloudinaryImageOptions } from './interfaces/cloudinaryImageOptions.interface';
+import { ResourceAssetResponse } from './interfaces';
 
 @Injectable()
 export class CloudinaryService {
@@ -49,6 +51,26 @@ export class CloudinaryService {
     try {
       await cloudinary.uploader.destroy(publicId);
       this.logger.log(`Image deleted successfully: ${publicId}`);
+    } catch (error) {
+      this.logger.error('Failed to delete image from Cloudinary', error);
+      throw error;
+    }
+  }
+
+  public async getImageUrl(
+    pathIn: string,
+    options?: CloudinaryImageOptions,
+  ): Promise<string> {
+    if (!pathIn) {
+      throw new NotFoundException('Public ID is required');
+    }
+
+    try {
+      const responseAsset = (await cloudinary.api.resource(pathIn, {
+        secure: true,
+        ...options,
+      })) as ResourceAssetResponse;
+      return responseAsset.secure_url;
     } catch (error) {
       this.logger.error('Failed to delete image from Cloudinary', error);
       throw error;
