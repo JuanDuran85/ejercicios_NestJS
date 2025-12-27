@@ -9,11 +9,10 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { RawDecorator } from '../common/decorators/raw-headers.decorator';
 import { AuthService } from './auth.service';
-import { GetUser } from './decorators/get-user.decorator';
+import { AuthUser, GetUser, RoleProtected } from './decorators';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
-import { RoleProtected } from './decorators';
 import { ValidRoles } from './interfaces';
 
 @Controller('auth')
@@ -62,6 +61,16 @@ export class AuthController {
     return {
       ok: true,
       message: 'testing private route 3',
+      user,
+    };
+  }
+
+  @Get('private4')
+  @AuthUser(ValidRoles.admin)
+  testingPrivateRouteFour(@GetUser() user: User) {
+    return {
+      ok: true,
+      message: 'testing private route 4',
       user,
     };
   }
