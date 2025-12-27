@@ -9,4 +9,8 @@ export class BcryptJsAdapter {
   public hash(password: string): string {
     return this.bcryptjs.hashSync(password, this.saltRounds);
   }
+
+  public check(password: string, hashedPassword: string): boolean {
+    return this.bcryptjs.compareSync(password, hashedPassword);
+  }
 }
