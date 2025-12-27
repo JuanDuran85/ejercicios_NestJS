@@ -28,7 +28,7 @@ export class AuthService {
         password: this.encryptAdapter.hash(password),
       });
       await this.userRepository.save(user);
-      return { ...user, token: this.getJwtToken({ email: user.email }) };
+      return { ...user, token: this.getJwtToken({ id: user.id }) };
     } catch (error) {
       this.handlerDbError(error);
     }
@@ -38,13 +38,13 @@ export class AuthService {
     const { email, password } = loginUserDto;
     const user: User | null = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, id: true },
     });
 
     if (!user || !this.encryptAdapter.check(password, user.password))
       throw new UnauthorizedException('Credentials are not valid');
 
-    return { ...user, token: this.getJwtToken({ email: user.email }) };
+    return { ...user, token: this.getJwtToken({ id: user.id }) };
   }
 
   private getJwtToken(payload: JwtPayload): string {

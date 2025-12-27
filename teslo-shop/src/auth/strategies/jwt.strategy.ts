@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService,
   ) {
-    const jwtValue = configService.get('JWT_SECRET') || '';
+    const jwtValue: string = configService.get('JWT_SECRET') || '';
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -23,8 +23,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   public async validate(payload: JwtPayload): Promise<User> {
-    const { email } = payload;
-    const user: User | null = await this.userRepository.findOneBy({ email });
+    const { id } = payload;
+    const user: User | null = await this.userRepository.findOneBy({ id });
     if (!user?.isActive)
       throw new UnauthorizedException('Token not valid or user not active');
     return user;
