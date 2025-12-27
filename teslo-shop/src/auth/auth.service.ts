@@ -9,16 +9,18 @@ import { Repository } from 'typeorm';
 import { BcryptJsAdapter } from '../common/adapters/bcryptjs.adapter';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     private readonly encryptAdapter: BcryptJsAdapter,
+    private readonly jwtService: JwtService,
   ) {}
-  public async create(createUserDto: CreateUserDto): Promise<User | undefined> {
+  public async create(createUserDto: CreateUserDto): Promise<unknown> {
     try {
       const { password, ...userData } = createUserDto;
       const user: User = this.userRepository.create({
@@ -26,13 +28,13 @@ export class AuthService {
         password: this.encryptAdapter.hash(password),
       });
       await this.userRepository.save(user);
-      return user;
+      return { ...user, token: this.getJwtToken({ email: user.email }) };
     } catch (error) {
       this.handlerDbError(error);
     }
   }
 
-  public async login(loginUserDto: LoginUserDto) {
+  public async login(loginUserDto: LoginUserDto): Promise<unknown> {
     const { email, password } = loginUserDto;
     const user: User | null = await this.userRepository.findOne({
       where: { email },
@@ -42,7 +44,11 @@ export class AuthService {
     if (!user || !this.encryptAdapter.check(password, user.password))
       throw new UnauthorizedException('Credentials are not valid');
 
-    return user;
+    return { ...user, token: this.getJwtToken({ email: user.email }) };
+  }
+
+  private getJwtToken(payload: JwtPayload): string {
+    return this.jwtService.sign(payload);
   }
 
   private handlerDbError(error: unknown): never {
