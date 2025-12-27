@@ -13,6 +13,8 @@ import { GetUser } from './decorators/get-user.decorator';
 import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
 import { UserRoleGuard } from './guards/user-role/user-role.guard';
+import { RoleProtected } from './decorators';
+import { ValidRoles } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -49,6 +51,17 @@ export class AuthController {
   testingPrivateRouteTwo(@GetUser() user: User) {
     return {
       ok: true,
+      user,
+    };
+  }
+
+  @Get('private3')
+  @RoleProtected(ValidRoles.admin)
+  @UseGuards(AuthGuard(), UserRoleGuard)
+  testingPrivateRouteThree(@GetUser() user: User) {
+    return {
+      ok: true,
+      message: 'testing private route 3',
       user,
     };
   }
