@@ -19,12 +19,12 @@ export class SeedService {
     const products: SeedProduct[] = initialData.products;
     const insertPromises: Promise<Product>[] = [];
 
-    products.forEach((product: SeedProduct) => {
+   /*  products.forEach((product: SeedProduct) => {
       const createdProduct = this.productService.create(
         product,
       ) as Promise<Product>;
       insertPromises.push(createdProduct);
-    });
+    }); */
     await Promise.all(insertPromises);
   }
 }
