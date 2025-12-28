@@ -15,12 +15,15 @@ import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { ProductResponse } from './interfaces/products-response.interface';
+import { AuthUser } from '../auth/decorators';
+import { ValidRoles } from '../auth/interfaces';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
+  @AuthUser(ValidRoles.admin)
   public create(
     @Body() createProductDto: CreateProductDto,
   ): Promise<Product | undefined> {
@@ -40,6 +43,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @AuthUser(ValidRoles.admin)
   public update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
@@ -48,6 +52,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @AuthUser(ValidRoles.admin)
   public remove(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return this.productsService.remove(id);
   }
