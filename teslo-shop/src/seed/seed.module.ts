@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from '../auth/auth.module';
 import { ProductsModule } from '../products/products.module';
 import { SeedController } from './seed.controller';
 import { SeedService } from './seed.service';
@@ -8,6 +9,6 @@ import { SeedService } from './seed.service';
   controllers: [SeedController],
   providers: [SeedService],
   exports: [SeedService],
-  imports: [ProductsModule, TypeOrmModule],
+  imports: [ProductsModule, TypeOrmModule, AuthModule],
 })
 export class SeedModule {}

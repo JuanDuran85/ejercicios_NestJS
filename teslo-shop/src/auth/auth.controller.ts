@@ -29,9 +29,15 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  @Get('check-status')
+  @UseGuards(AuthGuard())
+  public checkAuthStatus(@GetUser() user: User): Promise<unknown> {
+    return this.authService.checkAuthStatus(user);
+  }
+
   @Get('private')
   @UseGuards(AuthGuard())
-  testingPrivateRoute(
+  public testingPrivateRoute(
     @GetUser(['email', 'fullName', 'roles']) user: User,
     @GetUser('email') userEmail: string,
     @RawDecorator() rawHeaders: string[],
@@ -47,7 +53,7 @@ export class AuthController {
   @Get('private2')
   @SetMetadata('roles', ['admin', 'super-user'])
   @UseGuards(AuthGuard(), UserRoleGuard)
-  testingPrivateRouteTwo(@GetUser() user: User) {
+  public testingPrivateRouteTwo(@GetUser() user: User) {
     return {
       ok: true,
       user,
@@ -57,7 +63,7 @@ export class AuthController {
   @Get('private3')
   @RoleProtected(ValidRoles.admin)
   @UseGuards(AuthGuard(), UserRoleGuard)
-  testingPrivateRouteThree(@GetUser() user: User) {
+  public testingPrivateRouteThree(@GetUser() user: User) {
     return {
       ok: true,
       message: 'testing private route 3',
@@ -67,7 +73,7 @@ export class AuthController {
 
   @Get('private4')
   @AuthUser(ValidRoles.admin)
-  testingPrivateRouteFour(@GetUser() user: User) {
+  public testingPrivateRouteFour(@GetUser() user: User) {
     return {
       ok: true,
       message: 'testing private route 4',

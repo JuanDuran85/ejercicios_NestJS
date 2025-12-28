@@ -13,11 +13,12 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUuid } from 'uuid';
-import { Product, ProductImage } from './entities';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 import { CreateProductDto, UpdateProductDto } from './dto';
+import { Product, ProductImage } from './entities';
 import { ProductResponse } from './interfaces/products-response.interface';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -32,6 +33,7 @@ export class ProductsService {
 
   public async create(
     createProductDto: CreateProductDto,
+    user: User,
   ): Promise<Product | undefined> {
     try {
       const { images = [], ...productDetails } = createProductDto;
@@ -40,6 +42,7 @@ export class ProductsService {
         images: images.map((url) =>
           this.productImageRepository.create({ url }),
         ),
+        user,
       });
       await this.productRepository.save(product);
       return product;
@@ -48,15 +51,26 @@ export class ProductsService {
     }
   }
 
-  public async findAll(paginationDto: PaginationDto): Promise<Product[]> {
+  public async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<Product[] | undefined> {
     const { limit = 10, offset = 0 } = paginationDto;
-    return await this.productRepository.find({
-      take: limit,
-      skip: offset,
-      relations: {
-        images: true,
-      },
-    });
+    try {
+      const result: Product[] = await this.productRepository.find({
+        take: limit,
+        skip: offset,
+        relations: {
+          images: true,
+        },
+      });
+
+      if (!result) throw new NotFoundException('Products not found');
+
+      return result;
+    } catch (error) {
+      this.logger.error(`Error in findAll:`);
+      this.handlerDbExceptions(error);
+    }
   }
 
   public async findOne(searchParam: string): Promise<Product> {
@@ -90,6 +104,7 @@ export class ProductsService {
   public async update(
     id: string,
     updateProductDto: UpdateProductDto,
+    user: User,
   ): Promise<ProductResponse> {
     const { images, ...restProductToUpdate } = updateProductDto;
 
@@ -115,6 +130,7 @@ export class ProductsService {
           this.productImageRepository.create({ url: image }),
         );
       }
+      productUpdated.user = user;
       await queryRunnerProduct.manager.save(productUpdated);
       await queryRunnerProduct.commitTransaction();
       await queryRunnerProduct.release();
@@ -144,11 +160,31 @@ export class ProductsService {
     }
   }
 
-  private handlerDbExceptions(error: any) {
-    console.error(error);
-    if (error.code === '23505') throw new BadRequestException(error?.detail);
+  public async checkDatabaseConnection(): Promise<boolean> {
+    try {
+      this.logger.log(`Checking database connection...`);
+      const isConnected = this.datasource.isInitialized;
+      this.logger.log(
+        `Database connection status: ${isConnected ? 'connected' : 'not connected'}`,
+      );
 
-    this.logger.error(error);
+      if (isConnected) {
+        const result = await this.datasource.query('SELECT 1 as test');
+        this.logger.log(
+          `Database query test result: ${JSON.stringify(result)}`,
+        );
+      }
+
+      return isConnected;
+    } catch (error) {
+      this.logger.error(`Database connection check failed:`, error);
+      return false;
+    }
+  }
+
+  private handlerDbExceptions(error: any) {
+    this.logger.error(`Error stack:`, error.stack);
+    if (error.code === '23505') throw new BadRequestException(error?.detail);
     throw new InternalServerErrorException(
       `Unexpected error, check server logs`,
     );

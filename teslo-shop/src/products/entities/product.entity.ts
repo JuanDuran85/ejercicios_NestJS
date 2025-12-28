@@ -3,9 +3,11 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from '../../auth/entities/user.entity';
 import { ProductImage } from './product-image.entity';
 
 @Entity({ name: 'products' })
@@ -36,6 +38,11 @@ export class Product {
 
   @Column('text', { array: true, default: [] })
   tags: string[];
+
+  @ManyToOne(() => User, (user: User) => user.product, {
+    eager: true,
+  })
+  user: User;
 
   @OneToMany(
     () => ProductImage,
