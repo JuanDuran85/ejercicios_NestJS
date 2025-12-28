@@ -1,3 +1,5 @@
+import { BcryptJsAdapter } from '../../common/adapters/bcryptjs.adapter';
+
 export interface SeedProduct {
   description: string;
   images: string[];
@@ -30,13 +32,13 @@ export const initialData: SeedData = {
   users: [
     {
       email: 'Terence3@example.net',
-      password: '123Abc',
+      password: new BcryptJsAdapter().hash('123Abc'),
       roles: ['admin'],
       fullName: 'Terence',
     },
     {
       email: 'Freda.Gleichner@hotmail.com',
-      password: '123Abc',
+      password: new BcryptJsAdapter().hash('123Abc'),
       roles: ['user', 'super'],
       fullName: 'Freda Gleichner',
     },
