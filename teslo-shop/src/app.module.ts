@@ -3,12 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
+import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './common/cloudinary/cloudinary.module';
 import { CommonModule } from './common/common.module';
 import { FilesModule } from './files/files.module';
+import { MessagesWsModule } from './messages-ws/messages-ws.module';
 import { ProductsModule } from './products/products.module';
 import { SeedModule } from './seed/seed.module';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AuthModule } from './auth/auth.module';
     FilesModule,
     CloudinaryModule,
     AuthModule,
+    MessagesWsModule,
   ],
   controllers: [],
   providers: [],
