@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { createReadStream, ReadStream } from 'node:fs';
 import { FilesService } from './files.service';
@@ -19,6 +20,7 @@ import { fileNamer } from './helpers';
 import { fileFilter } from './helpers/fileFilter.helper';
 import { UploadFileResponse } from './interfaces/uploadFileResponse.interface';
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}

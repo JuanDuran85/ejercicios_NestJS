@@ -9,22 +9,37 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthUser, GetUser } from '../auth/decorators';
+import { User } from '../auth/entities/user.entity';
+import { ValidRoles } from '../auth/interfaces';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
-import { PaginationDto } from '../common/dtos/pagination.dto';
 import { ProductResponse } from './interfaces/products-response.interface';
-import { AuthUser, GetUser } from '../auth/decorators';
-import { ValidRoles } from '../auth/interfaces';
-import { User } from '../auth/entities/user.entity';
+import { ProductsService } from './products.service';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @AuthUser()
+  @ApiResponse({
+    status: 201,
+    description: 'Product was created',
+    type: Product,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bas Request',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
   public create(
     @Body() createProductDto: CreateProductDto,
     @GetUser() user: User,
