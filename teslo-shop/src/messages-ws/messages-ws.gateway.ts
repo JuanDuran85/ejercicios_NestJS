@@ -12,10 +12,16 @@ export class MessagesWsGateway
 {
   constructor(private readonly messagesWsService: MessagesWsService) {}
 
-  public handleDisconnect(client: Socket) {
-    console.debug('Client disconnected: ', client.id);
+  public handleDisconnect(client: Socket): void {
+    this.messagesWsService.removeClient(client.id);
+    console.debug(
+      `Connected Clients: ${this.messagesWsService.getNumberOfClients()}`,
+    );
   }
-  public handleConnection(client: Socket) {
-    console.debug('Connection established: ', client.id);
+  public handleConnection(client: Socket): void {
+    this.messagesWsService.registerClient(client);
+    console.debug(
+      `Connected Clients: ${this.messagesWsService.getNumberOfClients()}`,
+    );
   }
 }
