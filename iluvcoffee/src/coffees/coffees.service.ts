@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Coffee } from './entities/coffee.entity';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 
@@ -48,10 +48,19 @@ export class CoffeesService {
   }
 
   public update(id: string, updateCoffeeDto: any) {
-    const existingCoffee = this.findOne(id);
-    if (existingCoffee) {
-      // update the existing entity
+    const existingCoffee: Coffee | undefined = this.findOne(id);
+    if (!existingCoffee) {
+      throw new NotFoundException(`Coffee #${id} not found`);
     }
+    this.coffees = this.coffees.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          ...updateCoffeeDto,
+        };
+      }
+      return item;
+    });
     return this.coffees;
   }
 
