@@ -1,4 +1,4 @@
-import { IsString, MinLength } from 'class-validator';
+import { IsArray, IsString, MinLength } from 'class-validator';
 
 export class CreateCoffeeDto {
   @IsString()
@@ -10,5 +10,6 @@ export class CreateCoffeeDto {
   readonly brand: string;
 
   @IsString({ each: true })
+  @IsArray()
   readonly flavors: string[];
 }
