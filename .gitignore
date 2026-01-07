@@ -172,3 +172,5 @@ pokedex/mongo
 
 teslo-shop/postgres-db/
 teslo-shop/static/products/
+iluvcoffee/postgres-db/
+ilovecoffee.session.sql
