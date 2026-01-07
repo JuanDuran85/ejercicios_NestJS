@@ -272,6 +272,12 @@ If you are using Yarn:
     ```
 
 16. TypeOrm - revert migrations
+
     ```bash
         npx typeorm migration:revert -d dist/..path/to/migration
+    ```
+
+17. TypeOrm - generate migrations
+    ```bash
+        npx typeorm migration:generate -d dist/..path/to/migration
     ```
