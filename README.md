@@ -30,6 +30,8 @@ A pipe is a class annotated with the @Injectable() decorator, which implements t
 
 - Nest comes with a built-in exceptions layer which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
 
+## Nest CLI Commands
+
 1. Create a new project
 
    ```
@@ -219,40 +221,57 @@ If you are using Yarn:
 
 10. Encrypting keys and typing
 
-    ```
+    ```bash
         npm install --save bcryptjs @types/bcryptjs
     ```
 
-    ```
+    ```bash
         yarn add bcryptjs @types/bcryptjs
     ```
 
 11. To work with mongoose
 
-    ```
+    ```bash
         npm install -D @types/mongoose
     ```
 
-    ```
+    ```bash
         yarn add @types/mongoose -D
     ```
 
 12. To work with environment variables and their typings
 
-    ```
+    ```bash
         npm install dotenv @types/dotenv -D
     ```
 
-    ```
+    ```bash
         yarn add dotenv @types/dotenv -D
     ```
 
 13. Passport library for NestJS with JWT (jsonwebtoken) including typings for TypeScript
 
-    ```
+    ```bash
         npm install @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport passport
     ```
 
-    ```
+    ```bash
         yarn add @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport passport
+    ```
+
+14. TypeOrm - create migrations
+
+    ```bash
+        npx typeorm migration:create src/..path/to/migration
+    ```
+
+15. TypeOrm - run migrations
+
+    ```bash
+        npx typeorm migration:run -d dist/..path/to/migration
+    ```
+
+16. TypeOrm - revert migrations
+    ```bash
+        npx typeorm migration:revert -d dist/..path/to/migration
     ```
