@@ -1,0 +1,4 @@
+export const COFFEE_BRANDS = 'COFFEE_BRANDS';
+export const COFFEE_BRANDS_2 = 'COFFEE_BRANDS_2';
+export const COFFEE_BRANDS_3 = 'COFFEE_BRANDS_3';
+export const COFFEE_BRANDS_4 = 'COFFEE_BRANDS_4';

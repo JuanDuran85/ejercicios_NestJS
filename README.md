@@ -18,6 +18,14 @@ Exercises with NestJS
 
 - Providers are a core concept in Nest. Many of the basic Nest classes, such as services, repositories, factories, and helpers, can be treated as providers. The key idea behind a provider is that it can be injected as a dependency, allowing objects to form various relationships with each other. The responsibility of "wiring up" these objects is largely handled by the Nest runtime system.
 
+- Custom providers are used to create instances of classes that are not part of the Nest framework. They are: 
+    Value based Providers 
+    Non-class-based Provider Tokens
+    Class Providers
+    Factory Providers
+    Leverage Async Providers
+    Dynamic Module Providers
+
 ## Services
 
 - Services are a core concept in Nest. They are used to perform business logic and provide data to controllers.
@@ -29,6 +37,8 @@ A pipe is a class annotated with the @Injectable() decorator, which implements t
 ## Exception filters
 
 - Nest comes with a built-in exceptions layer which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
+
+## Nest CLI Commands
 
 1. Create a new project
 
@@ -219,40 +229,63 @@ If you are using Yarn:
 
 10. Encrypting keys and typing
 
-    ```
+    ```bash
         npm install --save bcryptjs @types/bcryptjs
     ```
 
-    ```
+    ```bash
         yarn add bcryptjs @types/bcryptjs
     ```
 
 11. To work with mongoose
 
-    ```
+    ```bash
         npm install -D @types/mongoose
     ```
 
-    ```
+    ```bash
         yarn add @types/mongoose -D
     ```
 
 12. To work with environment variables and their typings
 
-    ```
+    ```bash
         npm install dotenv @types/dotenv -D
     ```
 
-    ```
+    ```bash
         yarn add dotenv @types/dotenv -D
     ```
 
 13. Passport library for NestJS with JWT (jsonwebtoken) including typings for TypeScript
 
-    ```
+    ```bash
         npm install @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport passport
     ```
 
-    ```
+    ```bash
         yarn add @nestjs/passport @nestjs/jwt passport-jwt @types/passport-jwt jsonwebtoken @types/jsonwebtoken @types/passport passport
+    ```
+
+14. TypeOrm - create migrations
+
+    ```bash
+        npx typeorm migration:create src/..path/to/migration
+    ```
+
+15. TypeOrm - run migrations
+
+    ```bash
+        npx typeorm migration:run -d dist/..path/to/migration
+    ```
+
+16. TypeOrm - revert migrations
+
+    ```bash
+        npx typeorm migration:revert -d dist/..path/to/migration
+    ```
+
+17. TypeOrm - generate migrations
+    ```bash
+        npx typeorm migration:generate -d dist/..path/to/migration
     ```
