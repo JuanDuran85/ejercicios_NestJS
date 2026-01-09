@@ -6,7 +6,7 @@ import {
   Param,
   Patch,
   Post,
-  Query
+  Query,
 } from '@nestjs/common';
 import { Public } from '../common/decorators/public.decorator';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
@@ -20,7 +20,8 @@ export class CoffeesController {
 
   @Public()
   @Get()
-  public findAll(@Query() pagination: PaginationQueryDto) {
+  public async findAll(@Query() pagination: PaginationQueryDto) {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     return this.coffeeServices.findAll(pagination);
   }
 
