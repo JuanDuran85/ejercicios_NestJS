@@ -8,4 +8,7 @@ export const AppEnvConfigurations = () => ({
     database: process.env.DB_NAME,
     synchronize: process.env.DB_SYNC === 'true',
   },
+  coffeesKey: {
+    apiKey: process.env.API_KEY,
+  },
 });
