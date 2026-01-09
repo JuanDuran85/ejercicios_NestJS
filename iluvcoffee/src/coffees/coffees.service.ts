@@ -8,6 +8,7 @@ import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Coffee } from './entities/coffee.entity';
 import { Flavor } from './entities/flavor.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CoffeesService {
@@ -19,9 +20,15 @@ export class CoffeesService {
     private readonly dataSource: DataSource,
     @Inject(COFFEE_BRANDS) coffeeBrands: string[],
     @Inject(COFFEE_BRANDS_2) coffeeBrands2: string[],
+    private readonly configService: ConfigService,
   ) {
     console.debug(coffeeBrands);
     console.debug(coffeeBrands2);
+    const hostExample: string = this.configService.get<string>(
+      'database.host',
+      'localhost',
+    );
+    console.debug(hostExample);
   }
 
   public async findAll(pagination: PaginationQueryDto): Promise<Coffee[]> {

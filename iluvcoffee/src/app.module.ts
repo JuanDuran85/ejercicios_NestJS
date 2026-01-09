@@ -1,14 +1,20 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CoffeesModule } from './coffees/coffees.module';
 import { CoffeeRatingModule } from './coffee-rating/coffee-rating.module';
-import { ConfigModule } from '@nestjs/config';
+import { CoffeesModule } from './coffees/coffees.module';
+import { AppEnvConfigurations, JoiValidationSchema } from './config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      load: [AppEnvConfigurations],
+      isGlobal: true,
+      cache: true,
+      validationSchema: JoiValidationSchema,
+    }),
     CoffeesModule,
     TypeOrmModule.forRoot({
       type: 'postgres',

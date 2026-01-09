@@ -1,5 +1,7 @@
 import { Injectable, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { Event } from '../events/entities/event.entity';
 import {
   COFFEE_BRANDS,
@@ -10,7 +12,6 @@ import { CoffeesController } from './coffees.controller';
 import { CoffeesService } from './coffees.service';
 import { Coffee } from './entities/coffee.entity';
 import { Flavor } from './entities/flavor.entity';
-import { Connection, DataSource, DataSourceOptions } from 'typeorm';
 
 class ConfigServiceTest {}
 class DevelopmentConfigServiceTest {}
@@ -29,7 +30,7 @@ export class CoffeeBrandsThreeFactory {
 // ! ----------------------------------------------
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event])],
+  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event]), ConfigModule],
   controllers: [CoffeesController],
   providers: [
     CoffeesService,
