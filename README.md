@@ -18,6 +18,14 @@ Exercises with NestJS
 
 - Providers are a core concept in Nest. Many of the basic Nest classes, such as services, repositories, factories, and helpers, can be treated as providers. The key idea behind a provider is that it can be injected as a dependency, allowing objects to form various relationships with each other. The responsibility of "wiring up" these objects is largely handled by the Nest runtime system.
 
+- Custom providers are used to create instances of classes that are not part of the Nest framework. They are: 
+    Value based Providers 
+    Non-class-based Provider Tokens
+    Class Providers
+    Factory Providers
+    Leverage Async Providers
+    Dynamic Module Providers
+
 ## Services
 
 - Services are a core concept in Nest. They are used to perform business logic and provide data to controllers.
