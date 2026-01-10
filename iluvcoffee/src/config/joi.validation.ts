@@ -11,4 +11,5 @@ export const JoiValidationSchema: Joi.ObjectSchema = Joi.object({
   DB_PASSWORD: Joi.string().required(),
   DB_NAME: Joi.string().required(),
   DB_SYNC: Joi.boolean().default(false),
+  API_KEY: Joi.string().required(),
 });
