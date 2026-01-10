@@ -14,6 +14,7 @@ import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { ParseIntPipe } from '../common/pipes';
+import { Protocol } from '../common/decorators/protocol.decorator';
 
 @Controller('coffees')
 export class CoffeesController {
@@ -21,7 +22,11 @@ export class CoffeesController {
 
   @Public()
   @Get()
-  public async findAll(@Query() pagination: PaginationQueryDto) {
+  public async findAll(
+    @Protocol("exampleMessage") protocol: string,
+    @Query() pagination: PaginationQueryDto,
+  ) {
+    console.debug(protocol);
     await new Promise((resolve) => setTimeout(resolve, 5000));
     return this.coffeeServices.findAll(pagination);
   }
