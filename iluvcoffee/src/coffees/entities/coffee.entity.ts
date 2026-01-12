@@ -6,18 +6,22 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Flavor } from './flavor.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Coffee {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({ description: 'The name of a coffee.' })
   @Column()
   name: string;
 
+  @ApiProperty({ description: 'The brand of a coffee.' })
   @Column()
   brand: string;
 
+  @ApiProperty({ description: 'The recommendations of a coffee.' })
   @Column({ default: 0 })
   recommendations: number;
 
