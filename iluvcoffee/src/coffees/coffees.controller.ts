@@ -8,22 +8,27 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiBasicAuth, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
+import { Protocol } from '../common/decorators/protocol.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
+import { ParseIntPipe } from '../common/pipes';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
-import { ParseIntPipe } from '../common/pipes';
-import { Protocol } from '../common/decorators/protocol.decorator';
+import { Coffee } from './entities/coffee.entity';
 
+@ApiTags('coffees')
+@ApiBasicAuth()
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeeServices: CoffeesService) {}
 
   @Public()
   @Get()
+  @ApiForbiddenResponse({ description: 'Forbidden.' })
   public async findAll(
-    @Protocol("exampleMessage") protocol: string,
+    @Protocol('exampleMessage') protocol: string,
     @Query() pagination: PaginationQueryDto,
   ) {
     console.debug(protocol);
@@ -38,10 +43,16 @@ export class CoffeesController {
   }
 
   @Post()
-  public create(@Body() createCoffeeDto: CreateCoffeeDto) {
+  @ApiBody({ type: CreateCoffeeDto })
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+    type: Coffee,
+  })
+  public create(@Body() createCoffeeDto: CreateCoffeeDto): Promise<Coffee> {
     return this.coffeeServices.create(createCoffeeDto);
   }
 
+  @ApiBody({ type: UpdateCoffeeDto })
   @Patch(':id')
   public update(
     @Param('id') id: string,
