@@ -26,8 +26,16 @@ export class TodoService {
     },
   ];
 
-  public create(createTodoDto: CreateTodoDto) {
-    return 'This action adds a new todo';
+  public create(createTodoDto: CreateTodoDto): Todo {
+    const todo: Todo = new Todo();
+    todo.id = Math.max(...this.todos.map((todo) => todo.id), 0) + 1;
+    todo.title = createTodoDto.title;
+    todo.description = createTodoDto.description;
+    todo.done = false;
+
+    this.todos.push(todo);
+
+    return todo;
   }
 
   public findAll(): Todo[] {
