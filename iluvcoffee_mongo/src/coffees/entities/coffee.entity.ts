@@ -9,7 +9,7 @@ export class Coffee extends Document {
   @Prop({ required: true })
   brand: string;
 
-  @Prop({ required: true })
+  @Prop({default: 0})
   recommendations: number;
 
   @Prop([String])
