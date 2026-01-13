@@ -28,7 +28,7 @@ export class TodoController {
   }
 
   @Get(':id')
-  public findOne(@Param('id', ParseIntPipe) id: number) {
+  public findOne(@Param('id', ParseIntPipe) id: number): Todo {
     return this.todoService.findOne(id);
   }
 
@@ -36,12 +36,12 @@ export class TodoController {
   public update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTodoDto: UpdateTodoDto,
-  ) {
+  ): Todo {
     return this.todoService.update(id, updateTodoDto);
   }
 
   @Delete(':id')
-  public remove(@Param('id') id: string) {
+  public remove(@Param('id', ParseIntPipe) id: number): string {
     return this.todoService.remove(+id);
   }
 }

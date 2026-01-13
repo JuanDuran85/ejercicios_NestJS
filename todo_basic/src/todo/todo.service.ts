@@ -55,10 +55,37 @@ export class TodoService {
   }
 
   public update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+    const todoFound: Todo | undefined = this.findOne(id);
+    const {
+      description = undefined,
+      done = undefined,
+      title = undefined,
+    } = updateTodoDto;
+
+    if (title) {
+      todoFound.title = title;
+    }
+
+    if (description) {
+      todoFound.description = description;
+    }
+
+    if (done !== undefined) {
+      todoFound.done = done;
+    }
+
+    this.todos = this.todos.map((todoMap: Todo) => {
+      if (todoMap.id === id) return todoFound;
+
+      return todoMap;
+    });
+
+    return todoFound;
   }
 
-  public remove(id: number) {
-    return `This action removes a #${id} todo`;
+  public remove(id: number): string {
+    this.findOne(id);
+    this.todos = this.todos.filter((todo) => todo.id !== id);
+    return `Todo with id ${id} removed`;
   }
 }
