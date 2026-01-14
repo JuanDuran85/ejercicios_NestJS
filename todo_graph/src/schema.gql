@@ -1,0 +1,13 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Query {
+  RandomNumber: Float!
+
+  """first resolve message"""
+  firstResolve01: String!
+
+  """random from zero to"""
+  randomFromZeroTo(to: Int = 6): Int
+}
