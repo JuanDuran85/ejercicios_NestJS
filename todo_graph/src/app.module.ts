@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'node:path';
 import { FirstResolveModule } from './first-resolve/first-resolve.module';
+import { TodosModule } from './todos/todos.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { FirstResolveModule } from './first-resolve/first-resolve.module';
       plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
     }),
     FirstResolveModule,
+    TodosModule,
   ],
   controllers: [],
   providers: [],

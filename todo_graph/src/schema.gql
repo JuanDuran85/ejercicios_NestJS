@@ -10,4 +10,24 @@ type Query {
 
   """random from zero to"""
   randomFromZeroTo(to: Int = 6): Int
+
+  """return a todo by id"""
+  todo(id: Int!): Todo!
+
+  """return all todos"""
+  todos: [Todo!]!
+}
+
+type Todo {
+  """Todo description"""
+  description: String!
+
+  """Todo status"""
+  done: Boolean!
+
+  """Todo unique identifier"""
+  id: Int!
+
+  """Todo title"""
+  title: String!
 }
