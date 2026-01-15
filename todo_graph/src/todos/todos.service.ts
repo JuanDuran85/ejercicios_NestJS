@@ -65,7 +65,9 @@ export class TodosService {
     return todoFound;
   }
 
-  public removeTodo() {
-    return {};
+  public removeTodo(id: number): boolean {
+    this.findOne(id);
+    this.todos = this.todos.filter((todo: Todo) => todo.id !== id);
+    return true;
   }
 }

@@ -12,6 +12,7 @@ input CreateTodoInput {
 
 type Mutation {
   createTodo(createTodoInput: CreateTodoInput!): Todo!
+  removeTodo(id: Int!): Boolean!
   updateTodo(updateTodoInput: UpdateTodoInput!): Todo!
 }
 

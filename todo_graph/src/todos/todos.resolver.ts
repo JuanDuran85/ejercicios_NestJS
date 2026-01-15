@@ -33,7 +33,8 @@ export class TodosResolver {
     return this.todosService.updateTodo(updateTodoInput);
   }
 
-  public removeTodo() {
-    return null;
+  @Mutation(() => Boolean, { name: 'removeTodo' })
+  public removeTodo(@Args('id', { type: () => Int }) id: number) {
+    return this.todosService.removeTodo(id);
   }
 }
