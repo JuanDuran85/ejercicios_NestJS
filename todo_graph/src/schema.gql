@@ -1,0 +1,61 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateTodoInput {
+  """description of the todo"""
+  description: String!
+
+  """title of the todo"""
+  title: String!
+}
+
+type Mutation {
+  createTodo(createTodoInput: CreateTodoInput!): Todo!
+  removeTodo(id: Int!): Boolean!
+  updateTodo(updateTodoInput: UpdateTodoInput!): Todo!
+}
+
+type Query {
+  RandomNumber: Float!
+
+  """first resolve message"""
+  firstResolve01: String!
+
+  """random from zero to"""
+  randomFromZeroTo(to: Int = 6): Int
+
+  """return a todo by id"""
+  todo(id: Int!): Todo!
+
+  """return all todos"""
+  todos(status: Boolean): [Todo!]!
+}
+
+type Todo {
+  """Todo description"""
+  description: String!
+
+  """Todo status"""
+  done: Boolean!
+
+  """Todo unique identifier"""
+  id: Int!
+
+  """Todo title"""
+  title: String!
+}
+
+input UpdateTodoInput {
+  """description of the todo"""
+  description: String
+
+  """status of the todo"""
+  done: Boolean
+
+  """id of the todo to update"""
+  id: Int!
+
+  """title of the todo"""
+  title: String
+}
