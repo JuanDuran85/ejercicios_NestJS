@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Aggregations"""
+type AggregationsType {
+  completed: Int!
+  pending: Int!
+  total: Int!
+  totalTodosCompleted: Int! @deprecated(reason: "Use total instead")
+}
+
 input CreateTodoInput {
   """description of the todo"""
   description: String!
@@ -18,9 +26,12 @@ type Mutation {
 
 type Query {
   RandomNumber: Float!
+  aggregations: AggregationsType!
+  completedTodosNumber: Int!
 
   """first resolve message"""
   firstResolve01: String!
+  pendingTodosNumber: Int!
 
   """random from zero to"""
   randomFromZeroTo(to: Int = 6): Int
@@ -30,6 +41,7 @@ type Query {
 
   """return all todos"""
   todos(status: Boolean): [Todo!]!
+  totalTodosNumber: Int!
 }
 
 type Todo {

@@ -9,7 +9,7 @@ export class TodosService {
       id: 1,
       title: 'Todo 1',
       description: 'Description 1',
-      done: false,
+      done: true,
     },
     {
       id: 2,
@@ -23,8 +23,32 @@ export class TodosService {
       description: 'Description 3',
       done: true,
     },
+    {
+      id: 4,
+      title: 'Todo 4',
+      description: 'Description 4',
+      done: false,
+    },
+    {
+      id: 5,
+      title: 'Todo 5',
+      description: 'Description 5',
+      done: true,
+    },
   ];
-  
+
+  get totalTodosNumber(): number {
+    return this.todos.length;
+  }
+
+  get completedTodosNumber(): number {
+    return this.todos.filter((todo: Todo) => todo.done).length;
+  }
+
+  get pendingTodosNumber(): number {
+    return this.todos.filter((todo: Todo) => !todo.done).length;
+  }
+
   public findAll(statusArgs: StatusArgs): Todo[] {
     const { status } = statusArgs;
 
