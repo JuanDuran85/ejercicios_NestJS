@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateTodoInput, UpdateTodoInput } from './dto';
 import { Todo } from './entities/todo.entity';
-import { todo } from 'node:test';
-import { CreateTodoInput } from './dto';
 
 @Injectable()
 export class TodosService {
@@ -50,8 +49,20 @@ export class TodosService {
     return newTodo;
   }
 
-  public updateTodo() {
-    return {};
+  public updateTodo(updateTodoInput: UpdateTodoInput) {
+    const { id, description, done, title } = updateTodoInput;
+    const todoFound: Todo = this.findOne(updateTodoInput.id)!;
+
+    if (title) todoFound.title = title;
+    if (description) todoFound.description = description;
+    if (done !== undefined) todoFound.done = done;
+
+    this.todos = this.todos.map((todoMap: Todo) => {
+      if (todoMap.id === id) return todoFound;
+      return todoMap;
+    });
+
+    return todoFound;
   }
 
   public removeTodo() {
