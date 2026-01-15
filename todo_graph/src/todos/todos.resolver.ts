@@ -3,6 +3,7 @@ import { CreateTodoInput, UpdateTodoInput } from './dto';
 import { Todo } from './entities/todo.entity';
 import { TodosService } from './todos.service';
 import { StatusArgs } from './dto/args/status.args';
+import { AggregationsType } from './types/aggregations.type';
 
 @Resolver(() => Todo)
 export class TodosResolver {
@@ -22,6 +23,31 @@ export class TodosResolver {
     @Args('id', { type: () => Int, nullable: false }) id: number,
   ): Todo | undefined {
     return this.todosService.findOne(id);
+  }
+
+  @Query(() => Int, { name: 'totalTodosNumber' })
+  public totalTodos(): number {
+    return this.todosService.totalTodosNumber;
+  }
+
+  @Query(() => Int, { name: 'completedTodosNumber' })
+  public completedTodos(): number {
+    return this.todosService.completedTodosNumber;
+  }
+
+  @Query(() => Int, { name: 'pendingTodosNumber' })
+  public pendingTodos(): number {
+    return this.todosService.pendingTodosNumber;
+  }
+
+  @Query(() => AggregationsType, { name: 'aggregations' })
+  public aggregations(): AggregationsType {
+    return {
+      total: this.todosService.totalTodosNumber,
+      pending: this.todosService.pendingTodosNumber,
+      completed: this.todosService.completedTodosNumber,
+      totalTodosCompleted: this.todosService.totalTodosNumber,
+    };
   }
 
   @Mutation(() => Todo, { name: 'createTodo' })
