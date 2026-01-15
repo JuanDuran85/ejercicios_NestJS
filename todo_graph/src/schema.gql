@@ -29,7 +29,7 @@ type Query {
   todo(id: Int!): Todo!
 
   """return all todos"""
-  todos: [Todo!]!
+  todos(status: Boolean): [Todo!]!
 }
 
 type Todo {

@@ -1,15 +1,16 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateTodoInput, UpdateTodoInput } from './dto';
 import { Todo } from './entities/todo.entity';
 import { TodosService } from './todos.service';
-import { CreateTodoInput, UpdateTodoInput } from './dto';
+import { StatusArgs } from './dto/args/status.args';
 
-@Resolver()
+@Resolver(() => Todo)
 export class TodosResolver {
   constructor(private readonly todosService: TodosService) {}
 
   @Query(() => [Todo], { name: 'todos', description: 'return all todos' })
-  public findAll(): Todo[] {
-    return this.todosService.findAll();
+  public findAll(@Args() statusArgs: StatusArgs): Todo[] {
+    return this.todosService.findAll(statusArgs);
   }
 
   @Query(() => Todo, {
