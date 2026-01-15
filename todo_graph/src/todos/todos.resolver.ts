@@ -25,7 +25,7 @@ export class TodosResolver {
 
   @Mutation(() => Todo, { name: 'createTodo' })
   public createTodo(@Args('createTodoInput') createTodoInput: CreateTodoInput) {
-    return null;
+    return this.todosService.createTodo(createTodoInput);
   }
 
   public updateTodo() {
