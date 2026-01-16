@@ -97,3 +97,7 @@ input UpdateCoffeeInputDto {
   """The type of the coffee"""
   type: CoffeeType
 }
+
+type Subscription {
+  coffeeAdded: Coffee!
+}
