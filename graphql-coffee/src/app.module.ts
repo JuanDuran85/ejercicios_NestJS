@@ -15,6 +15,7 @@ import { CoffeesModule } from './coffees/coffees.module';
 import { DateScalar } from './common';
 import { Tea } from './teas';
 import { DrinksResolver } from './drinks/drinks.resolver';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 
 @Module({
   imports: [
@@ -41,11 +42,15 @@ import { DrinksResolver } from './drinks/drinks.resolver';
       graphiql: false,
       debug: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      subscriptions: {
+        'graphql-ws': true
+      },
       buildSchemaOptions: {
         orphanedTypes: [Tea]
       }
     }),
     CoffeesModule,
+    PubSubModule,
   ],
   controllers: [AppController],
   providers: [AppService, DateScalar, DrinksResolver],

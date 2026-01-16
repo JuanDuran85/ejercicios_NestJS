@@ -4,11 +4,12 @@ import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeInputDto, UpdateCoffeeInputDto } from './dto';
 
+import { PubSub } from 'graphql-subscriptions';
 import { Coffee } from './entities/coffee.entity';
 
 @Resolver()
 export class CoffeesResolver {
-  constructor(private readonly coffeeService: CoffeesService) {}
+  constructor(private readonly coffeeService: CoffeesService, private readonly pubsub: PubSub) { }
 
   @Query(() => [Coffee], { name: 'coffees', description: 'Find all coffees' })
   public async findAll(): Promise<Coffee[]> {

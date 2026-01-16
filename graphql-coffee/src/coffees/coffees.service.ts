@@ -5,8 +5,9 @@ import { Repository } from 'typeorm';
 
 import { CreateCoffeeInputDto, UpdateCoffeeInputDto } from './dto';
 
-import { Coffee } from './entities/coffee.entity';
+import { PubSub } from 'graphql-subscriptions';
 import { Flavor } from './entities';
+import { Coffee } from './entities/coffee.entity';
 
 @Injectable()
 export class CoffeesService {
@@ -15,7 +16,8 @@ export class CoffeesService {
     private readonly coffeeRepository: Repository<Coffee>,
     @InjectRepository(Flavor)
     private readonly flavorRepository: Repository<Flavor>,
-  ) {}
+    private readonly pubsub: PubSub,
+  ) { }
 
   public async findAll(): Promise<Coffee[]> {
     return this.coffeeRepository.find();
@@ -43,7 +45,12 @@ export class CoffeesService {
       flavors,
     });
 
-    return this.coffeeRepository.save(coffeeNew);
+    const newCoffeeEntity: Coffee = await this.coffeeRepository.save(coffeeNew)
+
+    this.pubsub.publish('coffeeAdded', { coffeeAdded: newCoffeeEntity });
+    return newCoffeeEntity;
+
+
   }
 
   public async update(id: number, updateCoffeeInput: UpdateCoffeeInputDto) {
