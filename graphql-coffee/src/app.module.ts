@@ -38,6 +38,9 @@ import { CoffeesModule } from './coffees/coffees.module';
       graphiql: false,
       debug: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      buildSchemaOptions: {
+        dateScalarMode: 'timestamp',
+      },
     }),
     CoffeesModule,
   ],
