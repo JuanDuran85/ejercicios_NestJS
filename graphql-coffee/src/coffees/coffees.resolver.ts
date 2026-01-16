@@ -37,7 +37,12 @@ export class CoffeesResolver {
   public async update(
     @Args('id', ParseIntPipe) id: number,
     @Args('updateCoffeeInput') updateCoffeeInput: UpdateCoffeeInputDto,
-  ) {
+  ): Promise<Coffee> {
     return this.coffeeService.update(id, updateCoffeeInput);
+  }
+
+  @Mutation(() => Coffee, { name: 'removeCoffee' })
+  public async remove(@Args('id', ParseIntPipe) id: number): Promise<Coffee> {
+    return this.coffeeService.remove(id);
   }
 }
