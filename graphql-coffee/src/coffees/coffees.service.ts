@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { CreateCoffeeDto } from './dto';
+import { CreateCoffeeInputDto, UpdateCoffeeInputDto } from './dto';
 
 import { Coffee } from './entities/coffee.entity';
 
@@ -28,8 +28,23 @@ export class CoffeesService {
     return coffeeFound;
   }
 
-  public async create(createCoffeeInput: CreateCoffeeDto): Promise<Coffee> {
+  public async create(
+    createCoffeeInput: CreateCoffeeInputDto,
+  ): Promise<Coffee> {
     const coffeeNew: Coffee = this.coffeeRepository.create(createCoffeeInput);
     return this.coffeeRepository.save(coffeeNew);
+  }
+
+  public async update(id: number, updateCoffeeInput: UpdateCoffeeInputDto) {
+    const coffeeFound: Coffee | undefined = await this.coffeeRepository.preload(
+      {
+        id,
+        ...updateCoffeeInput,
+      },
+    );
+
+    if (!coffeeFound) throw new NotFoundException(`Coffee #${id} not found`);
+    
+    return this.coffeeRepository.save(coffeeFound);
   }
 }

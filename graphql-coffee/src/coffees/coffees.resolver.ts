@@ -2,7 +2,7 @@ import { ParseIntPipe } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { CoffeesService } from './coffees.service';
-import { CreateCoffeeDto } from './dto';
+import { CreateCoffeeInputDto, UpdateCoffeeInputDto } from './dto';
 
 import { Coffee } from './entities/coffee.entity';
 
@@ -28,8 +28,16 @@ export class CoffeesResolver {
 
   @Mutation(() => Coffee, { name: 'createCoffee' })
   public async create(
-    @Args('createCoffeeInput') createCoffeeInput: CreateCoffeeDto,
+    @Args('createCoffeeInput') createCoffeeInput: CreateCoffeeInputDto,
   ): Promise<Coffee> {
     return this.coffeeService.create(createCoffeeInput);
+  }
+
+  @Mutation(() => Coffee, { name: 'updateCoffee' })
+  public async update(
+    @Args('id', ParseIntPipe) id: number,
+    @Args('updateCoffeeInput') updateCoffeeInput: UpdateCoffeeInputDto,
+  ) {
+    return this.coffeeService.update(id, updateCoffeeInput);
   }
 }

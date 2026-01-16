@@ -1,8 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
+
 import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 @InputType({ description: 'CreateCoffeeInput' })
-export class CreateCoffeeDto {
+export class CreateCoffeeInputDto {
   @Field(() => String, { description: 'The name of the coffee' })
   @IsString()
   @IsNotEmpty()
