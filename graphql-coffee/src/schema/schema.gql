@@ -22,7 +22,7 @@ type Query {
   coffees: [Coffee!]!
 
   """Find a coffee by id"""
-  coffee(id: ID!): Coffee
+  coffee(id: ID!): Coffee!
 }
 
 type Mutation {

@@ -1,40 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { CreateCoffeeDto } from './dto';
+
 import { Coffee } from './entities/coffee.entity';
 
 @Injectable()
 export class CoffeesService {
-  private readonly coffees: Coffee[] = [
-    {
-      id: 1,
-      name: 'Shipwreck Roast',
-      brand: 'Buddy Brew',
-      flavors: ['chocolate', 'vanilla'],
-    },
-    {
-      id: 2,
-      name: 'Cappuccino',
-      brand: 'Starbucks',
-      flavors: ['chocolate', 'vanilla'],
-    },
-  ];
+  constructor(
+    @InjectRepository(Coffee)
+    private readonly coffeeRepository: Repository<Coffee>,
+  ) {}
 
   public async findAll(): Promise<Coffee[]> {
-    return this.coffees;
+    return this.coffeeRepository.find();
   }
 
   public async findOne(id: number): Promise<Coffee | null> {
-    return this.coffees.find((coffee) => coffee.id === id) || null;
+    const coffeeFound: Coffee | null = await this.coffeeRepository.findOne({
+      where: { id },
+    });
+
+    if (!coffeeFound) throw new NotFoundException(`Coffee #${id} not found`);
+
+    return coffeeFound;
   }
 
   public async create(createCoffeeInput: CreateCoffeeDto): Promise<Coffee> {
-    const newCoffee: Coffee = new Coffee();
-    newCoffee.id = this.coffees.length + 1;
-    newCoffee.name = createCoffeeInput.name;
-    newCoffee.brand = createCoffeeInput.brand;
-    newCoffee.flavors = createCoffeeInput.flavors;
-    this.coffees.push(newCoffee);
-
-    return newCoffee;
+    const coffeeNew: Coffee = this.coffeeRepository.create(createCoffeeInput);
+    return this.coffeeRepository.save(coffeeNew);
   }
 }
