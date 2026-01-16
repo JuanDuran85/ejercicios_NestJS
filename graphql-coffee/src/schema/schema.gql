@@ -24,12 +24,21 @@ type Coffee implements Drink {
   id: ID!
   flavors: [Flavor!]!
   createdAt: Date
+  type: CoffeeType
 }
 
 """Drink Interface"""
 interface Drink {
   name: String!
   brand: String!
+}
+
+"""The type of coffee"""
+enum CoffeeType {
+  ARABICA
+  ROBUSTA
+  EXCELSA
+  LIBERICA
 }
 
 """Tea"""
@@ -69,6 +78,9 @@ input CreateCoffeeInputDto {
 
   """The flavors of the coffee"""
   flavors: [String!]!
+
+  """The type of the coffee"""
+  type: CoffeeType!
 }
 
 """Update a coffee"""
@@ -81,4 +93,7 @@ input UpdateCoffeeInputDto {
 
   """The flavors of the coffee"""
   flavors: [String!]
+
+  """The type of the coffee"""
+  type: CoffeeType
 }

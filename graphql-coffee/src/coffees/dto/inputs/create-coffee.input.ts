@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { CoffeeType } from '../../../common/enums/coffee-type.enum';
 
 @InputType({ description: 'CreateCoffeeInput' })
 export class CreateCoffeeInputDto {
@@ -21,4 +22,9 @@ export class CreateCoffeeInputDto {
   @IsNotEmpty()
   @IsArray()
   readonly flavors: string[];
+
+  @Field(() => CoffeeType, { description: 'The type of the coffee' })
+  @IsOptional()
+  @IsEnum(CoffeeType)
+  readonly type: CoffeeType;
 }
