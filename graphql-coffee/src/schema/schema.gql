@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""The flavor of a coffee"""
+type Flavor {
+  """The id of the flavor"""
+  id: ID!
+
+  """The name of the flavor"""
+  name: String!
+  coffees: [Coffee!]!
+}
+
 """Coffee model"""
 type Coffee {
   """The id of the coffee"""
@@ -12,9 +22,7 @@ type Coffee {
 
   """The brand of the coffee"""
   brand: String!
-
-  """The flavors of the coffee"""
-  flavors: [String!]!
+  flavors: [Flavor!]
 }
 
 type Query {

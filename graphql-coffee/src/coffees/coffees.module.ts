@@ -4,10 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoffeesResolver } from './coffees.resolver';
 import { CoffeesService } from './coffees.service';
 
-import { Coffee } from './entities/coffee.entity';
+import { Coffee, Flavor } from './entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Coffee])],
+  imports: [TypeOrmModule.forFeature([Coffee, Flavor])],
   controllers: [],
   exports: [],
   providers: [CoffeesResolver, CoffeesService],

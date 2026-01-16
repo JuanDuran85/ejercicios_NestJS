@@ -6,12 +6,15 @@ import { Repository } from 'typeorm';
 import { CreateCoffeeInputDto, UpdateCoffeeInputDto } from './dto';
 
 import { Coffee } from './entities/coffee.entity';
+import { Flavor } from './entities';
 
 @Injectable()
 export class CoffeesService {
   constructor(
     @InjectRepository(Coffee)
     private readonly coffeeRepository: Repository<Coffee>,
+    @InjectRepository(Flavor)
+    private readonly flavorRepository: Repository<Flavor>,
   ) {}
 
   public async findAll(): Promise<Coffee[]> {
@@ -31,15 +34,29 @@ export class CoffeesService {
   public async create(
     createCoffeeInput: CreateCoffeeInputDto,
   ): Promise<Coffee> {
-    const coffeeNew: Coffee = this.coffeeRepository.create(createCoffeeInput);
+    const flavors: Flavor[] = await Promise.all(
+      createCoffeeInput.flavors.map((name) => this.preloadFlavorByName(name)),
+    );
+
+    const coffeeNew: Coffee = this.coffeeRepository.create({
+      ...createCoffeeInput,
+      flavors,
+    });
+
     return this.coffeeRepository.save(coffeeNew);
   }
 
   public async update(id: number, updateCoffeeInput: UpdateCoffeeInputDto) {
+    const flavors =
+      updateCoffeeInput.flavors &&
+      (await Promise.all(
+        updateCoffeeInput.flavors.map((name) => this.preloadFlavorByName(name)),
+      ));
     const coffeeFound: Coffee | undefined = await this.coffeeRepository.preload(
       {
         id,
         ...updateCoffeeInput,
+        flavors,
       },
     );
 
@@ -55,5 +72,13 @@ export class CoffeesService {
     result.id = id;
     console.debug({ result });
     return result;
+  }
+
+  private async preloadFlavorByName(name: string): Promise<Flavor> {
+    const existingFlavor: Flavor | null = await this.flavorRepository.findOne({
+      where: { name },
+    });
+    if (existingFlavor) return existingFlavor;
+    return this.flavorRepository.create({ name });
   }
 }

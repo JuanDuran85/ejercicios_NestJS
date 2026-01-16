@@ -7,7 +7,7 @@ export class CreateCoffeeInputDto {
   @Field(() => String, { description: 'The name of the coffee' })
   @IsString()
   @IsNotEmpty()
-  @MinLength(2)
+  @MinLength(4)
   readonly name: string;
 
   @Field(() => String, { description: 'The brand of the coffee' })
