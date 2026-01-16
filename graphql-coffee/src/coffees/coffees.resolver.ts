@@ -1,10 +1,11 @@
-import { Args, ID, Query, Resolver } from '@nestjs/graphql';
-import { Coffee } from './entities/coffee.entity';
 import { ParseIntPipe } from '@nestjs/common';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CreateCoffeeDto } from './dto';
+import { Coffee } from './entities/coffee.entity';
 
 @Resolver()
 export class CoffeesResolver {
-  private readonly coffees: Coffee[] = [
+  private coffees: Coffee[] = [
     {
       id: 1,
       name: 'Shipwreck Roast',
@@ -33,5 +34,19 @@ export class CoffeesResolver {
     @Args('id', { type: () => ID }, ParseIntPipe) id: number,
   ): Promise<Coffee | null> {
     return this.coffees.find((coffee) => coffee.id === id) || null;
+  }
+
+  @Mutation(() => Coffee, { name: 'createCoffee' })
+  public async create(
+    @Args('createCoffeeInput') createCoffeeInput: CreateCoffeeDto,
+  ): Promise<Coffee> {
+    const newCoffee: Coffee = new Coffee();
+    newCoffee.id = this.coffees.length + 1;
+    newCoffee.name = createCoffeeInput.name;
+    newCoffee.brand = createCoffeeInput.brand;
+    newCoffee.flavors = createCoffeeInput.flavors;
+    this.coffees.push(newCoffee);
+
+    return newCoffee;
   }
 }

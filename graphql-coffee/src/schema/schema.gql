@@ -24,3 +24,19 @@ type Query {
   """Find a coffee by id"""
   coffee(id: ID!): Coffee
 }
+
+type Mutation {
+  createCoffee(createCoffeeInput: CreateCoffeeDto!): Coffee!
+}
+
+"""CreateCoffeeInput"""
+input CreateCoffeeDto {
+  """The name of the coffee"""
+  name: String!
+
+  """The brand of the coffee"""
+  brand: String!
+
+  """The flavors of the coffee"""
+  flavors: [String!]!
+}
