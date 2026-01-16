@@ -22,7 +22,7 @@ type Coffee {
 
   """The brand of the coffee"""
   brand: String!
-  flavors: [Flavor!]
+  flavors: [Flavor!]!
 }
 
 type Query {
