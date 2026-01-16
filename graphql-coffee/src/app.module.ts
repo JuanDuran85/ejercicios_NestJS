@@ -12,6 +12,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { CoffeesModule } from './coffees/coffees.module';
+import { DateScalar } from './common';
+import { Tea } from './teas';
+import { DrinksResolver } from './drinks/drinks.resolver';
 
 @Module({
   imports: [
@@ -39,12 +42,12 @@ import { CoffeesModule } from './coffees/coffees.module';
       debug: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       buildSchemaOptions: {
-        dateScalarMode: 'timestamp',
-      },
+        orphanedTypes: [Tea]
+      }
     }),
     CoffeesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DateScalar, DrinksResolver],
 })
-export class AppModule {}
+export class AppModule { }
