@@ -1,0 +1,103 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""The flavor of a coffee"""
+type Flavor {
+  """The id of the flavor"""
+  id: ID!
+
+  """The name of the flavor"""
+  name: String!
+  coffees: [Coffee!]!
+}
+
+"""Coffee model"""
+type Coffee implements Drink {
+  """The name of the coffee"""
+  name: String!
+
+  """The brand of the coffee"""
+  brand: String!
+
+  """The id of the coffee"""
+  id: ID!
+  flavors: [Flavor!]!
+  createdAt: Date
+  type: CoffeeType
+}
+
+"""Drink Interface"""
+interface Drink {
+  name: String!
+  brand: String!
+}
+
+"""The type of coffee"""
+enum CoffeeType {
+  ARABICA
+  ROBUSTA
+  EXCELSA
+  LIBERICA
+}
+
+"""Tea"""
+type Tea implements Drink {
+  name: String!
+  brand: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type Query {
+  drinks: [DrinksResult!]!
+
+  """Find all coffees"""
+  coffees: [Coffee!]!
+
+  """Find a coffee by id"""
+  coffee(id: ID!): Coffee!
+}
+
+union DrinksResult = Coffee | Tea
+
+type Mutation {
+  createCoffee(createCoffeeInput: CreateCoffeeInputDto!): Coffee!
+  updateCoffee(id: Float!, updateCoffeeInput: UpdateCoffeeInputDto!): Coffee!
+  removeCoffee(id: Float!): Coffee!
+}
+
+"""CreateCoffeeInput"""
+input CreateCoffeeInputDto {
+  """The name of the coffee"""
+  name: String!
+
+  """The brand of the coffee"""
+  brand: String!
+
+  """The flavors of the coffee"""
+  flavors: [String!]!
+
+  """The type of the coffee"""
+  type: CoffeeType!
+}
+
+"""Update a coffee"""
+input UpdateCoffeeInputDto {
+  """The name of the coffee"""
+  name: String
+
+  """The brand of the coffee"""
+  brand: String
+
+  """The flavors of the coffee"""
+  flavors: [String!]
+
+  """The type of the coffee"""
+  type: CoffeeType
+}
+
+type Subscription {
+  coffeeAdded: Coffee!
+}
