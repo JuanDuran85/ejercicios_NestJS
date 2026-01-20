@@ -1,6 +1,7 @@
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'node:path';
 import { ItemsModule } from './items/items.module';
@@ -14,7 +15,7 @@ import { ItemsModule } from './items/items.module';
     debug: true,
     graphiql: false,
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
-  }), ItemsModule,],
+  }), ItemsModule, ConfigModule.forRoot()],
   controllers: [],
   providers: [],
 })
