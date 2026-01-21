@@ -35,7 +35,8 @@ type Mutation {
 }
 
 type Query {
-  item(id: Int!): Item!
+  """return a item by id"""
+  item(id: ID!): Item!
   items: [Item!]!
 }
 

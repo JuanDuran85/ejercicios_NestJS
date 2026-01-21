@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateItemInput, UpdateItemInput } from './dto';
 import { Item } from './entities/item.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,12 +19,14 @@ export class ItemsService {
     return await this.itemRepository.save(newItem);
   }
 
-  public findAll() {
-    return `This action returns all items`;
+  public async findAll(): Promise<Item[]> {
+    return this.itemRepository.find();
   }
 
-  public findOne(id: number) {
-    return `This action returns a #${id} item`;
+  public async findOne(id: string): Promise<Item | null> {
+    const itemFound: Item | null = await this.itemRepository.findOneBy({ id });
+    if (!itemFound) throw new NotFoundException(`Item with id ${id} not found`);
+    return itemFound;
   }
 
   public update(id: number, updateItemInput: UpdateItemInput) {
