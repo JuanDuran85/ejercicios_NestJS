@@ -8,7 +8,7 @@ input CreateItemInput {
   name: String!
 
   """The quantity of the item"""
-  quantity: Float! = 0
+  quantity: Float!
 
   """The units of the quantity"""
   quantityUnits: String
@@ -30,7 +30,9 @@ type Item {
 
 type Mutation {
   createItem(createItemInput: CreateItemInput!): Item!
-  removeItem(id: Int!): Item!
+  removeItem(id: ID!): Item!
+
+  """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
 }
 
@@ -41,13 +43,14 @@ type Query {
 }
 
 input UpdateItemInput {
-  id: Int!
+  """The id of the item"""
+  id: ID!
 
   """The name of the item"""
   name: String
 
   """The quantity of the item"""
-  quantity: Float = 0
+  quantity: Float
 
   """The units of the quantity"""
   quantityUnits: String

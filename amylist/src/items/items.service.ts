@@ -29,11 +29,17 @@ export class ItemsService {
     return itemFound;
   }
 
-  public update(id: number, updateItemInput: UpdateItemInput) {
-    return `This action updates a #${id} item`;
+  public async update(id: string, updateItemInput: UpdateItemInput): Promise<Item> {
+    const itemFound = await this.itemRepository.preload(updateItemInput);
+
+    if (!itemFound) throw new NotFoundException(`Item with id ${id} not found`);
+
+    return this.itemRepository.save(itemFound);
   }
 
-  public remove(id: number) {
-    return `This action removes a #${id} item`;
+  public async remove(id: string): Promise<Item> {
+    const itemFound = await this.findOne(id) as Item;
+    await this.itemRepository.remove(itemFound);
+    return { ...itemFound, id };
   }
 }
