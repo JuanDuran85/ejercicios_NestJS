@@ -8,8 +8,17 @@ input CreateItemInput {
 }
 
 type Item {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """The id of the item"""
+  id: ID!
+
+  """The name of the item"""
+  name: String!
+
+  """The quantity of the item"""
+  quantity: Float!
+
+  """The units of the quantity"""
+  quantityUnits: String!
 }
 
 type Mutation {
