@@ -8,7 +8,7 @@ input CreateItemInput {
   name: String!
 
   """The quantity of the item"""
-  quantity: Float!
+  quantity: Float! = 0
 
   """The units of the quantity"""
   quantityUnits: String
@@ -46,7 +46,7 @@ input UpdateItemInput {
   name: String
 
   """The quantity of the item"""
-  quantity: Float
+  quantity: Float = 0
 
   """The units of the quantity"""
   quantityUnits: String

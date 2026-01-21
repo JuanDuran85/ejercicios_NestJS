@@ -18,5 +18,5 @@ export class Item {
 
   @Field(() => String, { description: 'The units of the quantity', nullable: true })
   @Column({ nullable: true })
-  quantityUnits: string;
+  quantityUnits?: string;
 }
