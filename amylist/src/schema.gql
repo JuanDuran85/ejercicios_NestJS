@@ -2,9 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""The input for creating an item"""
 input CreateItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """The name of the item"""
+  name: String!
+
+  """The quantity of the item"""
+  quantity: Float!
+
+  """The units of the quantity"""
+  quantityUnits: String
 }
 
 type Item {
@@ -18,7 +25,7 @@ type Item {
   quantity: Float!
 
   """The units of the quantity"""
-  quantityUnits: String!
+  quantityUnits: String
 }
 
 type Mutation {
@@ -33,7 +40,14 @@ type Query {
 }
 
 input UpdateItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int
   id: Int!
+
+  """The name of the item"""
+  name: String
+
+  """The quantity of the item"""
+  quantity: Float
+
+  """The units of the quantity"""
+  quantityUnits: String
 }
