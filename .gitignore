@@ -175,3 +175,4 @@ teslo-shop/static/products/
 iluvcoffee/postgres-db/
 ilovecoffee.session.sql
 graphql-coffee/postgres-db/
+amylist/postgres-db/
