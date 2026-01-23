@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  """The token"""
+  token: String!
+
+  """The user"""
+  user: User!
+}
+
 """The input for creating an item"""
 input CreateItemInput {
   """The name of the item"""
@@ -28,10 +36,20 @@ type Item {
   quantityUnits: String
 }
 
+input LoginInput {
+  """email of the user"""
+  email: String!
+
+  """password of the user"""
+  password: String!
+}
+
 type Mutation {
   blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
+  login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
+  signup(signupInput: SignupInput!): AuthResponse!
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
@@ -43,6 +61,17 @@ type Query {
   items: [Item!]!
   user(id: ID!): User!
   users: [User!]!
+}
+
+input SignupInput {
+  """email of the user"""
+  email: String!
+
+  """full name of the user"""
+  fullName: String!
+
+  """password of the user"""
+  password: String!
 }
 
 input UpdateItemInput {
