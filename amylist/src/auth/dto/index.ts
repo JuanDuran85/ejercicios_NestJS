@@ -1,1 +1,1 @@
-export * from './inputs/signup.input';
+export { LoginInput, SignupInput } from './inputs';

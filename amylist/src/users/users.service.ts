@@ -39,6 +39,18 @@ export class UsersService {
     return {} as User;
   }
 
+  public async findOneByEmail(email: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({ email });
+    } catch (error) {
+      this.logger.error(String(error));
+      this.handleDbErrors({
+        code: 'error-001',
+        detail: `User with email ${email} not found`,
+      });
+    }
+  }
+
   public async block(id: string): Promise<User> {
     return {} as User;
   }
@@ -46,6 +58,10 @@ export class UsersService {
   private handleDbErrors(error: any): never {
     if (error.code === '23505') {
       this.logger.error(error.detail);
+      throw new BadRequestException(error.detail);
+    }
+
+    if (error.code === 'error-001') {
       throw new BadRequestException(error.detail);
     }
 

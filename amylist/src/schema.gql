@@ -36,9 +36,18 @@ type Item {
   quantityUnits: String
 }
 
+input LoginInput {
+  """email of the user"""
+  email: String!
+
+  """password of the user"""
+  password: String!
+}
+
 type Mutation {
   blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
+  login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
   signup(signupInput: SignupInput!): AuthResponse!
 
