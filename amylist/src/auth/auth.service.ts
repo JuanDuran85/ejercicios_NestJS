@@ -10,7 +10,6 @@ export class AuthService {
 
   public async signup(signupInput: SignupInput): Promise<AuthResponse> {
     const user: User = await this.userService.create(signupInput);
-    console.debug({ user });
     return {
       token: 'token21234',
       user,

@@ -4,10 +4,11 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { SignupInput } from '../auth/dto';
-import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SignupInput } from '../auth/dto';
+import { BcryptJsAdapter } from '../common/adapters';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -16,10 +17,14 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly bcryptJsAdapter: BcryptJsAdapter,
   ) {}
   public async create(signupInput: SignupInput): Promise<User> {
     try {
-      const newUser: User = this.userRepository.create(signupInput);
+      const newUser: User = this.userRepository.create({
+        ...signupInput,
+        password: this.bcryptJsAdapter.hash(signupInput.password),
+      });
       return await this.userRepository.save(newUser);
     } catch (error) {
       this.handleDbErrors(error);
@@ -43,7 +48,7 @@ export class UsersService {
       this.logger.error(error.detail);
       throw new BadRequestException(error.detail);
     }
-    
+
     this.logger.fatal(String(error));
     throw new InternalServerErrorException(
       'Something went wrong. Please check server logs',
