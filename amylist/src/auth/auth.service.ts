@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 import { SignupInput } from './dto';
 import { AuthResponse } from './types';
-import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly userService: UsersService) {}
+
   public async signup(signupInput: SignupInput): Promise<AuthResponse> {
-    console.debug({
-      signupInput,
-    });
+    const user: User = await this.userService.create(signupInput);
+    console.debug({ user });
     return {
-      token: 'token',
-      user: {} as User,
+      token: 'token21234',
+      user,
     };
   }
 
