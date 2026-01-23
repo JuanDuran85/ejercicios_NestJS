@@ -29,6 +29,7 @@ type Item {
 }
 
 type Mutation {
+  blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
   removeItem(id: ID!): Item!
 
@@ -40,6 +41,8 @@ type Query {
   """return a item by id"""
   item(id: ID!): Item!
   items: [Item!]!
+  user(id: ID!): User!
+  users: [User!]!
 }
 
 input UpdateItemInput {
@@ -54,4 +57,21 @@ input UpdateItemInput {
 
   """The units of the quantity"""
   quantityUnits: String
+}
+
+type User {
+  """The email of the user"""
+  email: String!
+
+  """The first name of the user"""
+  fullName: String!
+
+  """The id of the user"""
+  id: ID!
+
+  """The status of the user"""
+  isBlocked: Boolean!
+
+  """The roles of the user"""
+  roles: [String!]!
 }
