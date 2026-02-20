@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { BcryptJsAdapter } from '../common/adapters';
 import { User } from '../users/entities/user.entity';
@@ -38,6 +42,16 @@ export class AuthService {
 
   public async revalidateToken(): Promise<unknown> {
     return null;
+  }
+
+  public async validateUser(id: string): Promise<Partial<User>> {
+    const userFound: User = await this.userService.findOneById(id);
+    if (userFound.isBlocked)
+      throw new UnauthorizedException(
+        'User is blocked or inactive. Please contact support.',
+      );
+    delete (userFound as any).password;
+    return userFound;
   }
 
   private getJwtToken(userId: string): string {

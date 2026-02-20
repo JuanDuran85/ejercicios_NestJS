@@ -19,6 +19,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     private readonly bcryptJsAdapter: BcryptJsAdapter,
   ) {}
+
   public async create(signupInput: SignupInput): Promise<User> {
     try {
       const newUser: User = this.userRepository.create({
@@ -53,6 +54,18 @@ export class UsersService {
 
   public async block(id: string): Promise<User> {
     return {} as User;
+  }
+
+  public async findOneById(id: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneByOrFail({ id });
+    } catch (error) {
+      this.logger.error(String(error));
+      this.handleDbErrors({
+        code: 'error-001',
+        detail: `User with id ${id} not found`,
+      });
+    }
   }
 
   private handleDbErrors(error: any): never {
