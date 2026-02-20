@@ -6,9 +6,10 @@ import { CommonModule } from '../common/common.module';
 import { UsersModule } from '../users/users.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-  providers: [AuthResolver, AuthService],
+  providers: [AuthResolver, AuthService, JwtStrategy],
   imports: [
     ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -18,7 +19,7 @@ import { AuthService } from './auth.service';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: '5h',
+          expiresIn: '10h',
         },
       }),
     }),
@@ -26,6 +27,6 @@ import { AuthService } from './auth.service';
     UsersModule,
   ],
   controllers: [],
-  exports: [AuthService],
+  exports: [AuthService, PassportModule, JwtStrategy, JwtModule],
 })
 export class AuthModule {}
