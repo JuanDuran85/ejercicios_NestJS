@@ -59,6 +59,7 @@ type Query {
   """return a item by id"""
   item(id: ID!): Item!
   items: [Item!]!
+  revalidate: AuthResponse!
   user(id: ID!): User!
   users: [User!]!
 }
