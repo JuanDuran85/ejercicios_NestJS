@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { BcryptJsAdapter } from '../common/adapters';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -10,12 +15,13 @@ export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly bcryptJsAdapter: BcryptJsAdapter,
+    private readonly jwtService: JwtService,
   ) {}
 
   public async signup(signupInput: SignupInput): Promise<AuthResponse> {
     const user: User = await this.userService.create(signupInput);
     return {
-      token: 'token21234',
+      token: this.getJwtToken(user.id),
       user,
     };
   }
@@ -29,12 +35,26 @@ export class AuthService {
       throw new BadRequestException('Credentials are not valid');
 
     return {
-      token: 'token21234',
+      token: this.getJwtToken(userFound.id),
       user: userFound,
     };
   }
 
   public async revalidateToken(): Promise<unknown> {
     return null;
+  }
+
+  public async validateUser(id: string): Promise<Partial<User>> {
+    const userFound: User = await this.userService.findOneById(id);
+    if (userFound.isBlocked)
+      throw new UnauthorizedException(
+        'User is blocked or inactive. Please contact support.',
+      );
+    delete (userFound as any).password;
+    return userFound;
+  }
+
+  private getJwtToken(userId: string): string {
+    return this.jwtService.sign({ id: userId });
   }
 }
