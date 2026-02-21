@@ -40,8 +40,12 @@ export class AuthService {
     };
   }
 
-  public async revalidateToken(): Promise<unknown> {
-    return null;
+  public revalidateToken(user: User): AuthResponse {
+    const token: string = this.getJwtToken(user.id);
+    return {
+      token,
+      user,
+    };
   }
 
   public async validateUser(id: string): Promise<Partial<User>> {
