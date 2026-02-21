@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SignupInput } from '../auth/dto';
+import { ValidRoles } from '../auth/enum';
 import { BcryptJsAdapter } from '../common/adapters';
 import { User } from './entities/user.entity';
 
@@ -32,8 +33,14 @@ export class UsersService {
     }
   }
 
-  public async findAll(): Promise<User[]> {
-    return [];
+  public async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0) return this.userRepository.find();
+    console.debug({ roles });
+    return this.userRepository
+      .createQueryBuilder()
+      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+      .setParameter('roles', roles)
+      .getMany();
   }
 
   public async findOne(id: string): Promise<User> {
