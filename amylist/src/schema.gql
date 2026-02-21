@@ -61,7 +61,7 @@ type Query {
   items: [Item!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
-  users(roles: [String!] = []): [User!]!
+  users(roles: [ValidRoles!] = []): [User!]!
 }
 
 input SignupInput {
@@ -104,4 +104,15 @@ type User {
 
   """The roles of the user"""
   roles: [String!]!
+}
+
+"""Valid roles for users"""
+enum ValidRoles {
+  admin
+  developer
+  seo
+  seoAdmin
+  seoSuperUser
+  superUser
+  user
 }
