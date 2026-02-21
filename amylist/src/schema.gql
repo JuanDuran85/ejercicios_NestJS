@@ -61,7 +61,7 @@ type Query {
   items: [Item!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
-  users: [User!]!
+  users(roles: [String!] = []): [User!]!
 }
 
 input SignupInput {
