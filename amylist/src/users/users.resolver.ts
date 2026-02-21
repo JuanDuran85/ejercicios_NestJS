@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ValidRoles } from '../auth/enum';
@@ -22,9 +22,10 @@ export class UsersResolver {
 
   @Query(() => User, { name: 'user' })
   public async findOne(
-    @Args('id', { type: () => ID }) id: string,
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser([ValidRoles.admin, ValidRoles.seo]) user: User,
   ): Promise<User> {
-    return this.usersService.findOne(id);
+    return this.usersService.findOneById(id);
   }
 
   @Mutation(() => User)
