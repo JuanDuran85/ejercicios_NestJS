@@ -60,6 +60,7 @@ export class User {
 
   @OneToMany(() => Item, (item: Item) => item.user, {
     nullable: false,
+    lazy: true,
   })
   @Field(() => [Item], {
     nullable: false,
