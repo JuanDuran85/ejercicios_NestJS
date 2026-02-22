@@ -23,8 +23,17 @@ export class ItemsService {
     return await this.itemRepository.save(newItem);
   }
 
-  public async findAll(): Promise<Item[]> {
-    return this.itemRepository.find();
+  public async findAll(user: User): Promise<Item[]> {
+    return this.itemRepository.find({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+      relations: {
+        user: true,
+      },
+    });
   }
 
   public async findOne(id: string): Promise<Item | null> {

@@ -20,13 +20,13 @@ export class ItemsResolver {
     @Args('createItemInput') createItemInput: CreateItemInput,
     @CurrentUser() user: User,
   ): Promise<Item> {
-    console.debug({user});
+    console.debug({ user });
     return this.itemsService.create(createItemInput, user);
   }
 
   @Query(() => [Item], { name: 'items' })
-  public async findAll(): Promise<Item[]> {
-    return this.itemsService.findAll();
+  public async findAll(@CurrentUser() user: User): Promise<Item[]> {
+    return this.itemsService.findAll(user);
   }
 
   @Query(() => Item, {
