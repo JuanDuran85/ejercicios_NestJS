@@ -54,6 +54,7 @@ type Mutation {
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
@@ -88,6 +89,26 @@ input UpdateItemInput {
 
   """The units of the quantity"""
   quantityUnits: String
+}
+
+input UpdateUserInput {
+  """email of the user"""
+  email: String
+
+  """full name of the user"""
+  fullName: String
+
+  """The id of the user"""
+  id: ID!
+
+  """Is the user blocked"""
+  isBlocked: Boolean
+
+  """password of the user"""
+  password: String
+
+  """Valid roles of the user"""
+  roles: [ValidRoles!]
 }
 
 type User {

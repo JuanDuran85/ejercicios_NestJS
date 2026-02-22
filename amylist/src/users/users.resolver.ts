@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidRolesArgs } from './dto/args/roles.arg';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { UpdateUserInput } from './dto/inputs/update-user.input';
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -44,5 +45,13 @@ export class UsersResolver {
   ): Promise<User> {
     console.debug('BlocUser method');
     return this.usersService.unblock(id, user);
+  }
+
+  @Mutation(() => User, { name: 'updateUser' })
+  public async updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @CurrentUser([ValidRoles.admin]) user: User,
+  ): Promise<User> {
+    return this.usersService.update(updateUserInput.id, updateUserInput, user);
   }
 }
