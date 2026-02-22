@@ -15,9 +15,6 @@ input CreateItemInput {
   """The name of the item"""
   name: String!
 
-  """The quantity of the item"""
-  quantity: Float!
-
   """The units of the quantity"""
   quantityUnits: String
 }
@@ -29,11 +26,11 @@ type Item {
   """The name of the item"""
   name: String!
 
-  """The quantity of the item"""
-  quantity: Float!
-
   """The units of the quantity"""
   quantityUnits: String
+
+  """The user"""
+  user: User!
 }
 
 input LoginInput {
@@ -46,6 +43,8 @@ input LoginInput {
 
 type Mutation {
   blockUser(id: ID!): User!
+
+  """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
@@ -84,9 +83,6 @@ input UpdateItemInput {
   """The name of the item"""
   name: String
 
-  """The quantity of the item"""
-  quantity: Float
-
   """The units of the quantity"""
   quantityUnits: String
 }
@@ -123,6 +119,9 @@ type User {
 
   """The status of the user"""
   isBlocked: Boolean!
+
+  """The items of the user"""
+  items: [Item!]!
 
   """The last update by user"""
   lastUpdateBy: User
