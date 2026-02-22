@@ -33,6 +33,7 @@ export class Item {
   @Field(() => User, { nullable: false, description: 'The user' })
   @ManyToOne(() => User, (user: User) => user.items, {
     nullable: false,
+    lazy: true,
   })
   @Index('userId-index')
   user: User;
