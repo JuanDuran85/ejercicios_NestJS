@@ -34,7 +34,7 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.admin]) user: User,
   ): Promise<User> {
     console.debug('BlocUser method');
-    return this.usersService.block(id);
+    return this.usersService.block(id, user);
   }
 
   @Mutation(() => User, { name: 'unblockUser' })
@@ -43,6 +43,6 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.admin]) user: User,
   ): Promise<User> {
     console.debug('BlocUser method');
-    return this.usersService.unblock(id);
+    return this.usersService.unblock(id, user);
   }
 }

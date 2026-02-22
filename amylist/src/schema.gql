@@ -102,6 +102,8 @@ type User {
 
   """The status of the user"""
   isBlocked: Boolean!
+
+  """The last update by user"""
   lastUpdateBy: User
 
   """The roles of the user"""

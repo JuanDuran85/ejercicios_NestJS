@@ -48,8 +48,11 @@ export class User {
   })
   isBlocked: boolean;
 
-  @ManyToOne(() => User, (user) => user.lastUpdateBy, { nullable: true })
+  @ManyToOne(() => User, (user) => user.lastUpdateBy, {
+    nullable: true,
+    lazy: true
+  })
   @JoinColumn({ name: 'lastUpdateBy' })
-  @Field(() => User, { nullable: true })
+  @Field(() => User, { nullable: true, description: 'The last update by user'})
   lastUpdateBy?: User;
 }

@@ -34,7 +34,8 @@ export class UsersService {
   }
 
   public async findAll(roles: ValidRoles[]): Promise<User[]> {
-    if (roles.length === 0) return this.userRepository.find();
+    if (roles.length === 0)
+      return this.userRepository.find();
     console.debug({ roles });
     return this.userRepository
       .createQueryBuilder()
@@ -59,15 +60,17 @@ export class UsersService {
     }
   }
 
-  public async block(id: string): Promise<User> {
+  public async block(id: string, adminUser: User): Promise<User> {
     const userToBlock: User = await this.findOneById(id);
     userToBlock.isBlocked = true;
+    userToBlock.lastUpdateBy = adminUser;
     return await this.userRepository.save(userToBlock);
   }
 
-  public async unblock(id: string): Promise<User> {
+  public async unblock(id: string, adminUser: User): Promise<User> {
     const userToUnblock: User = await this.findOneById(id);
     userToUnblock.isBlocked = false;
+    userToUnblock.lastUpdateBy = adminUser;
     return await this.userRepository.save(userToUnblock);
   }
 
