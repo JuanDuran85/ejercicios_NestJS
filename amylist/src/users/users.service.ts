@@ -60,7 +60,15 @@ export class UsersService {
   }
 
   public async block(id: string): Promise<User> {
-    return {} as User;
+    const userToBlock: User = await this.findOneById(id);
+    userToBlock.isBlocked = true;
+    return await this.userRepository.save(userToBlock);
+  }
+
+  public async unblock(id: string): Promise<User> {
+    const userToUnblock: User = await this.findOneById(id);
+    userToUnblock.isBlocked = false;
+    return await this.userRepository.save(userToUnblock);
   }
 
   public async findOneById(id: string): Promise<User> {

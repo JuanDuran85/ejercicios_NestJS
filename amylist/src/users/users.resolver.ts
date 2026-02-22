@@ -28,10 +28,21 @@ export class UsersResolver {
     return this.usersService.findOneById(id);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => User, { name: 'blockUser' })
   public async blockUser(
-    @Args('id', { type: () => ID }) id: string,
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser([ValidRoles.admin]) user: User,
   ): Promise<User> {
+    console.debug('BlocUser method');
     return this.usersService.block(id);
+  }
+
+  @Mutation(() => User, { name: 'unblockUser' })
+  public async unblockUser(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser([ValidRoles.admin]) user: User,
+  ): Promise<User> {
+    console.debug('BlocUser method');
+    return this.usersService.unblock(id);
   }
 }

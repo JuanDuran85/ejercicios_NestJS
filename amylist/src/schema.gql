@@ -50,6 +50,7 @@ type Mutation {
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
   signup(signupInput: SignupInput!): AuthResponse!
+  unblockUser(id: ID!): User!
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
@@ -101,6 +102,7 @@ type User {
 
   """The status of the user"""
   isBlocked: Boolean!
+  lastUpdateBy: User
 
   """The roles of the user"""
   roles: [String!]!
