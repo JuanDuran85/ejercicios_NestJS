@@ -50,7 +50,10 @@ export class ItemsService {
   public async update(
     id: string,
     updateItemInput: UpdateItemInput,
+    user: User
   ): Promise<Item> {
+
+    await this.findOne(id, user);
     const itemFound: Item | undefined =
       await this.itemRepository.preload(updateItemInput);
 
