@@ -15,9 +15,6 @@ input CreateItemInput {
   """The name of the item"""
   name: String!
 
-  """The quantity of the item"""
-  quantity: Float!
-
   """The units of the quantity"""
   quantityUnits: String
 }
@@ -29,11 +26,11 @@ type Item {
   """The name of the item"""
   name: String!
 
-  """The quantity of the item"""
-  quantity: Float!
-
   """The units of the quantity"""
   quantityUnits: String
+
+  """The user"""
+  user: User!
 }
 
 input LoginInput {
@@ -46,13 +43,17 @@ input LoginInput {
 
 type Mutation {
   blockUser(id: ID!): User!
+
+  """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
   signup(signupInput: SignupInput!): AuthResponse!
+  unblockUser(id: ID!): User!
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
@@ -61,7 +62,7 @@ type Query {
   items: [Item!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
-  users: [User!]!
+  users(roles: [ValidRoles!] = []): [User!]!
 }
 
 input SignupInput {
@@ -82,11 +83,28 @@ input UpdateItemInput {
   """The name of the item"""
   name: String
 
-  """The quantity of the item"""
-  quantity: Float
-
   """The units of the quantity"""
   quantityUnits: String
+}
+
+input UpdateUserInput {
+  """email of the user"""
+  email: String
+
+  """full name of the user"""
+  fullName: String
+
+  """The id of the user"""
+  id: ID!
+
+  """Is the user blocked"""
+  isBlocked: Boolean
+
+  """password of the user"""
+  password: String
+
+  """Valid roles of the user"""
+  roles: [ValidRoles!]
 }
 
 type User {
@@ -102,6 +120,26 @@ type User {
   """The status of the user"""
   isBlocked: Boolean!
 
+  """The items of the user"""
+  items: [Item!]!
+
+  """The number of items of the user"""
+  itemsCount: Int!
+
+  """The last update by user"""
+  lastUpdateBy: User
+
   """The roles of the user"""
   roles: [String!]!
+}
+
+"""Valid roles for users"""
+enum ValidRoles {
+  admin
+  developer
+  seo
+  seoAdmin
+  seoSuperUser
+  superUser
+  user
 }

@@ -1,19 +1,42 @@
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { join } from 'node:path';
-import { ItemsModule } from './items/items.module';
+import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
+import { join } from 'node:path';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { ItemsModule } from './items/items.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
+      imports: [AuthModule],
+      inject: [JwtService],
+      useFactory: async (jwtService: JwtService) => ({
+        playground: false,
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
+        debug: true,
+        plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
+        context({ req }) {
+          const token: string = req.headers.authorization?.replace(
+            'Bearer ',
+            '',
+          );
+          const payload = jwtService.decode(token);
+          if (!token) throw new Error('Invalid token. Token not found');
+          if (!payload) throw new Error('Invalid token. Payload not found');
+          return { user: payload };
+        },
+      }),
+    }),
+    /* GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
@@ -21,7 +44,7 @@ import { CommonModule } from './common/common.module';
       debug: true,
       graphiql: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
-    }),
+    }), */
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -32,14 +55,14 @@ import { CommonModule } from './common/common.module';
       autoLoadEntities: true,
       synchronize: true,
       logging: true,
-      logger: 'debug'
+      logger: 'debug',
     }),
     ItemsModule,
     UsersModule,
     AuthModule,
-    CommonModule
+    CommonModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

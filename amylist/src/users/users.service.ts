@@ -7,8 +7,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SignupInput } from '../auth/dto';
+import { ValidRoles } from '../auth/enum';
 import { BcryptJsAdapter } from '../common/adapters';
 import { User } from './entities/user.entity';
+import { UpdateUserInput } from './dto/inputs/update-user.input';
 
 @Injectable()
 export class UsersService {
@@ -32,8 +34,14 @@ export class UsersService {
     }
   }
 
-  public async findAll(): Promise<User[]> {
-    return [];
+  public async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0) return this.userRepository.find();
+    console.debug({ roles });
+    return this.userRepository
+      .createQueryBuilder()
+      .andWhere('ARRAY[roles] && ARRAY[:...roles]')
+      .setParameter('roles', roles)
+      .getMany();
   }
 
   public async findOne(id: string): Promise<User> {
@@ -52,8 +60,18 @@ export class UsersService {
     }
   }
 
-  public async block(id: string): Promise<User> {
-    return {} as User;
+  public async block(id: string, adminUser: User): Promise<User> {
+    const userToBlock: User = await this.findOneById(id);
+    userToBlock.isBlocked = true;
+    userToBlock.lastUpdateBy = adminUser;
+    return await this.userRepository.save(userToBlock);
+  }
+
+  public async unblock(id: string, adminUser: User): Promise<User> {
+    const userToUnblock: User = await this.findOneById(id);
+    userToUnblock.isBlocked = false;
+    userToUnblock.lastUpdateBy = adminUser;
+    return await this.userRepository.save(userToUnblock);
   }
 
   public async findOneById(id: string): Promise<User> {
@@ -68,6 +86,30 @@ export class UsersService {
     }
   }
 
+  public async update(
+    id: string,
+    updateUserInput: UpdateUserInput,
+    updateBy: User,
+  ): Promise<User> {
+    try {
+      const userPreload: User | undefined = await this.userRepository.preload({
+        ...updateUserInput,
+        id,
+      });
+
+      if (!userPreload) throw new Error(`User with id ${id} not found`);
+
+      userPreload.lastUpdateBy = updateBy;
+      return await this.userRepository.save(userPreload);
+    } catch (error) {
+      this.logger.error(String(error));
+      this.handleDbErrors({
+        code: 'error-002',
+        detail: `User with id ${id} not found`,
+      });
+    }
+  }
+
   private handleDbErrors(error: any): never {
     if (error.code === '23505') {
       this.logger.error(error.detail);
@@ -75,6 +117,10 @@ export class UsersService {
     }
 
     if (error.code === 'error-001') {
+      throw new BadRequestException(error.detail);
+    }
+
+    if (error.code === 'error-002') {
       throw new BadRequestException(error.detail);
     }
 
