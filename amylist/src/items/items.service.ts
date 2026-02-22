@@ -50,9 +50,8 @@ export class ItemsService {
   public async update(
     id: string,
     updateItemInput: UpdateItemInput,
-    user: User
+    user: User,
   ): Promise<Item> {
-
     await this.findOne(id, user);
     const itemFound: Item | undefined =
       await this.itemRepository.preload(updateItemInput);
@@ -65,5 +64,15 @@ export class ItemsService {
     const itemFound = (await this.findOne(id, user)) as Item;
     await this.itemRepository.delete({ id, user });
     return { ...itemFound, id };
+  }
+
+  public async itemsCountByUser(user: User): Promise<number> {
+    return this.itemRepository.count({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
   }
 }

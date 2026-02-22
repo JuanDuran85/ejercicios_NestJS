@@ -123,6 +123,9 @@ type User {
   """The items of the user"""
   items: [Item!]!
 
+  """The number of items of the user"""
+  itemsCount: Int!
+
   """The last update by user"""
   lastUpdateBy: User
 
