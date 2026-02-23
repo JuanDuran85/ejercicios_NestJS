@@ -46,6 +46,9 @@ type Mutation {
 
   """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
+
+  """Execute seed"""
+  executeSeed: Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
   signup(signupInput: SignupInput!): AuthResponse!
