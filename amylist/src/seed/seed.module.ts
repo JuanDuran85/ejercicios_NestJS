@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
-import { SeedService } from './seed.service';
+import { ConfigModule } from '@nestjs/config';
 import { SeedResolver } from './seed.resolver';
+import { SeedService } from './seed.service';
 
 @Module({
   providers: [SeedResolver, SeedService],
+  exports: [SeedService],
+  controllers: [],
+  imports: [ConfigModule]
 })
 export class SeedModule {}
