@@ -148,7 +148,13 @@ type User {
   isBlocked: Boolean!
 
   """The items of the user"""
-  items: [Item!]!
+  items(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [Item!]!
 
   """The number of items of the user"""
   itemsCount: Int!

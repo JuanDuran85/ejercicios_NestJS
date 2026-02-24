@@ -17,6 +17,8 @@ import { ValidRolesArgs } from './dto/args/roles.arg';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { Item } from '../items/entities/item.entity';
+import { PaginationArgs, SearchArgs } from '../common';
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -78,5 +80,19 @@ export class UsersResolver {
     @Parent() user: User,
   ): Promise<number> {
     return this.itemsService.itemsCountByUser(user);
+  }
+
+  @ResolveField(() => [Item], {
+    name: 'items',
+    description: 'The items of the user',
+    nullable: false,
+  })
+  public async getItemsByUser(
+    @CurrentUser([ValidRoles.admin]) adminUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() search: SearchArgs,
+  ): Promise<Item[]> {
+    return this.itemsService.findAll(user, paginationArgs, search);
   }
 }

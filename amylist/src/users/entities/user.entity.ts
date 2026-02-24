@@ -63,9 +63,5 @@ export class User {
     nullable: false,
     lazy: true,
   })
-  @Field(() => [Item], {
-    nullable: false,
-    description: 'The items of the user',
-  })
   items: Item[];
 }
