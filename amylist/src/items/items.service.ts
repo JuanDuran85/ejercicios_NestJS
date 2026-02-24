@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PaginationArgs } from '../common';
 import { User } from '../users/entities/user.entity';
 import { CreateItemInput, UpdateItemInput } from './dto';
 import { Item } from './entities/item.entity';
@@ -25,7 +26,7 @@ export class ItemsService {
 
   public async createMany(createItemInput: CreateItemInput[], user: User) {
     const items: Item[] = [];
-    
+
     for (const item of createItemInput) {
       const newItem: Item = this.itemRepository.create({
         ...item,
@@ -36,13 +37,19 @@ export class ItemsService {
     return await this.itemRepository.save(items);
   }
 
-  public async findAll(user: User): Promise<Item[]> {
+  public async findAll(
+    user: User,
+    paginationArgs: PaginationArgs,
+  ): Promise<Item[]> {
+    const { limit, offset } = paginationArgs;
     return this.itemRepository.find({
       where: {
         user: {
           id: user.id,
         },
       },
+      take: limit,
+      skip: offset,
       relations: {
         user: true,
       },
