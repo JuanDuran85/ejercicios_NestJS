@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ItemsModule } from './items/items.module';
 import { UsersModule } from './users/users.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -30,9 +31,9 @@ import { UsersModule } from './users/users.module';
             '',
           );
           const payload = jwtService.decode(token);
-          if (!token) throw new Error('Invalid token. Token not found');
-          if (!payload) throw new Error('Invalid token. Payload not found');
-          return { user: payload };
+          //if (!token) throw new Error('Invalid token. Token not found');
+          //if (!payload) throw new Error('Invalid token. Payload not found');
+          //return { user: payload };
         },
       }),
     }),
@@ -61,6 +62,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     AuthModule,
     CommonModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],

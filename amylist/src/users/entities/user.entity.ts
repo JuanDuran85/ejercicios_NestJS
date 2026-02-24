@@ -43,10 +43,11 @@ export class User {
   })
   roles: string[];
 
-  @Column({ type: 'boolean', default: true, nullable: false })
+  @Column({ type: 'boolean', default: false, nullable: false })
   @Field(() => Boolean, {
     description: 'The status of the user',
     nullable: false,
+    defaultValue: false,
   })
   isBlocked: boolean;
 

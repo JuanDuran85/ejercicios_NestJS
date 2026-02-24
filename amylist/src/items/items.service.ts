@@ -23,6 +23,19 @@ export class ItemsService {
     return await this.itemRepository.save(newItem);
   }
 
+  public async createMany(createItemInput: CreateItemInput[], user: User) {
+    const items: Item[] = [];
+    
+    for (const item of createItemInput) {
+      const newItem: Item = this.itemRepository.create({
+        ...item,
+        user,
+      });
+      items.push(newItem);
+    }
+    return await this.itemRepository.save(items);
+  }
+
   public async findAll(user: User): Promise<Item[]> {
     return this.itemRepository.find({
       where: {

@@ -12,19 +12,31 @@ type AuthResponse {
 
 """The input for creating an item"""
 input CreateItemInput {
+  """The category of the item"""
+  category: String = "unknown"
+
   """The name of the item"""
   name: String!
+
+  """The quantity of the item"""
+  quantity: Float = 0
 
   """The units of the quantity"""
   quantityUnits: String
 }
 
 type Item {
+  """The category of the item"""
+  category: String
+
   """The id of the item"""
   id: ID!
 
   """The name of the item"""
   name: String!
+
+  """The quantity of the item"""
+  quantity: Float
 
   """The units of the quantity"""
   quantityUnits: String
@@ -46,6 +58,9 @@ type Mutation {
 
   """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
+
+  """Execute seed"""
+  executeSeed: Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
   signup(signupInput: SignupInput!): AuthResponse!
@@ -77,11 +92,17 @@ input SignupInput {
 }
 
 input UpdateItemInput {
+  """The category of the item"""
+  category: String = "unknown"
+
   """The id of the item"""
   id: ID!
 
   """The name of the item"""
   name: String
+
+  """The quantity of the item"""
+  quantity: Float = 0
 
   """The units of the quantity"""
   quantityUnits: String
