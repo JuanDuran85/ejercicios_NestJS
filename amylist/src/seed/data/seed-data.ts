@@ -548,5 +548,5 @@ export const SEED_ITEMS = SEED_ITEMS_RAW.map((item) => ({
   quantity:
     typeof item.quantity === 'number'
       ? item.quantity
-      : Math.floor(Math.random() * 100),
+      : Math.floor(Math.random() * 36),
 }));
