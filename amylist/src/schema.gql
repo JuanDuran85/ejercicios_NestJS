@@ -74,7 +74,7 @@ type Mutation {
 type Query {
   """return a item by id"""
   item(id: ID!): Item!
-  items: [Item!]!
+  items(limit: Int = 10, offset: Int = 0): [Item!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
   users(roles: [ValidRoles!] = []): [User!]!
