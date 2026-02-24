@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PaginationArgs } from '../common';
+import { PaginationArgs, SearchArgs } from '../common';
 import { User } from '../users/entities/user.entity';
 import { CreateItemInput, UpdateItemInput } from './dto';
 import { Item } from './entities/item.entity';
@@ -40,20 +40,23 @@ export class ItemsService {
   public async findAll(
     user: User,
     paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
   ): Promise<Item[]> {
     const { limit, offset } = paginationArgs;
-    return this.itemRepository.find({
-      where: {
-        user: {
-          id: user.id,
-        },
-      },
-      take: limit,
-      skip: offset,
-      relations: {
-        user: true,
-      },
-    });
+    const { search } = searchArgs;
+
+    const queryBuilder = this.itemRepository
+      .createQueryBuilder('item')
+      .where(`"userId" = :userId`, { userId: user.id })
+      .take(limit)
+      .skip(offset);
+
+    if (search)
+      queryBuilder.andWhere(
+        String(search) ? `item.name ILIKE '%${search}%'` : '',
+      );
+
+    return queryBuilder.getMany();
   }
 
   public async findOne(id: string, user: User): Promise<Item | null> {

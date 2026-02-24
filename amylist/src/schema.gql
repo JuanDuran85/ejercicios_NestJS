@@ -79,7 +79,7 @@ type Query {
     offset: Int = 0
 
     """Search query"""
-    search: String = ""
+    search: String
   ): [Item!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
