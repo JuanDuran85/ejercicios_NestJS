@@ -22,21 +22,24 @@ export const SEED_USERS = [
   },
 ];
 
-export const SEED_ITEMS = [
+const SEED_ITEMS_RAW = [
   {
     name: 'Chicken breast (skinless,boneless)',
     quantityUnits: 'lb',
     category: 'meat',
+    quantity: 1,
   },
   {
     name: 'Chicken thighs (skinless,boneless)',
     quantityUnits: 'box',
     category: 'meat',
+    quantity: 1,
   },
   {
     name: 'Fish filets',
     quantityUnits: 'unit',
     category: 'meat',
+    quantity: 12,
   },
   {
     name: 'Ground turkey or chicken',
@@ -539,3 +542,11 @@ export const SEED_ITEMS = [
     category: 'other',
   },
 ];
+
+export const SEED_ITEMS = SEED_ITEMS_RAW.map((item) => ({
+  ...item,
+  quantity:
+    typeof item.quantity === 'number'
+      ? item.quantity
+      : Math.floor(Math.random() * 100),
+}));
