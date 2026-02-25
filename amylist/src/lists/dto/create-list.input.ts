@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class CreateListInput {
-  @Field(() => String, { description: 'The id of the list' })
-  id: string;
-
   @Field(() => String, { description: 'The name of the list' })
+  @IsString()
+  @IsNotEmpty()
   name: string;
 }

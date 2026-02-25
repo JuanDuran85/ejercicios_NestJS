@@ -8,7 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Item } from '../../items/entities/item.entity';
-import { List } from '../../lists';
+// DIAGNOSTIC: Changed from barrel import to direct entity import to avoid circular dependency
+import { List } from '../../lists/entities/list.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()

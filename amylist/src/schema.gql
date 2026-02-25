@@ -25,6 +25,11 @@ input CreateItemInput {
   quantityUnits: String
 }
 
+input CreateListInput {
+  """The name of the list"""
+  name: String!
+}
+
 type Item {
   """The category of the item"""
   category: String
@@ -45,6 +50,14 @@ type Item {
   user: User!
 }
 
+type List {
+  """The id of the list"""
+  id: ID!
+
+  """The name of the list"""
+  name: String!
+}
+
 input LoginInput {
   """email of the user"""
   email: String!
@@ -58,16 +71,19 @@ type Mutation {
 
   """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
+  createList(createListInput: CreateListInput!): List!
 
   """Execute seed"""
   executeSeed: Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
+  removeList(id: String!): List!
   signup(signupInput: SignupInput!): AuthResponse!
   unblockUser(id: ID!): User!
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
+  updateList(updateListInput: UpdateListInput!): List!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
@@ -81,6 +97,14 @@ type Query {
     """Search query"""
     search: String
   ): [Item!]!
+  list(id: ID!): List!
+  lists(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [List!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
   users(roles: [ValidRoles!] = []): [User!]!
@@ -112,6 +136,14 @@ input UpdateItemInput {
 
   """The units of the quantity"""
   quantityUnits: String
+}
+
+input UpdateListInput {
+  """The id of the list"""
+  id: ID!
+
+  """The name of the list"""
+  name: String
 }
 
 input UpdateUserInput {

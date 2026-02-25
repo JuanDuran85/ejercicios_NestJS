@@ -1,4 +1,8 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { ParseUUIDPipe } from '@nestjs/common';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from '../auth';
+import { PaginationArgs, SearchArgs } from '../common';
+import { User } from '../users';
 import { CreateListInput, UpdateListInput } from './dto';
 import { List } from './entities/list.entity';
 import { ListsService } from './lists.service';
@@ -8,27 +12,43 @@ export class ListsResolver {
   constructor(private readonly listsService: ListsService) {}
 
   @Mutation(() => List)
-  createList(@Args('createListInput') createListInput: CreateListInput) {
-    return this.listsService.create(createListInput);
+  public async createList(
+    @Args('createListInput') createListInput: CreateListInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.listsService.create(createListInput, user);
   }
 
   @Query(() => [List], { name: 'lists' })
-  findAll() {
-    return this.listsService.findAll();
+  public async findAll(
+    @CurrentUser() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ) {
+    return this.listsService.findAll(user, paginationArgs, searchArgs);
   }
 
   @Query(() => List, { name: 'list' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.listsService.findOne(id);
+  public async findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.listsService.findOne(id, user);
   }
 
   @Mutation(() => List)
-  updateList(@Args('updateListInput') updateListInput: UpdateListInput) {
-    return this.listsService.update(updateListInput.id, updateListInput);
+  public async updateList(
+    @Args('updateListInput') updateListInput: UpdateListInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.listsService.update(updateListInput.id, updateListInput, user);
   }
 
   @Mutation(() => List)
-  removeList(@Args('id', { type: () => Int }) id: number) {
-    return this.listsService.remove(id);
+  public async removeList(
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.listsService.remove(id, user);
   }
 }

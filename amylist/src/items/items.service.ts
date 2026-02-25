@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { PaginationArgs, SearchArgs } from '../common';
 import { User } from '../users/entities/user.entity';
 import { CreateItemInput, UpdateItemInput } from './dto';
@@ -45,7 +45,7 @@ export class ItemsService {
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
 
-    const queryBuilder = this.itemRepository
+    const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
       .createQueryBuilder('item')
       .where(`"userId" = :userId`, { userId: user.id })
       .take(limit)
@@ -76,8 +76,10 @@ export class ItemsService {
     user: User,
   ): Promise<Item> {
     await this.findOne(id, user);
-    const itemFound: Item | undefined =
-      await this.itemRepository.preload(updateItemInput);
+    const itemFound: Item | undefined = await this.itemRepository.preload({
+      ...updateItemInput,
+      user,
+    });
 
     if (!itemFound) throw new NotFoundException(`Item with id ${id} not found`);
     return this.itemRepository.save(itemFound);
