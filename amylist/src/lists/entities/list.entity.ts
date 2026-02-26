@@ -25,7 +25,9 @@ export class List {
 
   @ManyToOne(() => User, (user: User) => user.lists, {
     nullable: false,
+    lazy: true,
   })
   @Index('userId-list-index')
+  @Field(() => User, { nullable: false, description: 'The user' })
   user: User;
 }

@@ -12,15 +12,15 @@ import {
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ValidRoles } from '../auth/enum';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PaginationArgs, SearchArgs } from '../common';
+import { Item } from '../items/entities/item.entity';
 import { ItemsService } from '../items/items.service';
+import { List } from '../lists/entities/list.entity';
+import { ListsService } from '../lists/lists.service';
 import { ValidRolesArgs } from './dto/args/roles.arg';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
-import { Item } from '../items/entities/item.entity';
-import { PaginationArgs, SearchArgs } from '../common';
-import {  ListsService } from '../lists/lists.service';
-import { List } from '../lists/entities/list.entity';
 
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
@@ -111,5 +111,17 @@ export class UsersResolver {
     @Args() search: SearchArgs,
   ): Promise<List[]> {
     return this.listsService.findAll(user, paginationArgs, search);
+  }
+
+  @ResolveField(() => Int, {
+    name: 'listsCount',
+    description: 'The number of lists of the user',
+    defaultValue: 0,
+  })
+  public async listsCount(
+    @CurrentUser([ValidRoles.admin]) adminUser: User,
+    @Parent() user: User,
+  ): Promise<number> {
+    return this.listsService.listsCountByUser(user);
   }
 }

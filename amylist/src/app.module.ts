@@ -12,6 +12,7 @@ import { ItemsModule } from './items/items.module';
 import { ListsModule } from './lists';
 import { SeedModule } from './seed/seed.module';
 import { UsersModule } from './users/users.module';
+import { ListItemModule } from './list-item/list-item.module';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { UsersModule } from './users/users.module';
     CommonModule,
     SeedModule,
     ListsModule,
+    ListItemModule,
   ],
   controllers: [],
   providers: [],

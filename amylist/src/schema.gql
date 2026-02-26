@@ -30,6 +30,11 @@ input CreateListInput {
   name: String!
 }
 
+input CreateListItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Item {
   """The category of the item"""
   category: String
@@ -56,6 +61,20 @@ type List {
 
   """The name of the list"""
   name: String!
+
+  """The user"""
+  user: User!
+}
+
+type ListItem {
+  """Whether the item has been completed"""
+  completed: Boolean!
+
+  """The id of the list item"""
+  id: ID!
+
+  """The quantity of the item"""
+  quantity: Float!
 }
 
 input LoginInput {
@@ -72,18 +91,21 @@ type Mutation {
   """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
   createList(createListInput: CreateListInput!): List!
+  createListItem(createListItemInput: CreateListItemInput!): ListItem!
 
   """Execute seed"""
   executeSeed: Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
   removeList(id: ID!): List!
+  removeListItem(id: Int!): ListItem!
   signup(signupInput: SignupInput!): AuthResponse!
   unblockUser(id: ID!): User!
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
   updateList(updateListInput: UpdateListInput!): List!
+  updateListItem(updateListItemInput: UpdateListItemInput!): ListItem!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
@@ -98,6 +120,7 @@ type Query {
     search: String
   ): [Item!]!
   list(id: ID!): List!
+  listItem(id: Int!): ListItem!
   lists(
     limit: Int = 10
     offset: Int = 0
@@ -144,6 +167,12 @@ input UpdateListInput {
 
   """The name of the list"""
   name: String
+}
+
+input UpdateListItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
 
 input UpdateUserInput {
@@ -202,6 +231,9 @@ type User {
     """Search query"""
     search: String
   ): [List!]!
+
+  """The number of lists of the user"""
+  listsCount: Int!
 
   """The roles of the user"""
   roles: [String!]!
