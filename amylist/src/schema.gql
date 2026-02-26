@@ -42,6 +42,9 @@ type Item {
   """The id of the item"""
   id: ID!
 
+  """The list items"""
+  listItem: [ListItem!]
+
   """The name of the item"""
   name: String!
 
@@ -59,6 +62,9 @@ type List {
   """The id of the list"""
   id: ID!
 
+  """The list items"""
+  listItem: [ListItem!]!
+
   """The name of the list"""
   name: String!
 
@@ -72,6 +78,12 @@ type ListItem {
 
   """The id of the list item"""
   id: ID!
+
+  """The item"""
+  item: Item!
+
+  """The list"""
+  list: List!
 
   """The quantity of the item"""
   quantity: Float!
