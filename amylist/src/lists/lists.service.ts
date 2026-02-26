@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { PaginationArgs, SearchArgs } from '../common';
-import { User } from '../users/entities/user.entity';
+import { User } from '../users';
 import { CreateListInput, UpdateListInput } from './dto';
 import { List } from './entities';
 
@@ -76,5 +76,15 @@ export class ListsService {
     const listFound: List = (await this.findOne(id, user)) as List;
     await this.listsRepository.delete({ id, user });
     return { ...listFound, id };
+  }
+
+  public async listsCountByUser(user: User): Promise<number> {
+    return this.listsRepository.count({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
   }
 }

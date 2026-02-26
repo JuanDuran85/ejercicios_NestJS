@@ -77,7 +77,7 @@ type Mutation {
   executeSeed: Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
-  removeList(id: String!): List!
+  removeList(id: ID!): List!
   signup(signupInput: SignupInput!): AuthResponse!
   unblockUser(id: ID!): User!
 
@@ -193,6 +193,15 @@ type User {
 
   """The last update by user"""
   lastUpdateBy: User
+
+  """The list of the user"""
+  lists(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [List!]!
 
   """The roles of the user"""
   roles: [String!]!
