@@ -24,8 +24,8 @@ export class ListItemService {
     return this.listItemRepository.save(newListItem);
   }
 
-  public async findAll() {
-    return `This action returns all listItem`;
+  public async findAll(): Promise<ListItem[]> {
+    return this.listItemRepository.find();
   }
 
   public async findOne(id: number) {
