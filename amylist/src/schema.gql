@@ -31,8 +31,17 @@ input CreateListInput {
 }
 
 input CreateListItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """Whether the item has been completed"""
+  completed: Boolean = false
+
+  """The id of the item"""
+  itemId: ID!
+
+  """The id of the list"""
+  listId: ID!
+
+  """The quantity of the item"""
+  quantity: Int = 0
 }
 
 type Item {
@@ -182,9 +191,20 @@ input UpdateListInput {
 }
 
 input UpdateListItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  """Whether the item has been completed"""
+  completed: Boolean = false
+
+  """The id of the list item"""
+  id: ID!
+
+  """The id of the item"""
+  itemId: ID
+
+  """The id of the list"""
+  listId: ID
+
+  """The quantity of the item"""
+  quantity: Int = 0
 }
 
 input UpdateUserInput {
