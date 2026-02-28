@@ -72,10 +72,19 @@ type List {
   id: ID!
 
   """The list items"""
-  items: [ListItem!]
+  items(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [ListItem!]
 
   """The name of the list"""
   name: String!
+
+  """The total number of items"""
+  totalItems: Int!
 
   """The user"""
   user: User!

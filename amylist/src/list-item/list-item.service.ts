@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { PaginationArgs, SearchArgs } from '../common';
+import { List } from '../lists';
 import { CreateListItemInput } from './dto/create-list-item.input';
 import { UpdateListItemInput } from './dto/update-list-item.input';
 import { ListItem } from './entities/list-item.entity';
@@ -24,8 +26,26 @@ export class ListItemService {
     return this.listItemRepository.save(newListItem);
   }
 
-  public async findAll(): Promise<ListItem[]> {
-    return this.listItemRepository.find();
+  public async findAll(
+    list: List,
+    paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
+  ): Promise<ListItem[]> {
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
+    const queryBuilder: SelectQueryBuilder<ListItem> = this.listItemRepository
+      .createQueryBuilder('list_item')
+      .where(`"listId" = :listId`, { listId: list.id })
+      .take(limit)
+      .skip(offset);
+
+    if (search)
+      queryBuilder.andWhere(
+        String(search) ? `list_item.name ILIKE '%${search}%'` : '',
+      );
+
+    return queryBuilder.getMany();
   }
 
   public async findOne(id: number) {
@@ -38,5 +58,15 @@ export class ListItemService {
 
   public async remove(id: number) {
     return `This action removes a #${id} listItem`;
+  }
+
+  public async itemsCountByList(list: List): Promise<number> {
+    return this.listItemRepository.count({
+      where: {
+        list: {
+          id: list.id,
+        },
+      },
+    });
   }
 }

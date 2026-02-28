@@ -2,6 +2,7 @@ import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import {
   Args,
   ID,
+  Int,
   Mutation,
   Parent,
   Query,
@@ -72,7 +73,20 @@ export class ListsResolver {
     defaultValue: [],
     description: 'The list items',
   })
-  public async getListItems(@Parent() list: List): Promise<ListItem[]> {
-    return this.listItemService.findAll();
+  public async getListItems(
+    @Parent() list: List,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<ListItem[]> {
+    return this.listItemService.findAll(list, paginationArgs, searchArgs);
+  }
+
+  @ResolveField(() => Int, {
+    name: 'totalItems',
+    defaultValue: 0,
+    description: 'The total number of items',
+  })
+  public async countListItemsByList(@Parent() list: List): Promise<number> {
+    return this.listItemService.itemsCountByList(list);
   }
 }
