@@ -136,3 +136,8 @@ The `quantity` field for `SEED_ITEMS` is now populated with a random integer bet
   docker stop <container_id>
   docker rm <container_id>
 ```
+
+7. Push image to Docker Hub
+```bash
+  docker push <image_name>
+```
