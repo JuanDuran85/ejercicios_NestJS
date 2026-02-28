@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder, UpdateQueryBuilder } from 'typeorm';
 import { PaginationArgs, SearchArgs } from '../common';
 import { List } from '../lists';
 import { CreateListItemInput } from './dto/create-list-item.input';
@@ -35,14 +35,17 @@ export class ListItemService {
     const { search } = searchArgs;
 
     const queryBuilder: SelectQueryBuilder<ListItem> = this.listItemRepository
-      .createQueryBuilder('list_item')
+      .createQueryBuilder('listItem')
+      .innerJoin('listItem.item', 'item')
       .where(`"listId" = :listId`, { listId: list.id })
       .take(limit)
       .skip(offset);
 
     if (search)
       queryBuilder.andWhere(
-        String(search) ? `list_item.name ILIKE '%${search}%'` : '',
+        String(search)
+          ? `LOWER(listItem.name) LIKE '%${search.toLocaleLowerCase()}%'`
+          : '',
       );
 
     return queryBuilder.getMany();
@@ -51,14 +54,30 @@ export class ListItemService {
   public async findOne(id: string): Promise<ListItem> {
     const listItemFound: ListItem | null =
       await this.listItemRepository.findOneBy({ id });
-      console.debug(listItemFound);
+    console.debug(listItemFound);
     if (!listItemFound)
       throw new NotFoundException(`List item with id: ${id} not found`);
     return listItemFound;
   }
 
-  public async update(id: string, updateListItemInput: UpdateListItemInput) {
-    return `This action updates a #${id} listItem`;
+  public async update(
+    id: string,
+    updateListItemInput: UpdateListItemInput,
+  ): Promise<ListItem> {
+    const { itemId, listId, ...rest } = updateListItemInput;
+    const resultQueryBuilder: UpdateQueryBuilder<ListItem> =
+      this.listItemRepository
+        .createQueryBuilder('listItem')
+        .update()
+        .set(rest)
+        .where('id = :id', { id });
+
+    if (listId) resultQueryBuilder.set({ list: { id: listId } });
+    if (itemId) resultQueryBuilder.set({ item: { id: itemId } });
+
+    await resultQueryBuilder.execute();
+
+    return this.findOne(id);
   }
 
   public async remove(id: number) {
