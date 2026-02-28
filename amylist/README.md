@@ -101,3 +101,38 @@ The `quantity` field for `SEED_ITEMS` is now populated with a random integer bet
 - TypeORM configuration is in `src/app.module.ts` and reads `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` from environment variables.
 - Authentication uses `JWT_SECRET`.
 - If using Docker, update credentials in `.env` and `docker compose` will use them to initialize the database.
+
+## Using Docker
+
+1. Build
+```bash
+  docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
+```
+
+2. Run
+```bash
+  docker-compose -f docker-compose.prod.yaml --env-file .env.prod up
+```
+
+3. Stop
+```bash
+  docker-compose -f docker-compose.prod.yaml --env-file .env.prod down
+```
+
+**Note**: The `docker-compose.prod.yaml` file is configured to use the `.env.prod` file.
+
+4. Create image with name application
+```bash
+  docker build -t nest-graphql-prod .
+```
+
+5. Run image
+```bash
+  docker run --env-file=.env.prod -p 3000:3000 nest-graphql-prod
+```
+
+6. Stop image
+```bash
+  docker stop <container_id>
+  docker rm <container_id>
+```
