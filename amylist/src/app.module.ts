@@ -9,10 +9,10 @@ import { join } from 'node:path';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ItemsModule } from './items/items.module';
+import { ListItemModule } from './list-item/list-item.module';
 import { ListsModule } from './lists';
 import { SeedModule } from './seed/seed.module';
 import { UsersModule } from './users/users.module';
-import { ListItemModule } from './list-item/list-item.module';
 
 @Module({
   imports: [
@@ -49,6 +49,7 @@ import { ListItemModule } from './list-item/list-item.module';
       plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
     }), */
     TypeOrmModule.forRoot({
+      ssl: process.env.STATE === 'prod' ? { rejectUnauthorized: false, sslmode: 'require' } : false as any,
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT! || 5432,
@@ -57,7 +58,7 @@ import { ListItemModule } from './list-item/list-item.module';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
-      logging: true,
+      logging: false,
       logger: 'debug',
     }),
     ItemsModule,
@@ -71,4 +72,12 @@ import { ListItemModule } from './list-item/list-item.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.debug(`host: ${process.env.DB_HOST}`);
+    console.debug(`port: ${+process.env.DB_PORT!}`);
+    console.debug(`database: ${process.env.DB_NAME}`);
+    console.debug(`username: ${process.env.DB_USERNAME}`);
+    console.debug(`password: ${process.env.DB_PASSWORD}`);
+  }
+}
