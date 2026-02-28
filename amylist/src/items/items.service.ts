@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { PaginationArgs, SearchArgs } from '../common';
 import { User } from '../users/entities/user.entity';
 import { CreateItemInput, UpdateItemInput } from './dto';
 import { Item } from './entities/item.entity';
@@ -25,7 +26,7 @@ export class ItemsService {
 
   public async createMany(createItemInput: CreateItemInput[], user: User) {
     const items: Item[] = [];
-    
+
     for (const item of createItemInput) {
       const newItem: Item = this.itemRepository.create({
         ...item,
@@ -36,17 +37,26 @@ export class ItemsService {
     return await this.itemRepository.save(items);
   }
 
-  public async findAll(user: User): Promise<Item[]> {
-    return this.itemRepository.find({
-      where: {
-        user: {
-          id: user.id,
-        },
-      },
-      relations: {
-        user: true,
-      },
-    });
+  public async findAll(
+    user: User,
+    paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
+  ): Promise<Item[]> {
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
+    const queryBuilder: SelectQueryBuilder<Item> = this.itemRepository
+      .createQueryBuilder('item')
+      .where(`"userId" = :userId`, { userId: user.id })
+      .take(limit)
+      .skip(offset);
+
+    if (search)
+      queryBuilder.andWhere(
+        String(search) ? `item.name ILIKE '%${search}%'` : '',
+      );
+
+    return queryBuilder.getMany();
   }
 
   public async findOne(id: string, user: User): Promise<Item | null> {
@@ -66,8 +76,10 @@ export class ItemsService {
     user: User,
   ): Promise<Item> {
     await this.findOne(id, user);
-    const itemFound: Item | undefined =
-      await this.itemRepository.preload(updateItemInput);
+    const itemFound: Item | undefined = await this.itemRepository.preload({
+      ...updateItemInput,
+      user,
+    });
 
     if (!itemFound) throw new NotFoundException(`Item with id ${id} not found`);
     return this.itemRepository.save(itemFound);

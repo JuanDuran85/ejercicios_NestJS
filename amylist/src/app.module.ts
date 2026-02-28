@@ -9,8 +9,10 @@ import { join } from 'node:path';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { ItemsModule } from './items/items.module';
-import { UsersModule } from './users/users.module';
+import { ListsModule } from './lists';
 import { SeedModule } from './seed/seed.module';
+import { UsersModule } from './users/users.module';
+import { ListItemModule } from './list-item/list-item.module';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { SeedModule } from './seed/seed.module';
     AuthModule,
     CommonModule,
     SeedModule,
+    ListsModule,
+    ListItemModule,
   ],
   controllers: [],
   providers: [],

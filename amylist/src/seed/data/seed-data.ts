@@ -543,6 +543,18 @@ const SEED_ITEMS_RAW = [
   },
 ];
 
+export const SEED_LIST = [
+  {
+    name: 'Supermarket',
+  },
+  {
+    name: 'Pharmacy',
+  },
+  {
+    name: 'Travel',
+  },
+];
+
 export const SEED_ITEMS = SEED_ITEMS_RAW.map((item) => ({
   ...item,
   quantity:

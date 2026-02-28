@@ -12,7 +12,11 @@ import {
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ValidRoles } from '../auth/enum';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PaginationArgs, SearchArgs } from '../common';
+import { Item } from '../items/entities/item.entity';
 import { ItemsService } from '../items/items.service';
+import { List } from '../lists/entities/list.entity';
+import { ListsService } from '../lists/lists.service';
 import { ValidRolesArgs } from './dto/args/roles.arg';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { User } from './entities/user.entity';
@@ -24,6 +28,7 @@ export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly itemsService: ItemsService,
+    private readonly listsService: ListsService,
   ) {}
 
   @Query(() => [User], { name: 'users' })
@@ -78,5 +83,45 @@ export class UsersResolver {
     @Parent() user: User,
   ): Promise<number> {
     return this.itemsService.itemsCountByUser(user);
+  }
+
+  @ResolveField(() => [Item], {
+    name: 'items',
+    description: 'The items of the user',
+    nullable: false,
+  })
+  public async getItemsByUser(
+    @CurrentUser([ValidRoles.admin]) adminUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() search: SearchArgs,
+  ): Promise<Item[]> {
+    return this.itemsService.findAll(user, paginationArgs, search);
+  }
+
+  @ResolveField(() => [List], {
+    name: 'lists',
+    description: 'The list of the user',
+    nullable: false,
+  })
+  public async getListByUser(
+    @CurrentUser([ValidRoles.admin]) adminUser: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() search: SearchArgs,
+  ): Promise<List[]> {
+    return this.listsService.findAll(user, paginationArgs, search);
+  }
+
+  @ResolveField(() => Int, {
+    name: 'listsCount',
+    description: 'The number of lists of the user',
+    defaultValue: 0,
+  })
+  public async listsCount(
+    @CurrentUser([ValidRoles.admin]) adminUser: User,
+    @Parent() user: User,
+  ): Promise<number> {
+    return this.listsService.listsCountByUser(user);
   }
 }

@@ -8,6 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Item } from '../../items/entities/item.entity';
+// DIAGNOSTIC: Changed from barrel import to direct entity import to avoid circular dependency
+import { List } from '../../lists/entities/list.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()
@@ -63,9 +65,10 @@ export class User {
     nullable: false,
     lazy: true,
   })
-  @Field(() => [Item], {
-    nullable: false,
-    description: 'The items of the user',
-  })
   items: Item[];
+
+  @OneToMany(() => List, (list: List) => list.user, {
+    nullable: false,
+  })
+  lists: List[];
 }

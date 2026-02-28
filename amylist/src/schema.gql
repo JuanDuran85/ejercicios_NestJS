@@ -25,12 +25,34 @@ input CreateItemInput {
   quantityUnits: String
 }
 
+input CreateListInput {
+  """The name of the list"""
+  name: String!
+}
+
+input CreateListItemInput {
+  """Whether the item has been completed"""
+  completed: Boolean = false
+
+  """The id of the item"""
+  itemId: ID!
+
+  """The id of the list"""
+  listId: ID!
+
+  """The quantity of the item"""
+  quantity: Int = 0
+}
+
 type Item {
   """The category of the item"""
   category: String
 
   """The id of the item"""
   id: ID!
+
+  """The list items"""
+  listItem: [ListItem!]
 
   """The name of the item"""
   name: String!
@@ -43,6 +65,46 @@ type Item {
 
   """The user"""
   user: User!
+}
+
+type List {
+  """The id of the list"""
+  id: ID!
+
+  """The list items"""
+  items(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [ListItem!]
+
+  """The name of the list"""
+  name: String!
+
+  """The total number of items"""
+  totalItems: Int!
+
+  """The user"""
+  user: User!
+}
+
+type ListItem {
+  """Whether the item has been completed"""
+  completed: Boolean!
+
+  """The id of the list item"""
+  id: ID!
+
+  """The item"""
+  item: Item!
+
+  """The list"""
+  list: List!
+
+  """The quantity of the item"""
+  quantity: Float!
 }
 
 input LoginInput {
@@ -58,23 +120,44 @@ type Mutation {
 
   """create a new item"""
   createItem(createItemInput: CreateItemInput!): Item!
+  createList(createListInput: CreateListInput!): List!
+  createListItem(createListItemInput: CreateListItemInput!): ListItem!
 
   """Execute seed"""
   executeSeed: Boolean!
   login(loginInput: LoginInput!): AuthResponse!
   removeItem(id: ID!): Item!
+  removeList(id: ID!): List!
+  removeListItem(id: Int!): ListItem!
   signup(signupInput: SignupInput!): AuthResponse!
   unblockUser(id: ID!): User!
 
   """update a item"""
   updateItem(updateItemInput: UpdateItemInput!): Item!
+  updateList(updateListInput: UpdateListInput!): List!
+  updateListItem(updateListItemInput: UpdateListItemInput!): ListItem!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   """return a item by id"""
   item(id: ID!): Item!
-  items: [Item!]!
+  items(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [Item!]!
+  list(id: ID!): List!
+  listItem(id: String!): ListItem!
+  lists(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [List!]!
   revalidate: AuthResponse!
   user(id: ID!): User!
   users(roles: [ValidRoles!] = []): [User!]!
@@ -106,6 +189,31 @@ input UpdateItemInput {
 
   """The units of the quantity"""
   quantityUnits: String
+}
+
+input UpdateListInput {
+  """The id of the list"""
+  id: ID!
+
+  """The name of the list"""
+  name: String
+}
+
+input UpdateListItemInput {
+  """Whether the item has been completed"""
+  completed: Boolean = false
+
+  """The id of the list item"""
+  id: ID!
+
+  """The id of the item"""
+  itemId: ID
+
+  """The id of the list"""
+  listId: ID
+
+  """The quantity of the item"""
+  quantity: Int = 0
 }
 
 input UpdateUserInput {
@@ -142,13 +250,31 @@ type User {
   isBlocked: Boolean!
 
   """The items of the user"""
-  items: [Item!]!
+  items(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [Item!]!
 
   """The number of items of the user"""
   itemsCount: Int!
 
   """The last update by user"""
   lastUpdateBy: User
+
+  """The list of the user"""
+  lists(
+    limit: Int = 10
+    offset: Int = 0
+
+    """Search query"""
+    search: String
+  ): [List!]!
+
+  """The number of lists of the user"""
+  listsCount: Int!
 
   """The roles of the user"""
   roles: [String!]!
