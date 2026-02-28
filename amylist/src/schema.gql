@@ -150,7 +150,7 @@ type Query {
     search: String
   ): [Item!]!
   list(id: ID!): List!
-  listItem(id: Int!): ListItem!
+  listItem(id: String!): ListItem!
   lists(
     limit: Int = 10
     offset: Int = 0

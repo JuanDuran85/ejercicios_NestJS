@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth';
 import { CreateListItemInput } from './dto/create-list-item.input';
@@ -18,13 +18,10 @@ export class ListItemResolver {
     return this.listItemService.create(createListItemInput);
   }
 
-/*   @Query(() => [ListItem], { name: 'listItem' })
-  public async findAll() {
-    return this.listItemService.findAll();
-  } */
-
   @Query(() => ListItem, { name: 'listItem' })
-  public async findOne(@Args('id', { type: () => Int }) id: number) {
+  public async findOne(
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
+  ): Promise<ListItem> {
     return this.listItemService.findOne(id);
   }
 

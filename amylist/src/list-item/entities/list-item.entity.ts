@@ -26,7 +26,7 @@ export class ListItem {
   @Column({ type: 'boolean', default: false, nullable: false })
   completed: boolean;
 
-  @ManyToOne(() => List, (list: List) => list.listItem)
+  @ManyToOne(() => List, (list: List) => list.listItem, { lazy: true })
   @Field(() => List, { nullable: false, description: 'The list' })
   list: List;
 
