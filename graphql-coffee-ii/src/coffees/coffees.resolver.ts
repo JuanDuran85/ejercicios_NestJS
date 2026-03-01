@@ -15,7 +15,7 @@ export class CoffeesResolver {
   @Query('coffee')
   public async findOne(
     @Args('id', ParseIntPipe) id: number,
-  ): Promise<Coffee | null> {
+  ): Promise<Coffee> {
     return this.coffeesService.findOne(id);
   }
 

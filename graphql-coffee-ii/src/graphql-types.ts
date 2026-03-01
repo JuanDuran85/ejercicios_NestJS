@@ -20,19 +20,17 @@ export class Coffee {
     name: string;
     brand: string;
     flavors: string[];
-    createdAt: string;
-    updatedAt: string;
 }
 
 export abstract class IQuery {
     __typename?: 'IQuery';
     coffees: Coffee[];
-    coffee?: Nullable<Coffee>;
+    coffee?: Coffee;
 }
 
 export abstract class IMutation {
     __typename?: 'IMutation';
-    createCoffee?: Nullable<Coffee>;
+    createCoffee?: Coffee;
 }
 
 type Nullable<T> = T | null;
