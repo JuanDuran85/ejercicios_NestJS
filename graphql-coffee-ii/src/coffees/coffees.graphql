@@ -1,0 +1,12 @@
+type Coffee {
+  id: ID!
+  name: String!
+  brand: String!
+  flavors: [String!]!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Query {
+  coffees: [Coffee!]!
+}
