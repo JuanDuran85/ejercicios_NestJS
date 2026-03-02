@@ -1,10 +1,17 @@
 scalar Date
 
+interface Drink {
+  name: String!
+}
+
+type Tea implements Drink {
+  name: String!
+}
 
 """
 Coffees Model
 """
-type Coffee {
+type Coffee implements Drink {
   """
   A unique identifier for the resource.
   """
@@ -50,6 +57,7 @@ Get all coffees query
 type Query {
   coffees: [Coffee!]!
   coffee(id: ID!): Coffee!
+  drinks: [Drink!]!
 }
 
 type Mutation {
