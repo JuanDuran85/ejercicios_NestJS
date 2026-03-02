@@ -50,6 +50,7 @@ input UpdateCoffeeInput  {
   flavors: [String!]
 }
 
+union DrinksResult = Coffee | Tea
 
 """
 Get all coffees query
@@ -57,7 +58,7 @@ Get all coffees query
 type Query {
   coffees: [Coffee!]!
   coffee(id: ID!): Coffee!
-  drinks: [Drink!]!
+  drinks: [DrinksResult!]!
 }
 
 type Mutation {

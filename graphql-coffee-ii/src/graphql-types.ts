@@ -48,7 +48,7 @@ export abstract class IQuery {
     __typename?: 'IQuery';
     coffees: Coffee[];
     coffee?: Coffee;
-    drinks: Drink[];
+    drinks: DrinksResult[];
 }
 
 export abstract class IMutation {
@@ -58,4 +58,5 @@ export abstract class IMutation {
     removeCoffee?: Coffee;
 }
 
+export type DrinksResult = Coffee | Tea;
 type Nullable<T> = T | null;
