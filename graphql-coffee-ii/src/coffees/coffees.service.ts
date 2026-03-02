@@ -2,7 +2,7 @@ import { UserInputError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateCoffeeInput, UpdateCoffeeInput } from '../graphql-types';
+import { CreateCoffeeInputDto, UpdateCoffeeInputDto } from './dto';
 import { Coffee } from './entities/coffee.entity';
 
 @Injectable()
@@ -26,18 +26,22 @@ export class CoffeesService {
     return coffeeFound;
   }
 
-  public async create(createCoffeeInput: CreateCoffeeInput): Promise<Coffee> {
+  public async create(
+    createCoffeeInput: CreateCoffeeInputDto,
+  ): Promise<Coffee> {
     const coffee: Coffee = this.coffeesRepository.create(createCoffeeInput);
     return this.coffeesRepository.save(coffee);
   }
 
   public async update(
     id: number,
-    updateCoffeeInput: UpdateCoffeeInput,
+    updateCoffeeInput: UpdateCoffeeInputDto,
   ): Promise<Coffee> {
-  
     const coffeeFound: Coffee | undefined =
-      await this.coffeesRepository.preload({ id, ...updateCoffeeInput as any });
+      await this.coffeesRepository.preload({
+        id,
+        ...(updateCoffeeInput as any),
+      });
 
     if (!coffeeFound) throw new UserInputError('Coffee not found');
 

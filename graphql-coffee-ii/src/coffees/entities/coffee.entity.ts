@@ -1,6 +1,13 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 import * as GraphQLType from '../../graphql-types';
+import { Flavor } from './flavor.entity';
 
 @Entity('coffee')
 export class Coffee implements GraphQLType.Coffee {
@@ -19,6 +26,9 @@ export class Coffee implements GraphQLType.Coffee {
   @MinLength(2)
   brand: string;
 
-  @Column('json', { nullable: true })
-  flavors: string[];
+  @JoinTable()
+  @ManyToMany((type) => Flavor, (flavor: Flavor) => flavor.coffees, {
+    cascade: true,
+  })
+  flavors?: Flavor[];
 }
