@@ -35,12 +35,9 @@ export class CoffeesService {
     id: number,
     updateCoffeeInput: UpdateCoffeeInput,
   ): Promise<Coffee> {
-    const { name, brand, flavors } = updateCoffeeInput;
-
-    if (!name || !brand || !flavors) throw new UserInputError('Missing fields');
-
+  
     const coffeeFound: Coffee | undefined =
-      await this.coffeesRepository.preload({ id, name, brand, flavors });
+      await this.coffeesRepository.preload({ id, ...updateCoffeeInput as any });
 
     if (!coffeeFound) throw new UserInputError('Coffee not found');
 
