@@ -20,18 +20,35 @@ export class UpdateCoffeeInput {
     flavors?: Nullable<string[]>;
 }
 
-export class Coffee {
+export interface Drink {
+    name: string;
+}
+
+export class Tea implements Drink {
+    __typename?: 'Tea';
+    name: string;
+}
+
+export class Coffee implements Drink {
     __typename?: 'Coffee';
     id: number;
     name: string;
     brand: string;
-    flavors: string[];
+    flavors?: Nullable<Flavor[]>;
+    createdAt?: Nullable<Date>;
+}
+
+export class Flavor {
+    __typename?: 'Flavor';
+    id: number;
+    name: string;
 }
 
 export abstract class IQuery {
     __typename?: 'IQuery';
     coffees: Coffee[];
     coffee?: Coffee;
+    drinks: DrinksResult[];
 }
 
 export abstract class IMutation {
@@ -41,4 +58,5 @@ export abstract class IMutation {
     removeCoffee?: Coffee;
 }
 
+export type DrinksResult = Coffee | Tea;
 type Nullable<T> = T | null;
