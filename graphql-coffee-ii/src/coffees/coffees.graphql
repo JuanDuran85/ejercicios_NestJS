@@ -1,0 +1,48 @@
+"""
+Coffees Model
+"""
+type Coffee {
+  """
+  A unique identifier for the resource.
+  """
+  id: ID!
+  name: String!
+  brand: String!
+  flavors: [String!]!
+}
+
+"""
+Create coffee input object type.
+"""
+input CreateCoffeeInput {
+  """
+  A new coffee name.
+  """
+  name: String!
+  brand: String!
+  flavors: [String!]!
+}
+
+"""
+Update a coffee input object type by id.
+"""
+input UpdateCoffeeInput  {
+  name: String
+  brand: String
+  flavors: [String!]
+}
+
+
+"""
+Get all coffees query
+"""
+type Query {
+  coffees: [Coffee!]!
+  coffee(id: ID!): Coffee!
+}
+
+type Mutation {
+  createCoffee(createCoffeeInput: CreateCoffeeInput!): Coffee!
+  updateCoffee(id: ID!, updateCoffeeInput: UpdateCoffeeInput!): Coffee!
+  removeCoffee(id: ID!): Coffee!
+}
