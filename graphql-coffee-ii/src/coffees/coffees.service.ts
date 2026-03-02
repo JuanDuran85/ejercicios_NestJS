@@ -1,9 +1,9 @@
+import { UserInputError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateCoffeeInput } from '../graphql-types';
+import { CreateCoffeeInput, UpdateCoffeeInput } from '../graphql-types';
 import { Coffee } from './entities/coffee.entity';
-import { UserInputError } from '@nestjs/apollo';
 
 @Injectable()
 export class CoffeesService {
@@ -29,5 +29,26 @@ export class CoffeesService {
   public async create(createCoffeeInput: CreateCoffeeInput): Promise<Coffee> {
     const coffee: Coffee = this.coffeesRepository.create(createCoffeeInput);
     return this.coffeesRepository.save(coffee);
+  }
+
+  public async update(
+    id: number,
+    updateCoffeeInput: UpdateCoffeeInput,
+  ): Promise<Coffee> {
+    const { name, brand, flavors } = updateCoffeeInput;
+
+    if (!name || !brand || !flavors) throw new UserInputError('Missing fields');
+
+    const coffeeFound: Coffee | undefined =
+      await this.coffeesRepository.preload({ id, name, brand, flavors });
+
+    if (!coffeeFound) throw new UserInputError('Coffee not found');
+
+    return this.coffeesRepository.save(coffeeFound);
+  }
+
+  public async remove(id: number): Promise<Coffee> {
+    const coffeeFound: Coffee | null = await this.findOne(id);
+    return this.coffeesRepository.remove(coffeeFound);
   }
 }

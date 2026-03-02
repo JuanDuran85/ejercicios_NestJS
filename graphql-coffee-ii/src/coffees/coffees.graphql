@@ -24,6 +24,16 @@ input CreateCoffeeInput {
 }
 
 """
+Update a coffee input object type by id.
+"""
+input UpdateCoffeeInput  {
+  name: String
+  brand: String
+  flavors: [String!]
+}
+
+
+"""
 Get all coffees query
 """
 type Query {
@@ -33,4 +43,6 @@ type Query {
 
 type Mutation {
   createCoffee(createCoffeeInput: CreateCoffeeInput!): Coffee!
+  updateCoffee(id: ID!, updateCoffeeInput: UpdateCoffeeInput!): Coffee!
+  removeCoffee(id: ID!): Coffee!
 }
