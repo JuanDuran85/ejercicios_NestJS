@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoffeesModule } from './coffees/coffees.module';
+import { DateScalar } from './common';
 
 @Module({
   imports: [
@@ -33,6 +34,6 @@ import { CoffeesModule } from './coffees/coffees.module';
   ],
   exports: [],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DateScalar],
 })
 export class AppModule {}

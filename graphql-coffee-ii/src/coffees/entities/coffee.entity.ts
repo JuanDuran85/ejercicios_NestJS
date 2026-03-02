@@ -1,10 +1,11 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as GraphQLType from '../../graphql-types';
 import { Flavor } from './flavor.entity';
@@ -32,4 +33,7 @@ export class Coffee implements GraphQLType.Coffee {
     eager: true,
   })
   flavors?: Flavor[];
+
+  @CreateDateColumn()
+  createdAt?: Date | null;
 }
