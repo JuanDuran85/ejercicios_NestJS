@@ -177,3 +177,6 @@ ilovecoffee.session.sql
 graphql-coffee/postgres-db/
 amylist/postgres-db/
 graphql-coffee-ii/postgres-db/
+report-server/postgres-db/
+report-server/pgadmin
+
