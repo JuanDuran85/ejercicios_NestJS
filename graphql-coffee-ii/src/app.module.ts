@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { CoffeesModule } from './coffees/coffees.module';
 import { DateScalar } from './common';
 import { DrinksResolver } from './drinks/drinks.resolver';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 
 @Module({
   imports: [
@@ -30,8 +31,13 @@ import { DrinksResolver } from './drinks/drinks.resolver';
       typePaths: ['./**/*.graphql'],
       plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
       playground: false,
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      }
     }),
     CoffeesModule,
+    PubSubModule,
   ],
   exports: [],
   controllers: [AppController],

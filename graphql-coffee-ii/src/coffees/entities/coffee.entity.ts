@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -36,4 +36,12 @@ export class Coffee implements GraphQLType.Coffee {
 
   @CreateDateColumn()
   createdAt?: Date | null;
+
+  @Column({
+    type: 'enum',
+    enum: GraphQLType.CoffeeType,
+    default: GraphQLType.CoffeeType.ROBUSTA,
+    nullable: true,
+    })
+  type?: GraphQLType.CoffeeType;
 }
