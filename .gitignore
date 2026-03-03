@@ -180,3 +180,5 @@ graphql-coffee-ii/postgres-db/
 report-server/postgres-db/
 report-server/pgadmin
 
+
+/generated/prisma
