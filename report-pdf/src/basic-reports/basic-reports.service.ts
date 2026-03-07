@@ -1,12 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma.service';
-
+import pdfmake from 'pdfmake/';
+import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
+import { PrismaService } from '../prisma.service';
 @Injectable()
 export class BasicReportsService {
-    constructor(private readonly prisma: PrismaService){
+  private readonly fonts: TFontDictionary = {
+    Roboto: {
+      normal: 'fonts/Roboto-Regular.ttf',
+      bold: 'fonts/Roboto-Bold.ttf',
+      italics: 'fonts/Roboto-Italic.ttf',
+      bolditalics: 'fonts/Roboto-BoldItalic.ttf',
+    },
+  };
 
-    }
-   public async getBasicReport() {
-        return this.prisma.employees.findMany();
-    }
+  constructor(private readonly prisma: PrismaService) {}
+  public getBasicReport(): pdfmake.TCreatedPdf {
+    pdfmake.setFonts(this.fonts);
+    const docDefinition: TDocumentDefinitions = {
+      content: ['Second pdf document using pdfmake'],
+    };
+    return pdfmake.createPdf(docDefinition);
+  }
 }
