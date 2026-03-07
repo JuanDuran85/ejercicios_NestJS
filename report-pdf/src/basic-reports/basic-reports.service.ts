@@ -17,8 +17,48 @@ export class BasicReportsService {
   public getBasicReport(): pdfmake.TCreatedPdf {
     pdfmake.setFonts(this.fonts);
     const docDefinition: TDocumentDefinitions = {
-      content: ['Second pdf document using pdfmake'],
+      content: [
+        { text: 'This is a header ONE', style: 'header' },
+        'No styling here, this is a standard paragraph TWO',
+        { text: 'Another text THREE', style: 'anotherStyle' },
+        {
+          text: 'Multiple styles applied FOUR',
+          style: ['header', 'anotherStyle'],
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 22,
+          bold: true,
+        },
+        anotherStyle: {
+          italics: true,
+          alignment: 'right',
+        },
+        subheader: {
+          fontSize: 15,
+          extends: 'header', // or array of strings
+        },
+      },
+      displayTitle: false,
+      pageSize: 'LETTER',
+      pageOrientation: 'portrait',
+      pageMargins: [20, 20, 20, 20],
+      info: {
+        title: 'My Report',
+        author: 'John Doe',
+        subject: 'Report',
+        keywords: 'report, pdf',
+        creator: 'pdfmake',
+        producer: 'pdfmake',
+        creationDate: new Date(),
+        modDate: new Date(),
+      },
     };
-    return pdfmake.createPdf(docDefinition);
+    return pdfmake.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
   }
 }

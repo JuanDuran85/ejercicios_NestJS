@@ -11,7 +11,7 @@ export class BasicReportsController {
   public async getBasicReports(@Res() response: Response) {
     const resultPdfCreated: TCreatedPdf =
       this.basicReportsService.getBasicReport();
-
+    
     response.setHeader('Content-Type', 'application/pdf');
     const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
     return response.send(result);
