@@ -1,28 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import pdfmake from 'pdfmake/';
-import type { TDocumentDefinitions, TFontDictionary } from 'pdfmake/interfaces';
+import type { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { PrinterService } from 'src/printer/printer.service';
 import { PrismaService } from '../prisma.service';
+
 @Injectable()
 export class BasicReportsService {
-  private readonly fonts: TFontDictionary = {
-    Roboto: {
-      normal: 'fonts/Roboto-Regular.ttf',
-      bold: 'fonts/Roboto-Bold.ttf',
-      italics: 'fonts/Roboto-Italic.ttf',
-      bolditalics: 'fonts/Roboto-BoldItalic.ttf',
-    },
-  };
-
-  constructor(private readonly prisma: PrismaService) {}
-  public getBasicReport(): pdfmake.TCreatedPdf {
-    pdfmake.setFonts(this.fonts);
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly printerService: PrinterService,
+  ) {}
+  public getBasicReport() {
     const docDefinition: TDocumentDefinitions = {
       content: [
-        { text: 'This is a header ONE', style: 'header' },
-        'No styling here, this is a standard paragraph TWO',
-        { text: 'Another text THREE', style: 'anotherStyle' },
+        { text: 'This is a header 1', style: 'header' },
+        'No styling here, this is a standard paragraph 2',
+        { text: 'Another text 3', style: 'anotherStyle' },
         {
-          text: 'Multiple styles applied FOUR',
+          text: 'Multiple styles applied 4',
           style: ['header', 'anotherStyle'],
         },
       ],
@@ -30,6 +24,9 @@ export class BasicReportsService {
         header: {
           fontSize: 22,
           bold: true,
+          background: 'blue',
+          color: 'white',
+          alignment: 'center',
         },
         anotherStyle: {
           italics: true,
@@ -55,7 +52,7 @@ export class BasicReportsService {
         modDate: new Date(),
       },
     };
-    return pdfmake.createPdf(docDefinition, {
+    return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,
       fontLayoutCache: true,
