@@ -38,7 +38,9 @@ const styles: StyleDictionary = {
   },
 };
 
-export const getEmploymentLetterByIdReport = (
+export const getEmploymentLetterByIdReport: (
+  optionsValues: ReportValues,
+) => TDocumentDefinitions = (
   optionsValues: ReportValues,
 ): TDocumentDefinitions => {
   const {

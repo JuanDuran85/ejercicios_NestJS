@@ -3,6 +3,7 @@ import type { TCreatedPdf, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
 import {
+  getCountryReport,
   getEmploymentLetterByIdReport,
   getEmploymentLetterReport,
   getFinalBasicReport,
@@ -42,7 +43,7 @@ export class BasicReportsService {
     });
 
     if (!employeeFound) throw new NotFoundException('Employee not found');
-    
+
     const docDefinition: TDocumentDefinitions = getEmploymentLetterByIdReport({
       employeeName: employeeFound.name,
       employeePosition: employeeFound.position,
@@ -53,7 +54,16 @@ export class BasicReportsService {
       workSchedule: employeeFound.work_schedule,
       companyName: 'Toucan Company',
     });
-    
+
+    return this.printerService.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
+  }
+
+  public getCountriesReports(): TCreatedPdf {
+    const docDefinition: TDocumentDefinitions = getCountryReport();
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,
