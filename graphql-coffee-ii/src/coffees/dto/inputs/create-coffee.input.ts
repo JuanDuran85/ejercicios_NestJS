@@ -1,5 +1,5 @@
-import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
-import { CreateCoffeeInput } from '../../../graphql-types';
+import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { CreateCoffeeInput, CoffeeType } from '../../../graphql-types';
 
 export class CreateCoffeeInputDto extends CreateCoffeeInput {
   @MinLength(3)
@@ -15,4 +15,8 @@ export class CreateCoffeeInputDto extends CreateCoffeeInput {
   @IsArray()
   @IsString({ each: true })
   declare readonly flavors: string[];
+
+  @IsOptional()
+  @IsEnum(CoffeeType)
+  declare readonly type: CoffeeType;
 }

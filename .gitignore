@@ -177,3 +177,8 @@ ilovecoffee.session.sql
 graphql-coffee/postgres-db/
 amylist/postgres-db/
 graphql-coffee-ii/postgres-db/
+report-pdf/postgres-db/
+report-pdf/pgadmin
+
+
+/generated/prisma
