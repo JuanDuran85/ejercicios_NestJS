@@ -66,6 +66,16 @@ export const getEmploymentLetterReport = (
       text: 'This document is proof of employment and does not represent an employment commitment.',
       style: 'footer',
     },
+    info: {
+      title: 'My Report',
+      author: 'John Doe',
+      subject: 'Report',
+      keywords: 'report, pdf',
+      creator: 'pdfmake',
+      producer: 'pdfmake',
+      creationDate: new Date(),
+      modDate: new Date(),
+    },
   };
 
   return docDefinition;

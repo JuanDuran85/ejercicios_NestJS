@@ -1,4 +1,4 @@
-import { Controller, Get, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import type { TCreatedPdf } from 'pdfmake';
 import { BasicReportsService } from './basic-reports.service';
@@ -25,6 +25,20 @@ export class BasicReportsController {
   ): Promise<Response<any, Record<string, any>>> {
     const resultPdfCreated: TCreatedPdf =
       this.basicReportsService.getEmploymentLetter();
+    response.setHeader('Content-Type', 'application/pdf');
+    const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
+    return response.send(result);
+  }
+
+  @Get('employment-letter/:employeeId')
+  public async getEmploymentLetterByEmployeeId(
+    @Res() response: Response,
+    @Param('employeeId') employeeId: string,
+  ): Promise<Response<any, Record<string, any>>> {
+    const resultPdfCreated: TCreatedPdf =
+      await this.basicReportsService.getEmploymentLetterById(
+        Number(employeeId),
+      );
     response.setHeader('Content-Type', 'application/pdf');
     const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
     return response.send(result);
