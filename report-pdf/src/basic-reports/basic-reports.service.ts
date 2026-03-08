@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrinterService } from 'src/printer/printer.service';
+import type { TCreatedPdf, TDocumentDefinitions } from 'pdfmake/interfaces';
+import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
-import { getFinalBasicReport } from '../reports';
+import { getEmploymentLetterReport, getFinalBasicReport } from '../reports';
 
 @Injectable()
 export class BasicReportsService {
@@ -9,8 +10,17 @@ export class BasicReportsService {
     private readonly prismaService: PrismaService,
     private readonly printerService: PrinterService,
   ) {}
-  public getBasicReport() {
-    const docDefinition = getFinalBasicReport();
+  public getBasicReport(): TCreatedPdf {
+    const docDefinition = getFinalBasicReport({ name: 'John Doe' });
+    return this.printerService.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
+  }
+
+  public getEmploymentLetter(): TCreatedPdf {
+    const docDefinition: TDocumentDefinitions = getEmploymentLetterReport();
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,

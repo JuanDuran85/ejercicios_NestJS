@@ -1,9 +1,17 @@
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
 
-export const getFinalBasicReport = (): TDocumentDefinitions => {
+interface ReportDefinitionsOptions {
+  name: string;
+}
+
+export const getFinalBasicReport = (
+  options: ReportDefinitionsOptions,
+): TDocumentDefinitions => {
+  const { name } = options;
+
   const docDefinition: TDocumentDefinitions = {
     content: [
-      { text: 'This is a header 1', style: 'header' },
+      { text: name, style: 'header' },
       'No styling here, this is a standard paragraph 2',
       { text: 'Another text 3', style: 'anotherStyle' },
       {
