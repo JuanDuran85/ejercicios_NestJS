@@ -1,9 +1,9 @@
 import type {
-  Content,
   StyleDictionary,
-  TDocumentDefinitions,
+  TDocumentDefinitions
 } from 'pdfmake/interfaces';
-import { DateFormatter } from '../helpers';
+import { headerSection } from './sections/header.section';
+
 
 interface ReportDefinitionsOptions {
   name: string;
@@ -34,14 +34,6 @@ const styles: StyleDictionary = {
   },
 };
 
-const logo: Content = {
-  image: 'src/assets/toucan-code-logo.png',
-  width: 100,
-  height: 100,
-  alignment: 'center',
-  margin: [0, 0, 0, 20],
-};
-
 export const getEmploymentLetterReport = (
   options?: ReportDefinitionsOptions,
 ): TDocumentDefinitions => {
@@ -51,16 +43,7 @@ export const getEmploymentLetterReport = (
     pageSize: 'LETTER',
     pageOrientation: 'portrait',
     displayTitle: true,
-    header: {
-      columns: [
-        logo,
-        {
-          text: DateFormatter.getFormattedDateByDayMonthYear(new Date()),
-          alignment: 'right',
-          margin: [20, 20],
-        },
-      ],
-    },
+    header: headerSection({}),
     content: [
       { text: 'PROOF OF EMPLOYMENT', style: 'header' },
       {
