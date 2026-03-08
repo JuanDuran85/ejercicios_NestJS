@@ -3,6 +3,7 @@ import type {
   StyleDictionary,
   TDocumentDefinitions,
 } from 'pdfmake/interfaces';
+import { DateFormatter } from '../helpers';
 
 interface ReportDefinitionsOptions {
   name: string;
@@ -54,7 +55,7 @@ export const getEmploymentLetterReport = (
       columns: [
         logo,
         {
-          text: new Date().toLocaleDateString(),
+          text: DateFormatter.getFormattedDateByDayMonthYear(new Date()),
           alignment: 'right',
           margin: [20, 20],
         },
