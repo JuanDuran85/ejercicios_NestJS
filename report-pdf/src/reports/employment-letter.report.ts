@@ -29,6 +29,9 @@ export const getEmploymentLetterReport = (
 ): TDocumentDefinitions => {
   const docDefinition: TDocumentDefinitions = {
     styles,
+    header: {
+        columns: ['1', '2', '3']
+    },
     content: [
       { text: 'PROOF OF EMPLOYMENT', style: 'header' },
       {
