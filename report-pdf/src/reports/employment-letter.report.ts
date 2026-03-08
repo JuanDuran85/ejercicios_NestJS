@@ -1,4 +1,8 @@
-import type { StyleDictionary, TDocumentDefinitions } from 'pdfmake/interfaces';
+import type {
+  Content,
+  StyleDictionary,
+  TDocumentDefinitions,
+} from 'pdfmake/interfaces';
 
 interface ReportDefinitionsOptions {
   name: string;
@@ -9,7 +13,7 @@ const styles: StyleDictionary = {
     fontSize: 22,
     bold: true,
     alignment: 'center',
-    margin: [0, 0, 0, 20],
+    margin: [0, 60, 0, 20],
   },
   body: {
     margin: [0, 0, 0, 70],
@@ -20,8 +24,21 @@ const styles: StyleDictionary = {
     fontSize: 14,
     bold: true,
     alignment: 'left',
-  }
-  
+  },
+  footer: {
+    fontSize: 10,
+    italics: true,
+    alignment: 'center',
+    margin: [0, 0, 0, 20],
+  },
+};
+
+const logo: Content = {
+  image: 'src/assets/toucan-code-logo.png',
+  width: 100,
+  height: 100,
+  alignment: 'center',
+  margin: [0, 0, 0, 20],
 };
 
 export const getEmploymentLetterReport = (
@@ -29,8 +46,19 @@ export const getEmploymentLetterReport = (
 ): TDocumentDefinitions => {
   const docDefinition: TDocumentDefinitions = {
     styles,
+    pageMargins: [40, 60, 40, 60],
+    pageSize: 'LETTER',
+    pageOrientation: 'portrait',
+    displayTitle: true,
     header: {
-        columns: ['1', '2', '3']
+      columns: [
+        logo,
+        {
+          text: new Date().toLocaleDateString(),
+          alignment: 'right',
+          margin: [20, 20],
+        },
+      ],
     },
     content: [
       { text: 'PROOF OF EMPLOYMENT', style: 'header' },
@@ -50,6 +78,10 @@ export const getEmploymentLetterReport = (
       { text: `[Company Name]`, style: 'signature' },
       { text: `[Issue Date]`, style: 'signature' },
     ],
+    footer: {
+      text: 'This document is proof of employment and does not represent an employment commitment.',
+      style: 'footer',
+    },
   };
 
   return docDefinition;
