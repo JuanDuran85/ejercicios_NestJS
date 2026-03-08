@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { TCreatedPdf, TDocumentDefinitions } from 'pdfmake/interfaces';
+import {
+  countries as Country,
+  employees as Employee,
+} from '../generated/prisma/client';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
 import {
@@ -36,11 +40,12 @@ export class BasicReportsService {
   public async getEmploymentLetterById(
     employeeId: number,
   ): Promise<TCreatedPdf> {
-    const employeeFound = await this.prismaService.employees.findUnique({
-      where: {
-        id: employeeId,
-      },
-    });
+    const employeeFound: Employee | null =
+      await this.prismaService.employees.findUnique({
+        where: {
+          id: employeeId,
+        },
+      });
 
     if (!employeeFound) throw new NotFoundException('Employee not found');
 
@@ -62,8 +67,18 @@ export class BasicReportsService {
     });
   }
 
-  public getCountriesReports(): TCreatedPdf {
-    const docDefinition: TDocumentDefinitions = getCountryReport();
+  public async getCountriesReports(): Promise<TCreatedPdf> {
+    const countriesFound: Country[] =
+      await this.prismaService.countries.findMany({
+        where: {
+          local_name: { not: null },
+        },
+      });
+    if (!countriesFound) throw new NotFoundException('Countries not found');
+
+    const docDefinition: TDocumentDefinitions = getCountryReport({
+      countries: countriesFound,
+    });
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,
