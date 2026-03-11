@@ -34,7 +34,9 @@ const styles: StyleDictionary = {
   },
 };
 
-export const getEmploymentLetterReport = (
+export const getEmploymentLetterReport: (
+  options?: ReportDefinitionsOptions | undefined,
+) => TDocumentDefinitions = (
   options?: ReportDefinitionsOptions,
 ): TDocumentDefinitions => {
   const docDefinition: TDocumentDefinitions = {

@@ -4,7 +4,9 @@ interface ReportDefinitionsOptions {
   name: string;
 }
 
-export const getFinalBasicReport = (
+export const getFinalBasicReport: (
+  options: ReportDefinitionsOptions,
+) => TDocumentDefinitions = (
   options: ReportDefinitionsOptions,
 ): TDocumentDefinitions => {
   const { name } = options;

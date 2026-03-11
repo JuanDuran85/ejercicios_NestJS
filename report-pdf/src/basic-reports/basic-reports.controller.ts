@@ -43,4 +43,15 @@ export class BasicReportsController {
     const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
     return response.send(result);
   }
+
+  @Get('countries')
+  public async getCountryReport(
+    @Res() response: Response,
+  ): Promise<Response<any, Record<string, any>>> {
+    const resultPdfCreated: TCreatedPdf =
+      await this.basicReportsService.getCountriesReports();
+    response.setHeader('Content-Type', 'application/pdf');
+    const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
+    return response.send(result);
+  }
 }
