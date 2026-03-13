@@ -1,16 +1,16 @@
-import type { TDocumentDefinitions } from 'pdfmake/interfaces';
-import { headerSection } from './sections/header.section';
-import { countries as Country} from '../generated/prisma/client';
+import type { PageSize, TDocumentDefinitions } from 'pdfmake/interfaces';
+import { countries as Country } from '../generated/prisma/client';
+import { FooterSection, headerSection } from './sections';
 
 interface ReportOptions {
   countries: Country[];
   title?: string;
   subtitle?: string;
 }
-export const getCountryReport: (options: ReportOptions) => TDocumentDefinitions = (
+export const getCountryReport: (
   options: ReportOptions,
-): TDocumentDefinitions => {
-  const {subtitle, title, countries} = options;
+) => TDocumentDefinitions = (options: ReportOptions): TDocumentDefinitions => {
+  const { subtitle, title, countries } = options;
 
   return {
     pageOrientation: 'landscape',
@@ -22,6 +22,8 @@ export const getCountryReport: (options: ReportOptions) => TDocumentDefinitions 
       showDate: true,
       subtitle: 'List of countries',
     }),
+    footer: (currentPage: number, pageCount: number, pageSize: PageSize) =>
+      FooterSection(currentPage, pageCount, pageSize),
     pageMargins: [40, 110, 40, 60],
     content: [
       {
