@@ -27,7 +27,7 @@ export const getCountryReport: (
     pageMargins: [40, 110, 40, 60],
     content: [
       {
-        layout: 'lightHorizontalLines',
+        layout: 'customLayout01',
         table: {
           headerRows: 1,
           widths: [50, 50, 50, '*', 'auto', '*'],
@@ -41,6 +41,7 @@ export const getCountryReport: (
               country.continent ?? '',
               country.local_name ?? '',
             ]),
+            ['', '', '', '', 'Total', countries.length.toString()],
           ],
         },
       },
