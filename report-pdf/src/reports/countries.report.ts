@@ -10,7 +10,7 @@ interface ReportOptions {
 export const getCountryReport: (
   options: ReportOptions,
 ) => TDocumentDefinitions = (options: ReportOptions): TDocumentDefinitions => {
-  const { subtitle, title, countries } = options;
+  const { countries } = options;
 
   return {
     pageOrientation: 'landscape',
@@ -41,6 +41,31 @@ export const getCountryReport: (
               country.continent ?? '',
               country.local_name ?? '',
             ]),
+          ],
+        },
+      },
+      {
+        layout: 'noBorders',
+        table: {
+          headerRows: 1,
+          widths: [50, 50, 50, '*', 'auto', '*'],
+          body: [
+            [
+              {
+                text: 'Total Countries',
+                colSpan: 3,
+                bold: true,
+              },
+              {},
+              {},
+              {
+                text: countries.length.toString(),
+                bold: true,
+                italics: true,
+              },
+              {},
+              {},
+            ],
           ],
         },
       },
