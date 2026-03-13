@@ -1,4 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
+import type { Response } from 'express';
+import type { TCreatedPdf } from 'pdfmake';
 import { StoreReportsService } from './store-reports.service';
 
 @Controller('store-reports')
@@ -8,7 +10,13 @@ export class StoreReportsController {
   @Get('orders/:orderId')
   public async getOrderReport(
     @Param('orderId') orderId: string,
-  ): Promise<string> {
-    return this.storeReportsService.getOrderReport(orderId);
+    @Res() response: Response,
+  ): Promise<Response<any, Record<string, any>>> {
+    const resultPdfCreated: TCreatedPdf =
+      await this.storeReportsService.getOrderReport(orderId.toString());
+
+    response.setHeader('Content-Type', 'application/pdf');
+    const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
+    return response.send(result);
   }
 }
