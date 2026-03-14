@@ -1,6 +1,6 @@
 export class DateFormatter {
   private static readonly formatter: Intl.DateTimeFormat =
-    new Intl.DateTimeFormat('es-ES', {
+    new Intl.DateTimeFormat('en-US', {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
