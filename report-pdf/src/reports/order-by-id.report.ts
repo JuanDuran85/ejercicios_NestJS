@@ -1,9 +1,11 @@
 import type {
-    Content,
-    StyleDictionary,
-    TDocumentDefinitions,
+  Content,
+  PageSize,
+  StyleDictionary,
+  TDocumentDefinitions,
 } from 'pdfmake/interfaces';
-import { DateFormatter } from '../helpers';
+import { CurrencyFormatterHelper, DateFormatter } from '../helpers';
+import { FooterSection } from './sections';
 
 const logo: Content = {
   image: 'src/assets/toucan-banner.png',
@@ -20,6 +22,12 @@ const styles: StyleDictionary = {
     alignment: 'left',
     margin: [0, 30, 0, 0],
   },
+  subheader: {
+    fontSize: 16,
+    bold: true,
+    alignment: 'left',
+    margin: [0, 10, 0, 0],
+  },
 };
 
 export const orderByIdReport = (): TDocumentDefinitions => {
@@ -30,6 +38,8 @@ export const orderByIdReport = (): TDocumentDefinitions => {
     displayTitle: true,
     header: logo,
     pageMargins: [40, 60, 40, 60],
+    footer: (currentPage: number, pageCount: number, pageSize: PageSize) =>
+      FooterSection(currentPage, pageCount, pageSize),
     content: [
       {
         text: 'Toucan Code',
@@ -41,12 +51,73 @@ export const orderByIdReport = (): TDocumentDefinitions => {
             text: '15 Montgomery Str, Suite 100, \nOttawa ON K2Y 9X1, CANADA\nBN: 1278367182\nhttps://devtalles.com',
           },
           {
-            text: `Ticket No#: 10255\nDate received: ${DateFormatter.getFormattedDateByDayMonthYear(new Date())}\nPayment by: ${DateFormatter.getFormattedDateByDayMonthYear(new Date())}`,
+            text: [
+              {
+                text: 'Ticket No#: 10255\n',
+                bold: true,
+                style: {
+                  fontSize: 12,
+                },
+              },
+              `Date received: ${DateFormatter.getFormattedDateByDayMonthYear(new Date())}\nPayment by: ${DateFormatter.getFormattedDateByDayMonthYear(new Date())}`,
+            ],
             alignment: 'right',
           },
         ],
       },
       { qr: 'http://alirafael.com', fit: 75, alignment: 'right' },
+      {
+        text: [
+          {
+            text: 'OrderCharge to: \n\n',
+            bold: true,
+            style: 'subheader',
+          },
+          `Company name: Richter Supermarket Michael Holz 
+          Grenzacherweg 237`,
+        ],
+      },
+      {
+        layout: 'headerLineOnly',
+        margin: [0, 20],
+        table: {
+          headerRows: 1,
+          widths: [50, '*', 'auto', 'auto', 'auto'],
+          body: [
+            ['ID', 'Description', 'Quantity', 'Unit Price', 'Total Price'],
+            [
+              '1',
+              'Product 1',
+              '2',
+              '$10.00',
+              {
+                text: CurrencyFormatterHelper.formatCurrency(630),
+                alignment: 'right',
+              },
+            ],
+            [
+              '2',
+              'Product 2',
+              '1',
+              '$15.00',
+              {
+                text: CurrencyFormatterHelper.formatCurrency(10),
+                alignment: 'right',
+              },
+            ],
+            [
+              '3',
+              'Product 3',
+              '3',
+              '$20.00',
+              {
+                text: CurrencyFormatterHelper.formatCurrency(56),
+                alignment: 'right',
+              },
+            ],
+          ],
+        },
+      },
     ],
   };
 };
