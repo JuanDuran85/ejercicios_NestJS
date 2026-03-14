@@ -7,6 +7,12 @@ import type {
 import { CurrencyFormatterHelper, DateFormatter } from '../helpers';
 import { FooterSection } from './sections';
 
+
+interface ReportValues {
+  title: string;
+}
+
+
 const logo: Content = {
   image: 'src/assets/toucan-banner.png',
   width: 100,
