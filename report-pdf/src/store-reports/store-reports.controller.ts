@@ -13,7 +13,7 @@ export class StoreReportsController {
     @Res() response: Response,
   ): Promise<Response<any, Record<string, any>>> {
     const resultPdfCreated: TCreatedPdf =
-      await this.storeReportsService.getOrderReport(orderId.toString());
+      await this.storeReportsService.getOrderReport(Number(orderId));
 
     response.setHeader('Content-Type', 'application/pdf');
     const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
