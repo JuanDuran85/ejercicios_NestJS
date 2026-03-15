@@ -3,7 +3,11 @@ import type { TCreatedPdf } from 'pdfmake';
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
-import { getBasicChartSvgReport, getStatisticsReport, orderByIdReport } from '../reports';
+import {
+  getBasicChartSvgReport,
+  getStatisticsReport,
+  orderByIdReport,
+} from '../reports';
 
 @Injectable()
 export class StoreReportsService {
@@ -61,8 +65,17 @@ export class StoreReportsService {
       take: 10,
     });
 
-    const docDefinition: TDocumentDefinitions = getStatisticsReport({
-      data: topCountry,});
+    if (!topCountry) throw new NotFoundException('Top country not found');
+
+    const topCountriesData = topCountry.map((country) => ({
+      country: country.country!,
+      customers: country._count,
+    }));
+
+    const docDefinition: TDocumentDefinitions = await getStatisticsReport({
+      topCountries: topCountriesData,
+    });
+
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,
