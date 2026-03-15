@@ -1,3 +1,4 @@
+export * from './basic-chart-svg.report';
 export * from './basic.report';
 export * from './countries.report';
 export * from './employment-letter-by-id.report';

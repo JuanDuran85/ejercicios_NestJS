@@ -3,8 +3,7 @@ import type { TCreatedPdf } from 'pdfmake';
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
-import { orderByIdReport } from '../reports';
-import { NotFoundError } from 'rxjs';
+import { getBasicChartSvgReport, getFinalBasicReport, orderByIdReport } from '../reports';
 
 @Injectable()
 export class StoreReportsService {
@@ -34,6 +33,15 @@ export class StoreReportsService {
     const docDefinition: TDocumentDefinitions = orderByIdReport({
       data: orderFound as any,
     });
+    return this.printerService.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
+  }
+
+  public async getSvgChart() {
+    const docDefinition: TDocumentDefinitions = await getBasicChartSvgReport();
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,
