@@ -4,7 +4,7 @@ import { chartJsToImage } from '../helpers';
 
 const svgContent: string = fs.readFileSync('src/assets/ford.svg', 'utf-8');
 
-const generateChartImage = async () => {
+const generateChartImage: () => Promise<string> = async () => {
   const chartConfig = {
     type: 'bar', // Show a bar chart
     data: {
@@ -22,8 +22,7 @@ const generateChartImage = async () => {
 };
 export const getBasicChartSvgReport: () => Promise<TDocumentDefinitions> =
   async (): Promise<TDocumentDefinitions> => {
-
-    const chart = await generateChartImage();
+    const chart: string = await generateChartImage();
 
     return {
       content: [
@@ -33,11 +32,11 @@ export const getBasicChartSvgReport: () => Promise<TDocumentDefinitions> =
           fit: [100, 100],
         },
         {
-            image: chart,
-            width: 500,
-            height: 300,
-            fit: [500, 300]
-        }
+          image: chart,
+          width: 500,
+          height: 300,
+          fit: [500, 300],
+        },
       ],
     };
   };
