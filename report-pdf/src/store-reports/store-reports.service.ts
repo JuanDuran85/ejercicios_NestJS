@@ -30,9 +30,10 @@ export class StoreReportsService {
 
     if (!orderFound)
       throw new NotFoundException(`Order with id ${orderId} not found`);
-    console.debug(JSON.stringify(orderFound, null, 2));
 
-    const docDefinition: TDocumentDefinitions = orderByIdReport();
+    const docDefinition: TDocumentDefinitions = orderByIdReport({
+      data: orderFound as any,
+    });
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,
