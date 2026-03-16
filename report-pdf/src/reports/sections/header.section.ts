@@ -14,8 +14,8 @@ const currentDate: Column = {
   text: DateFormatter.getFormattedDateByDayMonthYear(new Date()),
   alignment: 'right',
   margin: [20, 30],
-  width: 150,
-  fontSize: 10,
+  width: 100,
+  fontSize: 7,
   bold: false,
 };
 
@@ -58,7 +58,7 @@ export const headerSection = (options: HeaderOptions): Content => {
         margin: [0, 2, 0, 0],
         style: {
           fontSize: 12,
-          bold: true,
+          bold: false,
         },
       }
     : null;

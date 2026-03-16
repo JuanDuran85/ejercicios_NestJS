@@ -6,6 +6,7 @@ import { BasicReportsModule } from './basic-reports/basic-reports.module';
 import { PrinterModule } from './printer/printer.module';
 import { PrismaService } from './prisma.service';
 import { StoreReportsModule } from './store-reports/store-reports.module';
+import { ExtraReportModule } from './extra-report/extra-report.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { StoreReportsModule } from './store-reports/store-reports.module';
     BasicReportsModule,
     PrinterModule,
     StoreReportsModule,
+    ExtraReportModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

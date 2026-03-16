@@ -3,8 +3,11 @@ import type { TCreatedPdf } from 'pdfmake';
 import type { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
-import { orderByIdReport } from '../reports';
-import { NotFoundError } from 'rxjs';
+import {
+  getBasicChartSvgReport,
+  getStatisticsReport,
+  orderByIdReport,
+} from '../reports';
 
 @Injectable()
 export class StoreReportsService {
@@ -30,9 +33,49 @@ export class StoreReportsService {
 
     if (!orderFound)
       throw new NotFoundException(`Order with id ${orderId} not found`);
-    console.debug(JSON.stringify(orderFound, null, 2));
 
-    const docDefinition: TDocumentDefinitions = orderByIdReport();
+    const docDefinition: TDocumentDefinitions = orderByIdReport({
+      data: orderFound as any,
+    });
+    return this.printerService.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
+  }
+
+  public async getSvgChart(): Promise<TCreatedPdf> {
+    const docDefinition: TDocumentDefinitions = await getBasicChartSvgReport();
+    return this.printerService.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
+  }
+
+  public async getStatistics() {
+    const topCountry = await this.prismaService.customers.groupBy({
+      by: ['country'],
+      _count: true,
+      orderBy: {
+        _count: {
+          country: 'desc',
+        },
+      },
+      take: 10,
+    });
+
+    if (!topCountry) throw new NotFoundException('Top country not found');
+
+    const topCountriesData = topCountry.map((country) => ({
+      country: country.country!,
+      customers: country._count,
+    }));
+
+    const docDefinition: TDocumentDefinitions = await getStatisticsReport({
+      topCountries: topCountriesData,
+    });
+
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
       bufferPages: true,

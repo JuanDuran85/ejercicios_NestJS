@@ -19,4 +19,28 @@ export class StoreReportsController {
     const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
     return response.send(result);
   }
+
+  @Get('svgs-charts')
+  public async getSvgChartsReport(
+    @Res() response: Response,
+  ): Promise<Response<any, Record<string, any>>> {
+    const resultPdfCreated: TCreatedPdf =
+      await this.storeReportsService.getSvgChart();
+
+    response.setHeader('Content-Type', 'application/pdf');
+    const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
+    return response.send(result);
+  }
+
+  @Get('statistics')
+  public async statistics(
+    @Res() response: Response,
+  ): Promise<Response<any, Record<string, any>>> {
+    const resultPdfCreated: TCreatedPdf =
+      await this.storeReportsService.getStatistics();
+
+    response.setHeader('Content-Type', 'application/pdf');
+    const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
+    return response.send(result);
+  }
 }
