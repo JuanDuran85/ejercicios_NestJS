@@ -1,6 +1,6 @@
-import type { TDocumentDefinitions } from 'pdfmake/interfaces';
-import { getDonutChart, getLineChart } from './charts';
-import { headerSection } from './sections';
+import type { PageSize, TDocumentDefinitions } from 'pdfmake/interfaces';
+import { getBarsChart, getDonutChart, getLineChart } from './charts';
+import { FooterSection, headerSection } from './sections';
 
 interface TopCountry {
   country: string;
@@ -17,7 +17,7 @@ export const getStatisticsReport: (
 ) => Promise<TDocumentDefinitions> = async (
   options: ReportOptions,
 ): Promise<TDocumentDefinitions> => {
-  const [donutChart, lineChart] = await Promise.all([
+  const [donutChart, lineChart, barChar01, barChar02] = await Promise.all([
     getDonutChart({
       entries: options.topCountries.map((country: TopCountry) => ({
         label: country.country,
@@ -26,6 +26,8 @@ export const getStatisticsReport: (
       position: 'left',
     }),
     getLineChart(),
+    getBarsChart(),
+    getBarsChart(),
   ]);
 
   const docDefinition: TDocumentDefinitions = {
@@ -37,6 +39,8 @@ export const getStatisticsReport: (
       title: options.title ?? 'Customers Statistics',
       subtitle: options.subtitle ?? 'Top 10 countries with the most customers',
     }),
+    footer: (currentPage: number, pageCount: number, pageSize: PageSize) =>
+          FooterSection(currentPage, pageCount, pageSize),
     content: [
       {
         columns: [
@@ -47,13 +51,13 @@ export const getStatisticsReport: (
                 alignment: 'center',
                 margin: [0, 0, 0, 10],
                 style: {
-                  fontSize: 16,
+                  fontSize: 14,
                   bold: true,
                 },
               },
               {
                 image: donutChart,
-                width: 350,
+                width: 300,
               },
             ],
           },
@@ -77,7 +81,20 @@ export const getStatisticsReport: (
       {
         image: lineChart,
         width: 500,
-        margin: [0, 30],
+        margin: [0, 20],
+      },
+      {
+        columnGap: 10,
+        columns: [
+          {
+            image: barChar01,
+            width: 250,
+          },
+          {
+            image: barChar02,
+            width: 250
+          },
+        ],
       },
     ],
   };

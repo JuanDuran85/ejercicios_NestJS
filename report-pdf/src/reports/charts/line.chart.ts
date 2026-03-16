@@ -32,7 +32,7 @@ export const getLineChart: () => Promise<string> = async (): Promise<string> => 
   };
 
   return Utils.chartJsToImage(config, {
-    width: 500,
+    width: 450,
     height: 200,
   });
 };
