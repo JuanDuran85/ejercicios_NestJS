@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import type { TCreatedPdf } from 'pdfmake';
+import type { TCreatedPdf, TDocumentDefinitions } from 'pdfmake';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
-import { getFinalBasicReport } from '../reports';
+import { getFinalBasicReport, headerSection } from '../reports';
 import fs from 'node:fs';
+import { getHtmlContent } from 'src/helpers';
 
 @Injectable()
 export class ExtraReportService {
@@ -13,8 +14,15 @@ export class ExtraReportService {
   ) {}
   public getHtmlReport(): TCreatedPdf {
     const htmlFile: string = fs.readFileSync('src/reports/html/basic-01.html', 'utf8');
-    console.debug(htmlFile);
-    const docDefinition = getFinalBasicReport({ name: 'John Doe' });
+    const content: Content = getHtmlContent();
+
+    const docDefinition: TDocumentDefinitions = {
+      header: headerSection({
+        title: 'HTML to Pdf',
+        subtitle: 'HTML to PDF Converter'
+      }),
+      content
+    }
 
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
