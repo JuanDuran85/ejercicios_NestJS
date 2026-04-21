@@ -41,8 +41,6 @@ export class ExtraReportService {
   }
 
   public getCommunityReport(): TCreatedPdf {
-    
-
     const docDefinition: TDocumentDefinitions = {
       pageMargins: [40, 120, 40, 60],
       header: headerSection({
@@ -50,7 +48,7 @@ export class ExtraReportService {
         subtitle: 'HTML to PDF Converter',
       }),
       footer: FooterSection,
-      content,
+      content: ['Community report message test'],
     };
 
     return this.printerService.createPdf(docDefinition, {

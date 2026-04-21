@@ -5,7 +5,9 @@ interface ReportDefinitionsOptions {
 }
 
 export const getCommunityReport = (): TDocumentDefinitions => {
-  const docDefinition: TDocumentDefinitions = {
+    
+  
+    const docDefinition: TDocumentDefinitions = {
     content: ['Community report message test'],
     styles: {
       header: {
