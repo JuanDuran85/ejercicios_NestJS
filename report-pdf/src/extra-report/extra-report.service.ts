@@ -47,6 +47,7 @@ export class ExtraReportService {
         {
           columns: [
             {
+              margin: [-5, -20],
               image: 'src/assets/toucan-code-logo.png',
               width: 100,
             },
@@ -76,6 +77,67 @@ export class ExtraReportService {
               },
             },
           ],
+        },
+        {
+          margin: [0, 25],
+          canvas: [
+            {
+              type: 'line',
+              x1: 0,
+              y1: 0,
+              x2: 515,
+              y2: 5,
+              lineWidth: 2,
+              lineColor: '#3A4546',
+            },
+          ],
+        },
+        {
+          table: {
+            widths: ['auto', '*', 'auto', '*'],
+            body: [
+              [
+                {
+                  text: 'Client information',
+                  fillColor: '#5775D1',
+                  color: '#ffffff',
+                  bold: true,
+                  alignment: 'center',
+                  colSpan: 4,
+                  border: [false, false, false, false],
+                },
+                {},
+                {},
+                {},
+              ],
+              [
+                {
+                  text: 'Company Identification',
+                  fillColor: '#343a40',
+                  color: '#ffffff',
+                  bold: true,
+                  alignment: 'left',
+                },
+                {
+                  text: 'Name',
+                  bold: true,
+                  alignment: 'left',
+                },
+                {
+                  text: 'Direction',
+                  fillColor: '#343a40',
+                  color: '#ffffff',
+                  bold: true,
+                  alignment: 'left',
+                },
+                {
+                  text: 'Company information',
+                  bold: true,
+                  alignment: 'left',
+                },
+              ],
+            ],
+          },
         },
       ],
     };
