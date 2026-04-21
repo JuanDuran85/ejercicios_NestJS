@@ -13,6 +13,7 @@ export class ExtraReportService {
     private readonly prismaService: PrismaService,
     private readonly printerService: PrinterService,
   ) {}
+
   public getHtmlReport(): TCreatedPdf {
     const htmlFile: string = fs.readFileSync(
       'src/reports/html/basic-03.html',
@@ -42,13 +43,41 @@ export class ExtraReportService {
 
   public getCommunityReport(): TCreatedPdf {
     const docDefinition: TDocumentDefinitions = {
-      pageMargins: [40, 120, 40, 60],
-      header: headerSection({
-        title: 'HTML to Pdf',
-        subtitle: 'HTML to PDF Converter',
-      }),
-      footer: FooterSection,
-      content: ['Community report message test'],
+      content: [
+        {
+          columns: [
+            {
+              image: 'src/assets/toucan-code-logo.png',
+              width: 100,
+            },
+            {
+              alignment: 'center',
+              text: 'Forest Admin Community SAP\n RUT: 44.123.1233\n Row Street 1234\n Phone Number: 323.3123.123',
+            },
+            {
+              alignment: 'right',
+              width: 140,
+              layout: 'borderBlue',
+              table: {
+                body: [
+                  [
+                    {
+                      layout: 'noBorders',
+                      table: {
+                        body: [
+                          ['No. Order:', '123-45676'],
+                          ['Date:', '2026-04-20'],
+                          ['Version:', '2026-001'],
+                        ],
+                      },
+                    },
+                  ],
+                ],
+              },
+            },
+          ],
+        },
+      ],
     };
 
     return this.printerService.createPdf(docDefinition, {
