@@ -15,7 +15,7 @@ export class ExtraReportService {
   ) {}
   public getHtmlReport(): TCreatedPdf {
     const htmlFile: string = fs.readFileSync(
-      'src/reports/html/basic-02.html',
+      'src/reports/html/basic-03.html',
       'utf8',
     );
     const content: Content = getHtmlContent(htmlFile, {
