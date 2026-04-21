@@ -39,4 +39,24 @@ export class ExtraReportService {
       fontLayoutCache: true,
     });
   }
+
+  public getCommunityReport(): TCreatedPdf {
+    
+
+    const docDefinition: TDocumentDefinitions = {
+      pageMargins: [40, 120, 40, 60],
+      header: headerSection({
+        title: 'HTML to Pdf',
+        subtitle: 'HTML to PDF Converter',
+      }),
+      footer: FooterSection,
+      content,
+    };
+
+    return this.printerService.createPdf(docDefinition, {
+      autoPrint: true,
+      bufferPages: true,
+      fontLayoutCache: true,
+    });
+  }
 }
