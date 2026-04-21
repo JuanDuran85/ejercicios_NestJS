@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import type { TCreatedPdf, TDocumentDefinitions } from 'pdfmake';
+import fs from 'node:fs';
+import type { Content, TCreatedPdf } from 'pdfmake';
+import { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { getHtmlContent } from 'src/helpers';
 import { PrinterService } from '../printer/printer.service';
 import { PrismaService } from '../prisma.service';
-import { getFinalBasicReport, headerSection } from '../reports';
-import fs from 'node:fs';
-import { getHtmlContent } from 'src/helpers';
+import { FooterSection, headerSection } from '../reports';
 
 @Injectable()
 export class ExtraReportService {
@@ -13,16 +14,24 @@ export class ExtraReportService {
     private readonly printerService: PrinterService,
   ) {}
   public getHtmlReport(): TCreatedPdf {
-    const htmlFile: string = fs.readFileSync('src/reports/html/basic-01.html', 'utf8');
-    const content: Content = getHtmlContent();
+    const htmlFile: string = fs.readFileSync(
+      'src/reports/html/basic-02.html',
+      'utf8',
+    );
+    const content: Content = getHtmlContent(htmlFile, {
+      client: 'Client name',
+      title: 'My title',
+    });
 
     const docDefinition: TDocumentDefinitions = {
+      pageMargins: [40, 120, 40, 60],
       header: headerSection({
         title: 'HTML to Pdf',
-        subtitle: 'HTML to PDF Converter'
+        subtitle: 'HTML to PDF Converter',
       }),
-      content
-    }
+      footer: FooterSection,
+      content,
+    };
 
     return this.printerService.createPdf(docDefinition, {
       autoPrint: true,
