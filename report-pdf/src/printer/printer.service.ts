@@ -61,10 +61,18 @@ export class PrinterService {
             return '#a0c3ee';
           }
 
-          if(i === node.table.body.length - 1){
+          if (i === node.table.body.length - 1) {
             return '#a0c3ee';
           }
           return i % 2 ? '#f4f4f4' : '#ffffff';
+        },
+      },
+      borderBlue: {
+        hLineColor: function () {
+          return '#5f96d4';
+        },
+        vLineColor: function () {
+          return '#5f96d4';
         },
       },
     };

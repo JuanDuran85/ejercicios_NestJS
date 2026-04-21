@@ -16,7 +16,20 @@ export class ExtraReportController {
     response.setHeader('Content-Type', 'application/pdf');
 
     const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
-    
+
+    return response.send(result);
+  }
+
+  @Get('community-report')
+  public async getCommunityReports(
+    @Res() response: Response,
+  ): Promise<Response<any, Record<string, any>>> {
+    const resultPdfCreated: TCreatedPdf =
+      this.extraReportService.getCommunityReport();
+    response.setHeader('Content-Type', 'application/pdf');
+
+    const result: Buffer<ArrayBufferLike> = await resultPdfCreated.getBuffer();
+
     return response.send(result);
   }
 }
