@@ -182,3 +182,6 @@ report-pdf/pgadmin
 
 
 /generated/prisma
+.kilo
+.kilocode
+.vscode
