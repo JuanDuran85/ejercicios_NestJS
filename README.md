@@ -88,6 +88,12 @@ A pipe is a class annotated with the @Injectable() decorator, which implements t
         nest g resource
    ```
 
+8. To generate a new app inside a repository (microservice)
+
+   ```bash
+        nest g app name_app_service
+   ```
+
 # Using Docker PostgreSQL
 
 1. Start container
