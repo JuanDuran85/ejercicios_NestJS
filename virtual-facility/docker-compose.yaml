@@ -1,0 +1,29 @@
+services:
+  workflows-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - APP_NAME=workflows-service
+    command: npm run start:dev -- workflows-service
+    environment:
+      WF_POSTGRES_HOST: ${DB_HOST}
+      WF_POSTGRES_PORT: ${DB_PORT}
+      WF_POSTGRES_USER: ${DB_USERNAME}
+      WF_POSTGRES_PASSWORD: ${DB_PASSWORD}
+      WF_POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./app/workflows-service/src:/usr/src/app/apps/workflows-service
+    depends_on:
+      - workflows-db
+
+  workflows-db:
+    image: postgres:17
+    environment:
+      WF_POSTGRES_USER: ${DB_USERNAME}
+      WF_POSTGRES_PASSWORD: ${DB_PASSWORD}
+      WF_POSTGRES_DB: ${DB_NAME}
+      
