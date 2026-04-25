@@ -7,8 +7,8 @@ services:
         - APP_NAME=workflows-service
     command: npm run start:dev -- workflows-service
     environment:
-      POSTGRES_HOST: ${WF_POSTGRES_DB_HOST}
-      POSTGRES_PORT: ${WF_POSTGRES_DB_PORT}
+      POSTGRES_HOST: workflows-db
+      POSTGRES_PORT: 5432
       POSTGRES_USER: ${WF_POSTGRES_DB_USERNAME}
       POSTGRES_PASSWORD: ${WF_POSTGRES_DB_PASSWORD}
       POSTGRES_DB: ${WF_POSTGRES_DB_NAME}
@@ -19,15 +19,28 @@ services:
       - ./node_modules:/usr/src/app/node_modules
       - ./apps/workflows-service/src:/usr/src/app/apps/workflows-service/src
     depends_on:
-      - workflows-db
+      workflows-db:
+        condition: service_healthy
+    networks:
+      - app-network
 
   workflows-db:
     image: postgres:17
+    ports:
+      - '5432:5432'
     environment:
       POSTGRES_USER: ${WF_POSTGRES_DB_USERNAME}
       POSTGRES_PASSWORD: ${WF_POSTGRES_DB_PASSWORD}
       POSTGRES_DB: ${WF_POSTGRES_DB_NAME}
-  
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      - app-network
+
   virtual-facility:
     build:
       context: .
@@ -38,8 +51,8 @@ services:
     ports:
       - 3000:3000
     environment:
-      POSTGRES_HOST: ${VF_POSTGRES_DB_HOST}
-      POSTGRES_PORT: ${VF_POSTGRES_DB_PORT}
+      POSTGRES_HOST: virtual-facility-db
+      POSTGRES_PORT: 5432
       POSTGRES_USER: ${VF_POSTGRES_DB_USERNAME}
       POSTGRES_PASSWORD: ${VF_POSTGRES_DB_PASSWORD}
       POSTGRES_DB: ${VF_POSTGRES_DB_NAME}
@@ -50,12 +63,32 @@ services:
       - ./node_modules:/usr/src/app/node_modules
       - ./apps/virtual-facility/src:/usr/src/app/apps/virtual-facility/src
     depends_on:
-      - virtual-facility-db
-      - workflows-service
+      virtual-facility-db:
+        condition: service_healthy
+      workflows-service:
+        condition: service_started
+    networks:
+      - app-network
 
   virtual-facility-db:
     image: postgres:17
+    ports:
+      - '5433:5432'
     environment:
       POSTGRES_USER: ${VF_POSTGRES_DB_USERNAME}
       POSTGRES_PASSWORD: ${VF_POSTGRES_DB_PASSWORD}
       POSTGRES_DB: ${VF_POSTGRES_DB_NAME}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    networks:
+      app-network:
+        aliases:
+          - virtual-facility-db
+
+networks:
+  app-network:
+    driver: bridge

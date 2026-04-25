@@ -3,18 +3,32 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BuildingsModule } from './buildings/buildings.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.VF_POSTGRES_DB_HOST,
-      port: Number(process.env.VF_POSTGRES_DB_PORT),
-      username: process.env.VF_POSTGRES_DB_USERNAME,
-      password: process.env.VF_POSTGRES_DB_PASSWORD,
-      database: process.env.VF_POSTGRES_DB_NAME,
-      synchronize: true,
-      autoLoadEntities: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres' as const,
+        host: configService.get<string>('VF_POSTGRES_DB_HOST'),
+        port: parseInt(configService.get('VF_POSTGRES_DB_PORT') || '5433', 10),
+        username: configService.get<string>('VF_POSTGRES_DB_USERNAME'),
+        password: configService.get<string>('VF_POSTGRES_DB_PASSWORD'),
+        database: configService.get<string>('VF_POSTGRES_DB_NAME'),
+        synchronize: true,
+        autoLoadEntities: true,
+        logging: true,
+        logger: 'debug',
+        retryAttempts: 10,
+        retryDelay: 5000,
+        connectTimeout: 10000,
+      }),
     }),
     BuildingsModule,
   ],
