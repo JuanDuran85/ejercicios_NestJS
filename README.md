@@ -143,7 +143,7 @@ If you are using Yarn:
 
 # Additional Installations
 
-1. To take advantage of express typings (as in request: Request), you can install the @types/express package.
+1. To take advantage of express typing (as in request: Request), you can install the @types/express package.
 
    ```
         yarn add @types/express
