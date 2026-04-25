@@ -7,11 +7,11 @@ services:
         - APP_NAME=workflows-service
     command: npm run start:dev -- workflows-service
     environment:
-      WF_POSTGRES_HOST: ${DB_HOST}
-      WF_POSTGRES_PORT: ${DB_PORT}
-      WF_POSTGRES_USER: ${DB_USERNAME}
-      WF_POSTGRES_PASSWORD: ${DB_PASSWORD}
-      WF_POSTGRES_DB: ${DB_NAME}
+      WF_POSTGRES_DB_HOST: ${WF_POSTGRES_DB_HOST}
+      WF_POSTGRES_DB_PORT: ${WF_POSTGRES_DB_PORT}
+      WF_POSTGRES_DB_USER: ${WF_POSTGRES_DB_USER}
+      WF_POSTGRES_DB_PASSWORD: ${WF_POSTGRES_DB_PASSWORD}
+      WF_POSTGRES_DB_NAME: ${WF_POSTGRES_DB_NAME}
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -23,7 +23,7 @@ services:
   workflows-db:
     image: postgres:17
     environment:
-      WF_POSTGRES_USER: ${DB_USERNAME}
-      WF_POSTGRES_PASSWORD: ${DB_PASSWORD}
-      WF_POSTGRES_DB: ${DB_NAME}
+      WF_POSTGRES_DB_USER: ${WF_POSTGRES_DB_USER}
+      WF_POSTGRES_DB_PASSWORD: ${WF_POSTGRES_DB_PASSWORD}
+      WF_POSTGRES_DB_NAME: ${WF_POSTGRES_DB_NAME}
       
