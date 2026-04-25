@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateBuildingDto } from './dto/create-building.dto';
 import { UpdateBuildingDto } from './dto/update-building.dto';
 import { Building } from './entities/building.entity';
+import { CreateWorkflowDto } from '@app/workflows';
 
 @Injectable()
 export class BuildingsService {
@@ -57,7 +58,7 @@ export class BuildingsService {
       JSON.stringify({
         name: 'My workflow',
         buildingId,
-      }),
+      } as CreateWorkflowDto),
     );
 
     const response: Response = await fetch(
