@@ -185,6 +185,8 @@ report-pdf/pgadmin
 .kilo
 .kilocode
 .vscode
+
+# MICROSERVICE
 microservices_repo/products-app/products-ms/prisma/migrations
 microservices_repo/products-app/products-ms/dev.db-shm
 microservices_repo/products-app/products-ms/dev.db-wal
