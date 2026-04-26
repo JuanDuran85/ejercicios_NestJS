@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -27,8 +28,8 @@ export class ProductsController {
   }
 
   @Get(':id')
-  public findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  public findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
@@ -40,7 +41,7 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  public remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  public remove(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.remove(id);
   }
 }
