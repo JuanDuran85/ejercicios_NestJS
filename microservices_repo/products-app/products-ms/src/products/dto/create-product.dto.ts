@@ -12,11 +12,11 @@ export class CreateProductDto {
   @IsString()
   @MinLength(1)
   @IsNotEmpty()
-  public name: string;
+  name: string;
 
   @IsString()
   @MinLength(2)
-  public description: string;
+  description: string;
 
   @IsNumber({
     maxDecimalPlaces: 4,
@@ -26,7 +26,7 @@ export class CreateProductDto {
   @Min(0)
   @IsPositive()
   @Type(() => Number)
-  public price: number;
+  price: number;
 
   constructor(name: string, description: string, price: number) {
     this.name = name;
