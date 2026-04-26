@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as UuidV4 } from 'uuid';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -6,31 +6,44 @@ import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
+  private products: Product[] = [];
 
-  private readonly products: Product[] = [];
+  constructor() {}
 
-  constructor(){}
-
-  public create(createProductDto: CreateProductDto) {
-    const {name, price, description} = createProductDto;
-    const newProduct: Product = new Product(UuidV4(), name, description || '', price);
+  public create(createProductDto: CreateProductDto): Product {
+    const { name, price, description } = createProductDto;
+    const newProduct: Product = new Product(
+      UuidV4(),
+      name,
+      description || '',
+      price,
+    );
     this.products.push(newProduct);
     return newProduct;
   }
 
-  public findAll() {
-    return `This action returns all products`;
+  public findAll(): Product[] {
+    return this.products;
   }
 
-  public findOne(id: number) {
-    return `This action returns a #${id} product`;
+  public findOne(id: string): Product | undefined {
+    const productFound: Product | undefined = this.products.find(
+      (product: Product) => product.id === id,
+    );
+    if (!productFound)
+      throw new NotFoundException(`Product with id ${id} not found`);
+    return productFound;
   }
 
   public update(id: number, updateProductDto: UpdateProductDto) {
     return `This action updates a #${id} product`;
   }
 
-  public remove(id: number) {
-    return `This action removes a #${id} product`;
+  public remove(id: string): Product {
+    const productFound: Product = this.findOne(id)!;
+    this.products = this.products.filter(
+      (product: Product) => product.id !== id,
+    );
+    return productFound;
   }
 }
