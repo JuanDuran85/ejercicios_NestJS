@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto, UpdateProductDto } from './dto';
 
 @Injectable()
 export class ProductsService {
@@ -16,7 +15,7 @@ export class ProductsService {
   }
 
   public findAll() {
-    return `This action returns all products`;
+    return this.prismaService.product.findMany();
   }
 
   public findOne(id: number) {

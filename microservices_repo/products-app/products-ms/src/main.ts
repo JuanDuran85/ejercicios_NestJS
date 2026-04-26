@@ -1,9 +1,10 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { envs } from './config';
 
 async function bootstrap() {
+  const logger: Logger = new Logger('Bootstrap');
   const app: INestApplication<any> = await NestFactory.create(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,6 +18,6 @@ async function bootstrap() {
   );
   const port: number = envs.port || 3000;
   await app.listen(port);
-  console.debug(`App running on port: ${port} `);
+  logger.log(`App running on port: ${port} `);
 }
 bootstrap();
