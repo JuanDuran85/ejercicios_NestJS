@@ -23,8 +23,7 @@ export class ProductsController {
 
   @Get()
   public findAll(@Query() paginationDto: PaginationDto) {
-    console.debug({ paginationDto});
-    return this.productsService.findAll();
+    return this.productsService.findAll(paginationDto);
   }
 
   @Get(':id')
