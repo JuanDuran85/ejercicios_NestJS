@@ -1,13 +1,17 @@
-import "dotenv/config";
-import * as joi from "joi";
+import 'dotenv/config';
+import * as joi from 'joi';
 
 interface EnvVars {
   PORT: number;
+  PRODUCT_MICROSERVICE_HOST: string;
+  PRODUCT_MICROSERVICE_PORT: number;
 }
 
 export const envSchema: joi.ObjectSchema<EnvVars> = joi
   .object({
     PORT: joi.number().required(),
+    PRODUCT_MICROSERVICE_HOST: joi.string().required(),
+    PRODUCT_MICROSERVICE_PORT: joi.number().required(),
   })
   .unknown(true);
 
@@ -21,6 +25,6 @@ export const envVars: EnvVars = value;
 
 export const envs = {
   port: envVars.PORT,
+  productMicroserviceHost: envVars.PRODUCT_MICROSERVICE_HOST,
+  productMicroservicePort: envVars.PRODUCT_MICROSERVICE_PORT,
 };
-
-
