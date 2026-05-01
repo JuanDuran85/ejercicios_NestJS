@@ -6,12 +6,13 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, Observable } from 'rxjs';
 import { ORDER_SERVICE } from '../config';
-import { CreateOrderDto } from './dto';
-import { OrderClient } from './interfaces';
+import { CreateOrderDto, OrderPaginationDto } from './dto';
+import { AllFilterOrderResponse, OrderClient } from './interfaces';
 
 @Controller('orders')
 export class OrdersController {
@@ -32,8 +33,10 @@ export class OrdersController {
   }
 
   @Get()
-  public findAll(): Observable<OrderClient> {
-    return this.orderClient.send('findAllOrders', {}).pipe(
+  public findAll(
+    @Query() orderPaginationDto: OrderPaginationDto,
+  ): Observable<AllFilterOrderResponse> {
+    return this.orderClient.send('findAllOrders', orderPaginationDto).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
       }),
