@@ -1,6 +1,7 @@
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { RpcCustomExceptionFilter } from './common';
 import { envs } from './config';
 
 async function bootstrap() {
@@ -18,6 +19,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.useGlobalFilters(new RpcCustomExceptionFilter());
   await app.listen(port ?? 3000);
   logger.log(`Gateway running on port ${port}`);
 }
