@@ -1,4 +1,4 @@
-import { INestMicroservice, Logger } from '@nestjs/common';
+import { INestMicroservice, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
@@ -16,6 +16,16 @@ async function bootstrap() {
         retryDelay: 3000,
       },
     });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
   await app.listen();
   logger.log(`Order Microservice running on port ${port}`);
 }
