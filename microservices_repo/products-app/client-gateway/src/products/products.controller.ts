@@ -57,8 +57,8 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  public deleteOneProductById(@Param('id') id: string) {
-    return this.productClient.send({ cmd: 'delete_products' }, { id }).pipe(
+  public deleteOneProductById(@Param('id', ParseIntPipe) id: number) {
+    return this.productClient.send({ cmd: 'delete_products' }, {id}).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
       }),
