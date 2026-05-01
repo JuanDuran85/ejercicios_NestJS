@@ -5,6 +5,7 @@ import {
   Inject,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -65,6 +66,20 @@ export class OrdersController {
         ...paginationDto,
         status: statusDto.status,
       })
+      .pipe(
+        catchError((error) => {
+          throw new RpcException(error as unknown as object);
+        }),
+      );
+  }
+
+  @Patch(':id')
+  public changeStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() statusDto: StatusDto,
+  ): Observable<OrderClient> {
+    return this.orderClient
+      .send('changeOrderStatus', { id, status: statusDto.status })
       .pipe(
         catchError((error) => {
           throw new RpcException(error as unknown as object);
