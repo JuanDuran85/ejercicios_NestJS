@@ -4,13 +4,14 @@ import {
   Get,
   Inject,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { catchError } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { ORDER_SERVICE } from '../config';
 import { CreateOrderDto } from './dto';
+import { OrderClient } from './interfaces';
 
 @Controller('orders')
 export class OrdersController {
@@ -20,7 +21,9 @@ export class OrdersController {
   ) {}
 
   @Post()
-  public create(@Body() createOrderDto: CreateOrderDto) {
+  public create(
+    @Body() createOrderDto: CreateOrderDto,
+  ): Observable<OrderClient> {
     return this.orderClient.send('createOrder', createOrderDto).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
@@ -29,7 +32,7 @@ export class OrdersController {
   }
 
   @Get()
-  public findAll() {
+  public findAll(): Observable<OrderClient> {
     return this.orderClient.send('findAllOrders', {}).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
@@ -38,8 +41,10 @@ export class OrdersController {
   }
 
   @Get(':id')
-  public findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.orderClient.send('findOneOrder', {id}).pipe(
+  public findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Observable<OrderClient> {
+    return this.orderClient.send('findOneOrder', { id }).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
       }),

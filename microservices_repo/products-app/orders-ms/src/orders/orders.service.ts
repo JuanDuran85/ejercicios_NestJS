@@ -1,20 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { PrismaService } from '../prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderClient } from './interfaces';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  public create(createOrderDto: CreateOrderDto) {
-    return createOrderDto;
+  public create(createOrderDto: CreateOrderDto): Promise<OrderClient> {
+    return this.prismaService.order.create({
+      data: createOrderDto,
+    });
   }
 
-  public findAll() {
+  public findAll(): Promise<OrderClient[]> {
     return this.prismaService.order.findMany({});
   }
 
-  public findOne(id: number) {
-    return `This action returns a #${id} order`;
+  public async findOne(id: string): Promise<OrderClient | null> {
+    const order: OrderClient | null = await this.prismaService.order.findFirst({
+      where: { id },
+    });
+
+    if (!order) {
+      throw new RpcException({
+        message: 'Order not found',
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+
+    return order;
   }
 }
