@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, Observable } from 'rxjs';
+import { PaginationDto } from '../common';
 import { ORDER_SERVICE } from '../config';
-import { CreateOrderDto, OrderPaginationDto } from './dto';
+import { CreateOrderDto, OrderPaginationDto, StatusDto } from './dto';
 import { AllFilterOrderResponse, OrderClient } from './interfaces';
 
 @Controller('orders')
@@ -43,7 +44,7 @@ export class OrdersController {
     );
   }
 
-  @Get(':id')
+  @Get('id/:id')
   public findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Observable<OrderClient> {
@@ -52,5 +53,22 @@ export class OrdersController {
         throw new RpcException(error as unknown as object);
       }),
     );
+  }
+
+  @Get(':status')
+  public findAllByStatus(
+    @Param() statusDto: StatusDto,
+    @Query() paginationDto: PaginationDto,
+  ): Observable<AllFilterOrderResponse> {
+    return this.orderClient
+      .send('findAllOrders', {
+        ...paginationDto,
+        status: statusDto.status,
+      })
+      .pipe(
+        catchError((error) => {
+          throw new RpcException(error as unknown as object);
+        }),
+      );
   }
 }
