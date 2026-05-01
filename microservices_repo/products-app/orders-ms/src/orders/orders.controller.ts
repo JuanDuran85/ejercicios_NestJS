@@ -19,7 +19,7 @@ export class OrdersController {
   }
 
   @MessagePattern('findOneOrder')
-  public findOne(@Payload() id: number) {
+  public findOne(@Payload('id') id: number) {
     return this.ordersService.findOne(id);
   }
 
