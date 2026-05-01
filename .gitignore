@@ -192,3 +192,4 @@ microservices_repo/products-app/products-ms/dev.db-shm
 microservices_repo/products-app/products-ms/dev.db-wal
 microservices_repo/products-app/products-ms/dev.db
 microservices_repo/products-app/orders-ms/postgres-db/
+microservices_repo/products-app/orders-ms/prisma/migrations
