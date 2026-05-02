@@ -1,5 +1,7 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { catchError, Observable } from 'rxjs';
+import { PRODUCTS_SERVICES } from '../config';
 import { PrismaService } from '../prisma.service';
 import {
   ChangeOrderStatusFto,
@@ -10,16 +12,22 @@ import { AllFilterOrderResponse, OrderClient } from './interfaces';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(PRODUCTS_SERVICES) private readonly productsClient: ClientProxy,
+  ) {}
 
-  public create(createOrderDto: CreateOrderDto): unknown {
-    return {
-      service: 'Orders Microservice',
-      createOrderDto,
-    };
-    /*  return this.prismaService.order.create({
-      data: createOrderDto,
-    }); */
+  public create(createOrderDto: CreateOrderDto): Observable<unknown> {
+    const productsFound: Observable<any> = this.productsClient
+      .send({ cmd: 'validate_products' }, [6, 7])
+      .pipe(
+        catchError((error) => {
+          throw new RpcException(error as unknown as object);
+        }),
+      );
+
+    productsFound.subscribe((data) => console.debug(data));
+    return productsFound;
   }
 
   public async findAll(
