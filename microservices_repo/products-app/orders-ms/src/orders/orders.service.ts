@@ -1,14 +1,19 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { catchError, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { PRODUCTS_SERVICES } from '../config';
 import { PrismaService } from '../prisma.service';
 import {
   ChangeOrderStatusFto,
   CreateOrderDto,
+  OrderItemDto,
   OrderPaginationDto,
 } from './dto';
-import { AllFilterOrderResponse, OrderClient } from './interfaces';
+import {
+  AllFilterOrderResponse,
+  OrderClient,
+  ProductResponse,
+} from './interfaces';
 
 @Injectable()
 export class OrdersService {
@@ -17,17 +22,46 @@ export class OrdersService {
     @Inject(PRODUCTS_SERVICES) private readonly productsClient: ClientProxy,
   ) {}
 
-  public create(createOrderDto: CreateOrderDto): Observable<unknown> {
-    const productsFound: Observable<any> = this.productsClient
-      .send({ cmd: 'validate_products' }, [6, 7])
-      .pipe(
-        catchError((error) => {
-          throw new RpcException(error as unknown as object);
-        }),
+  public async create(createOrderDto: CreateOrderDto): Promise<unknown> {
+    try {
+      const productsIds: number[] = createOrderDto.items.map(
+        (item: OrderItemDto) => item.productId,
       );
 
-    productsFound.subscribe((data) => console.debug(data));
-    return productsFound;
+      const productsFound: ProductResponse[] = await firstValueFrom(
+        this.productsClient.send({ cmd: 'validate_products' }, productsIds),
+      );
+
+      const totalAmount: number = this.getTotalAmount(
+        createOrderDto,
+        productsFound,
+      );
+
+      const totalItems: number = this.getTotalItems(createOrderDto);
+
+      const orderCreated: OrderClient = await this.prismaService.order.create({
+        data: {
+          totalAmount,
+          totalItems,
+          OrderItem: {
+            createMany: {
+              data: createOrderDto.items.map((item: OrderItemDto) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                price:
+                  productsFound.find(
+                    (product: ProductResponse) => product.id === item.productId,
+                  )?.price || 0,
+              })),
+            },
+          },
+        },
+      });
+
+      return { productsFound, totalAmount, totalItems, orderCreated };
+    } catch (error) {
+      throw new RpcException(error as unknown as object);
+    }
   }
 
   public async findAll(
@@ -86,5 +120,26 @@ export class OrdersService {
       where: { id },
       data: { status },
     });
+  }
+
+  private getTotalItems(createOrderDto: CreateOrderDto): number {
+    return createOrderDto.items.reduce(
+      (acc: number, item: OrderItemDto) => acc + item.quantity,
+      0,
+    );
+  }
+
+  private getTotalAmount(
+    createOrderDto: CreateOrderDto,
+    productsFound: ProductResponse[],
+  ): number {
+    return createOrderDto.items.reduce((acc: number, item: OrderItemDto) => {
+      const price: number =
+        productsFound.find((product: ProductResponse) => {
+          return product.id === item.productId;
+        })?.price || 0;
+
+      return acc + item.quantity * price;
+    }, 0);
   }
 }
