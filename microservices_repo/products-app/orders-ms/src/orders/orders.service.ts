@@ -22,15 +22,14 @@ export class OrdersService {
     @Inject(PRODUCTS_SERVICES) private readonly productsClient: ClientProxy,
   ) {}
 
-  public async create(createOrderDto: CreateOrderDto): Promise<unknown> {
+  public async create(createOrderDto: CreateOrderDto): Promise<OrderClient> {
     try {
       const productsIds: number[] = createOrderDto.items.map(
         (item: OrderItemDto) => item.productId,
       );
 
-      const productsFound: ProductResponse[] = await firstValueFrom(
-        this.productsClient.send({ cmd: 'validate_products' }, productsIds),
-      );
+      const productsFound: ProductResponse[] =
+        await this.findProductsByIds(productsIds);
 
       const totalAmount: number = this.getTotalAmount(
         createOrderDto,
@@ -39,47 +38,25 @@ export class OrdersService {
 
       const totalItems: number = this.getTotalItems(createOrderDto);
 
-      const orderCreated: OrderClient = await this.prismaService.order.create({
-        data: {
-          totalAmount,
-          totalItems,
-          OrderItem: {
-            createMany: {
-              data: createOrderDto.items.map((item: OrderItemDto) => ({
-                productId: item.productId,
-                quantity: item.quantity,
-                price:
-                  productsFound.find(
-                    (product: ProductResponse) => product.id === item.productId,
-                  )?.price || 0,
-              })),
-            },
-          },
-        },
-        include: {
-          OrderItem: {
-            select: {
-              price: true,
-              quantity: true,
-              productId: true,
-            },
-          },
-        },
-      });
+      const orderCreated: OrderClient = await this.createFinalOrder(
+        totalAmount,
+        totalItems,
+        createOrderDto,
+        productsFound,
+      );
 
-      return {
-        ...orderCreated,
-        OrderItem: orderCreated.OrderItem?.map((item: OrderItemDto) => ({
-          ...item,
-          name:
-            productsFound.find(
-              (product: ProductResponse) => product.id === item.productId,
-            )?.name || 'NO_NAME',
-        })),
-      };
+      return this.mapperResponseOrder(orderCreated, productsFound);
     } catch (error) {
       throw new RpcException(error as unknown as object);
     }
+  }
+
+  private async findProductsByIds(
+    productsIds: number[],
+  ): Promise<ProductResponse[]> {
+    return await firstValueFrom(
+      this.productsClient.send({ cmd: 'validate_products' }, productsIds),
+    );
   }
 
   public async findAll(
@@ -111,6 +88,15 @@ export class OrdersService {
   public async findOne(id: string): Promise<OrderClient | null> {
     const order: OrderClient | null = await this.prismaService.order.findFirst({
       where: { id },
+      include: {
+        OrderItem: {
+          select: {
+            price: true,
+            quantity: true,
+            productId: true,
+          },
+        },
+      },
     });
 
     if (!order) {
@@ -120,7 +106,18 @@ export class OrdersService {
       });
     }
 
-    return order;
+    const productsIds: number[] | undefined = order.OrderItem?.map(
+      (item) => item.productId,
+    );
+
+    const productsFound: ProductResponse[] = await this.findProductsByIds(
+      productsIds as number[],
+    );
+
+    return {
+      ...order,
+      ...this.mapperResponseOrder(order, productsFound),
+    };
   }
 
   public async changeOrderStatus(
@@ -159,5 +156,56 @@ export class OrdersService {
 
       return acc + item.quantity * price;
     }, 0);
+  }
+
+  private mapperResponseOrder(
+    orderCreated: OrderClient,
+    productsFound: ProductResponse[],
+  ): OrderClient {
+    return {
+      ...orderCreated,
+      OrderItem: orderCreated.OrderItem?.map((item: OrderItemDto) => ({
+        ...item,
+        name:
+          productsFound.find(
+            (product: ProductResponse) => product.id === item.productId,
+          )?.name || 'NO_NAME',
+      })),
+    };
+  }
+
+  private async createFinalOrder(
+    totalAmount: number,
+    totalItems: number,
+    createOrderDto: CreateOrderDto,
+    productsFound: ProductResponse[],
+  ): Promise<OrderClient> {
+    return await this.prismaService.order.create({
+      data: {
+        totalAmount,
+        totalItems,
+        OrderItem: {
+          createMany: {
+            data: createOrderDto.items.map((item: OrderItemDto) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price:
+                productsFound.find(
+                  (product: ProductResponse) => product.id === item.productId,
+                )?.price || 0,
+            })),
+          },
+        },
+      },
+      include: {
+        OrderItem: {
+          select: {
+            price: true,
+            quantity: true,
+            productId: true,
+          },
+        },
+      },
+    });
   }
 }
