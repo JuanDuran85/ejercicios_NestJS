@@ -1,18 +1,25 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { PrismaService } from '../prisma.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { OrderPaginationDto } from './dto/order-pagination.dto';
+import {
+  ChangeOrderStatusFto,
+  CreateOrderDto,
+  OrderPaginationDto,
+} from './dto';
 import { AllFilterOrderResponse, OrderClient } from './interfaces';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  public create(createOrderDto: CreateOrderDto): Promise<OrderClient> {
-    return this.prismaService.order.create({
+  public create(createOrderDto: CreateOrderDto): unknown {
+    return {
+      service: 'Orders Microservice',
+      createOrderDto,
+    };
+    /*  return this.prismaService.order.create({
       data: createOrderDto,
-    });
+    }); */
   }
 
   public async findAll(
@@ -54,5 +61,22 @@ export class OrdersService {
     }
 
     return order;
+  }
+
+  public async changeOrderStatus(
+    changeOrderStatusDto: ChangeOrderStatusFto,
+  ): Promise<OrderClient | null> {
+    const { id, status } = changeOrderStatusDto;
+
+    const orderFound: OrderClient | null = await this.findOne(id);
+
+    if (orderFound?.status === status) {
+      return orderFound;
+    }
+
+    return this.prismaService.order.update({
+      where: { id },
+      data: { status },
+    });
   }
 }

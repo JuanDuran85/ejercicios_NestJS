@@ -1,12 +1,10 @@
-import {
-  Controller,
-  NotImplementedException,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, ParseUUIDPipe } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { OrderPaginationDto } from './dto/order-pagination.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import {
+  ChangeOrderStatusFto,
+  CreateOrderDto,
+  OrderPaginationDto,
+} from './dto';
 import { AllFilterOrderResponse, OrderClient } from './interfaces';
 import { OrdersService } from './orders.service';
 
@@ -17,7 +15,7 @@ export class OrdersController {
   @MessagePattern('createOrder')
   public create(
     @Payload() createOrderDto: CreateOrderDto,
-  ): Promise<OrderClient> {
+  ): unknown {
     return this.ordersService.create(createOrderDto);
   }
 
@@ -36,7 +34,9 @@ export class OrdersController {
   }
 
   @MessagePattern('changeOrderStatus')
-  public changeOrderStatus(@Payload() updateOrderDto: UpdateOrderDto) {
-    throw new NotImplementedException();
+  public changeOrderStatus(
+    @Payload() changeOrderStatusDto: ChangeOrderStatusFto,
+  ): Promise<OrderClient | null> {
+    return this.ordersService.changeOrderStatus(changeOrderStatusDto);
   }
 }
