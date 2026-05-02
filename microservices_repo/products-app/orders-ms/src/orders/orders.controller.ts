@@ -15,7 +15,7 @@ export class OrdersController {
   @MessagePattern('createOrder')
   public create(
     @Payload() createOrderDto: CreateOrderDto,
-  ): Promise<OrderClient> {
+  ): unknown {
     return this.ordersService.create(createOrderDto);
   }
 

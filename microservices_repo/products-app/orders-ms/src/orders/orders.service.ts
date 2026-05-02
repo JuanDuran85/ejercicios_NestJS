@@ -12,10 +12,14 @@ import { AllFilterOrderResponse, OrderClient } from './interfaces';
 export class OrdersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  public create(createOrderDto: CreateOrderDto): Promise<OrderClient> {
-    return this.prismaService.order.create({
+  public create(createOrderDto: CreateOrderDto): unknown {
+    return {
+      service: 'Orders Microservice',
+      createOrderDto,
+    };
+    /*  return this.prismaService.order.create({
       data: createOrderDto,
-    });
+    }); */
   }
 
   public async findAll(
