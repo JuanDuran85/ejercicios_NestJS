@@ -1,4 +1,4 @@
-import { OrderStatus } from "../../generated/prisma/client";
+import { OrderStatus } from '../../generated/prisma/client';
 
 export interface OrderClient {
   id: string;
@@ -9,4 +9,13 @@ export interface OrderClient {
   paidAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  OrderItem?: OrderItemClient[];
+}
+
+export interface OrderItemClient {
+  productId: number;
+  quantity: number;
+  price: number;
+  name?: string;
+  description?: string;
 }
