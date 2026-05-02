@@ -56,9 +56,27 @@ export class OrdersService {
             },
           },
         },
+        include: {
+          OrderItem: {
+            select: {
+              price: true,
+              quantity: true,
+              productId: true,
+            },
+          },
+        },
       });
 
-      return { productsFound, totalAmount, totalItems, orderCreated };
+      return {
+        ...orderCreated,
+        OrderItem: orderCreated.OrderItem?.map((item: OrderItemDto) => ({
+          ...item,
+          name:
+            productsFound.find(
+              (product: ProductResponse) => product.id === item.productId,
+            )?.name || 'NO_NAME',
+        })),
+      };
     } catch (error) {
       throw new RpcException(error as unknown as object);
     }
