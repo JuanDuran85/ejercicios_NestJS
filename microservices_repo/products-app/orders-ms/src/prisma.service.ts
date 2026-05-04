@@ -6,7 +6,7 @@ import { PrismaClient } from './generated/prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-  private readonly envs: Record<string, string | number> = envs;
+  private readonly envs: Record<string, unknown> = envs;
   private readonly logger: Logger = new Logger(PrismaService.name);
   constructor() {
     const adapter: PrismaPg = new PrismaPg({

@@ -12,22 +12,22 @@ import {
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, Observable } from 'rxjs';
 import { PaginationDto } from '../common';
-import { ORDER_SERVICE } from '../config';
+import { NATS_SERVICE } from '../config';
 import { CreateOrderDto, OrderPaginationDto, StatusDto } from './dto';
 import { AllFilterOrderResponse, OrderClient } from './interfaces';
 
 @Controller('orders')
 export class OrdersController {
   constructor(
-    @Inject(ORDER_SERVICE)
-    private readonly orderClient: ClientProxy,
+    @Inject(NATS_SERVICE)
+    private readonly client: ClientProxy,
   ) {}
 
   @Post()
   public create(
     @Body() createOrderDto: CreateOrderDto,
   ): Observable<OrderClient> {
-    return this.orderClient.send('createOrder', createOrderDto).pipe(
+    return this.client.send('createOrder', createOrderDto).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
       }),
@@ -38,7 +38,7 @@ export class OrdersController {
   public findAll(
     @Query() orderPaginationDto: OrderPaginationDto,
   ): Observable<AllFilterOrderResponse> {
-    return this.orderClient.send('findAllOrders', orderPaginationDto).pipe(
+    return this.client.send('findAllOrders', orderPaginationDto).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
       }),
@@ -49,7 +49,7 @@ export class OrdersController {
   public findOne(
     @Param('id', ParseUUIDPipe) id: string,
   ): Observable<OrderClient> {
-    return this.orderClient.send('findOneOrder', { id }).pipe(
+    return this.client.send('findOneOrder', { id }).pipe(
       catchError((error) => {
         throw new RpcException(error as unknown as object);
       }),
@@ -61,7 +61,7 @@ export class OrdersController {
     @Param() statusDto: StatusDto,
     @Query() paginationDto: PaginationDto,
   ): Observable<AllFilterOrderResponse> {
-    return this.orderClient
+    return this.client
       .send('findAllOrders', {
         ...paginationDto,
         status: statusDto.status,
@@ -78,7 +78,7 @@ export class OrdersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() statusDto: StatusDto,
   ): Observable<OrderClient> {
-    return this.orderClient
+    return this.client
       .send('changeOrderStatus', { id, status: statusDto.status })
       .pipe(
         catchError((error) => {
