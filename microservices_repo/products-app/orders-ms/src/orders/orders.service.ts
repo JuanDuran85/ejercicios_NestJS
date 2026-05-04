@@ -1,7 +1,7 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { PRODUCTS_SERVICES } from '../config';
+import { NATS_SERVICE } from '../config';
 import { PrismaService } from '../prisma.service';
 import {
   ChangeOrderStatusFto,
@@ -19,7 +19,7 @@ import {
 export class OrdersService {
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(PRODUCTS_SERVICES) private readonly productsClient: ClientProxy,
+    @Inject(NATS_SERVICE) private readonly client: ClientProxy,
   ) {}
 
   public async create(createOrderDto: CreateOrderDto): Promise<OrderClient> {
@@ -55,7 +55,7 @@ export class OrdersService {
     productsIds: number[],
   ): Promise<ProductResponse[]> {
     return await firstValueFrom(
-      this.productsClient.send({ cmd: 'validate_products' }, productsIds),
+      this.client.send({ cmd: 'validate_products' }, productsIds),
     );
   }
 

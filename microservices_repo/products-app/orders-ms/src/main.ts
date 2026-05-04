@@ -9,11 +9,9 @@ async function bootstrap() {
   const logger: Logger = new Logger('OrderMSBootstrap');
   const app: INestMicroservice =
     await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-      transport: Transport.TCP,
+      transport: Transport.NATS,
       options: {
-        port,
-        retryAttempts: 5,
-        retryDelay: 3000,
+        servers: envs.natsServers,
       },
     });
   app.useGlobalPipes(
