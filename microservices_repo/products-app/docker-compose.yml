@@ -14,6 +14,7 @@ services:
     environment:
       - PORT=3000
       - NATS_SERVERS=nats://nats-server:4222
+    restart: always
 
   products-app:
     build: ./products-ms
@@ -26,6 +27,7 @@ services:
       - PORT=3001
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=file:./dev.db
+    restart: always
 
   #Order MicroService
   orders-app:
@@ -39,6 +41,7 @@ services:
       - PORT=${ORDERS_APP_PORT}
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@orders-db:5432/${DB_NAME}?schema=public
+    restart: always
     depends_on:
       - orders-db
 
