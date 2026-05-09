@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   nats-server:
     image: nats:latest
@@ -9,7 +7,7 @@ services:
   client-gateway:
     build: ./client-gateway
     ports:
-      - "3000:3000"
+      - ${CLIENT_GATEWAY_PORT}:3000
     volumes:
       - ./client-gateway/src:/usr/src/app/src
     command: npm run start:dev
@@ -33,14 +31,14 @@ services:
   orders-app:
     build: ./orders-ms
     ports:
-      - "3002:3002"
+      - ${ORDERS_APP_PORT}:3002
     volumes:
       - ./orders-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=3002
+      - PORT=${ORDERS_APP_PORT}
       - NATS_SERVERS=nats://nats-server:4222
-      - DATABASE_URL=postgresql://postgres:postgres123456@orders-db:5432/ordersdb?schema=public
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@orders-db:5432/${DB_NAME}?schema=public
     depends_on:
       - orders-db
 
@@ -50,11 +48,11 @@ services:
     container_name: orders_database
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123456
-      POSTGRES_DB: ordersdb
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME} 
     volumes:
-      - ./order-ms/postgres-db:/var/lib/postgresql/data
+      - ./orders-ms/postgres-db:/var/lib/postgresql/data
     ports:
       - 5432:5432
     healthcheck:
