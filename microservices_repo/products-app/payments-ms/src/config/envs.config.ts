@@ -1,10 +1,6 @@
-import "dotenv/config";
-import * as joi from "joi";
-
-interface EnvVars {
-  PORT: number;
-  STRIPE_SECRET_KEY: string;
-}
+import 'dotenv/config';
+import * as joi from 'joi';
+import { ConfigEnvs, EnvVars } from './interfaces.config';
 
 export const envSchema: joi.ObjectSchema<EnvVars> = joi
   .object({
@@ -21,9 +17,7 @@ if (error) {
 
 export const envVars: EnvVars = value;
 
-export const envs = {
+export const envs: ConfigEnvs = {
   port: envVars.PORT,
   stripeSecretKey: envVars.STRIPE_SECRET_KEY,
 };
-
-
