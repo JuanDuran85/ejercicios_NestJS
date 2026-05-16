@@ -42,7 +42,7 @@ export class PaymentsService {
   public async stripeWebhook(req: Request, res: Response) {
     const signature: string | string[] | undefined =
       req.headers['stripe-signature'];
-
+    console.debug({signature});
     return res.status(200).json({ received: true, signature });
   }
 }
