@@ -43,8 +43,6 @@ export class PaymentsService {
     const signature: string | string[] | undefined =
       req.headers['stripe-signature'];
 
-    return {
-      signature,
-    };
+    return res.status(200).json({ received: true, signature });
   }
 }
