@@ -8,7 +8,9 @@ async function bootstrap() {
 
   const { port } = envs;
 
-  const app: INestApplication<any> = await NestFactory.create(AppModule);
+  const app: INestApplication<any> = await NestFactory.create(AppModule, {
+    rawBody: true,
+  });
 
   app.setGlobalPrefix('api/v1');
   app.enableCors({
