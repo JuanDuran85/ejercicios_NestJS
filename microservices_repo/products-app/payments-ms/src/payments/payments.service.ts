@@ -55,16 +55,13 @@ export class PaymentsService {
       return;
     }
 
-    switch (eventStripe.type) {
-      case 'charge.succeeded':
-        console.debug({ eventStripe });
-        console.debug(eventStripe.data);
-        break;
-      default:
-        console.debug(
-          `Event --> ${eventStripe.type}, out of range or not handled`,
-        );
-        break;
+    if (eventStripe.type === 'charge.succeeded') {
+      console.debug({ eventStripe });
+      console.debug(eventStripe.data);
+    } else {
+      console.debug(
+        `Event --> ${eventStripe.type}, out of range or not handled`,
+      );
     }
     return res.status(200).json({ received: true, signature });
   }

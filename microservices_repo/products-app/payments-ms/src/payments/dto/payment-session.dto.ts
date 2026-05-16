@@ -1,14 +1,13 @@
 import { Type } from 'class-transformer';
 import {
-    ArrayMaxSize,
-    ArrayMinSize,
-    IsArray,
-    IsNotEmpty,
-    IsNumber,
-    IsPositive,
-    IsString,
-    Min,
-    ValidateNested,
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 
 export class PaymentSessionDto {
