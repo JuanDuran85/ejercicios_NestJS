@@ -1,10 +1,18 @@
 services:
+
+  # NATS Server
   nats-server:
     image: nats:latest
     ports:
       - 8222:8222
 
+# =================================================
+# Client Gateway Connections
+# =================================================
+
+  # Client Gateway
   client-gateway:
+    container_name: client_gateway
     build: ./client-gateway
     ports:
       - ${CLIENT_GATEWAY_PORT}:3000
@@ -12,25 +20,32 @@ services:
       - ./client-gateway/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=3000
+      - PORT=${CLIENT_GATEWAY_PORT}
       - NATS_SERVERS=nats://nats-server:4222
     restart: always
 
+# =================================================
+# Microservices
+# =================================================
+
+  # Products MicroService
   products-app:
+    container_name: products_ms
     build: ./products-ms
     ports:
-      - "3001:3001"
+      - ${PRODUCTS_APP_PORT}:3001
     volumes:
       - ./products-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
-      - PORT=3001
+      - PORT=${PRODUCTS_APP_PORT}
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=file:./dev.db
     restart: always
 
-  #Order MicroService
+  # Order MicroService
   orders-app:
+    container_name: orders_ms
     build: ./orders-ms
     ports:
       - ${ORDERS_APP_PORT}:3002
@@ -47,7 +62,29 @@ services:
         condition: service_healthy
         restart: true
 
-  # Orders database
+  # Payments MicroService
+  payments-app:
+    container_name: payments_ms
+    build: ./payments-ms
+    ports:
+      - ${PAYMENTS_APP_PORT}:3003
+    volumes:
+      - ./payments-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PAYMENTS_APP_PORT}
+      - NATS_SERVERS=nats://nats-server:4222
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
+    restart: always
+
+# =================================================
+# Database configuration
+# =================================================
+
+    # Orders database
   orders-db:
     image: postgres:17
     container_name: orders_database
@@ -59,7 +96,7 @@ services:
     volumes:
       - ./orders-ms/postgres-db:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
       interval: 10s
