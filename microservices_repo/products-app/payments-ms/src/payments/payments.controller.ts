@@ -1,4 +1,5 @@
 import { Controller, Get, Post } from '@nestjs/common';
+import { Checkout } from 'stripe';
 import { PaymentsService } from './payments.service';
 
 @Controller('payments')
@@ -6,8 +7,8 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('create-payment-session')
-  public createPaymentSession() {
-    return 'createPaymentSession';
+  public async createPaymentSession(): Promise<Checkout.Session> {
+    return this.paymentsService.createPaymentSession();
   }
 
   @Get('success')
