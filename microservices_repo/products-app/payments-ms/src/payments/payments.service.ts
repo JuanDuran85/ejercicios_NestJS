@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import Stripe, { Checkout } from 'stripe';
 import { ConfigEnvs, envs } from '../config';
 import { PaymentSessionDto } from './dto/payment-session.dto';
-import { LineItems } from './interfaces';
+import { LineItems, StripeEvents } from './interfaces';
 @Injectable()
 export class PaymentsService {
   private readonly envs: ConfigEnvs = envs;
@@ -42,7 +42,30 @@ export class PaymentsService {
   public async stripeWebhook(req: Request, res: Response) {
     const signature: string | string[] | undefined =
       req.headers['stripe-signature'];
-    console.debug({signature});
+    const endpointSecret: string = this.envs.stripeEndpointSecret;
+    let eventStripe: StripeEvents;
+    try {
+      eventStripe = this.stripeClient.webhooks.constructEvent(
+        req['rawBody'],
+        signature!,
+        endpointSecret,
+      );
+    } catch (error) {
+      res.status(400).send(`Webhook Error: ${JSON.stringify(error)}`);
+      return;
+    }
+
+    switch (eventStripe.type) {
+      case 'charge.succeeded':
+        console.debug({ eventStripe });
+        console.debug(eventStripe.data);
+        break;
+      default:
+        console.debug(
+          `Event --> ${eventStripe.type}, out of range or not handled`,
+        );
+        break;
+    }
     return res.status(200).json({ received: true, signature });
   }
 }

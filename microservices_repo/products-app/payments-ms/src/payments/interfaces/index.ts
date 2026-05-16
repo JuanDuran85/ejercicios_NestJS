@@ -1,1 +1,2 @@
-export * from './lines-items.interfaces';
+export * from './lines-items.interface';
+export * from './stripe-events.interface';
