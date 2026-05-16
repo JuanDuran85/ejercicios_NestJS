@@ -13,6 +13,10 @@ import {
 export class PaymentSessionDto {
   @IsString()
   @IsNotEmpty()
+  orderId: string;
+
+  @IsString()
+  @IsNotEmpty()
   currency: string;
 
   @IsArray()
@@ -21,7 +25,12 @@ export class PaymentSessionDto {
   @Type(() => PaymentSessionItemDto)
   items: PaymentSessionItemDto[];
 
-  constructor(currency: string, items: PaymentSessionItemDto[]) {
+  constructor(
+    orderId: string,
+    currency: string,
+    items: PaymentSessionItemDto[],
+  ) {
+    this.orderId = orderId;
     this.currency = currency;
     this.items = items;
   }

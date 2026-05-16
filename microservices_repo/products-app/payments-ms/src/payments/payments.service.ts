@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import Stripe, { Checkout } from 'stripe';
 import { ConfigEnvs, envs } from '../config';
 import { PaymentSessionDto } from './dto/payment-session.dto';
-import { LineItems, StripeEvents } from './interfaces';
+import { LineItems } from './interfaces';
 @Injectable()
 export class PaymentsService {
   private readonly envs: ConfigEnvs = envs;
@@ -14,7 +14,7 @@ export class PaymentsService {
   public async createPaymentSession(
     paymentSessionDto: PaymentSessionDto,
   ): Promise<Checkout.Session> {
-    const { currency, items } = paymentSessionDto;
+    const { orderId, currency, items } = paymentSessionDto;
 
     const lineItems: LineItems[] = items.map(({ name, price, quantity }) => ({
       price_data: {
@@ -30,12 +30,14 @@ export class PaymentsService {
 
     return await this.stripeClient.checkout.sessions.create({
       payment_intent_data: {
-        metadata: {},
+        metadata: {
+          orderId,
+        },
       },
       mode: 'payment',
       line_items: lineItems,
-      success_url: 'http://localhost:3003/api/v1/payments/success',
-      cancel_url: 'http://localhost:3003/api/v1/payments/cancelled',
+      success_url: this.envs.stripeSuccessUrl,
+      cancel_url: this.envs.stripeCancelUrl,
     });
   }
 
@@ -43,7 +45,9 @@ export class PaymentsService {
     const signature: string | string[] | undefined =
       req.headers['stripe-signature'];
     const endpointSecret: string = this.envs.stripeEndpointSecret;
-    let eventStripe: StripeEvents;
+    let eventStripe: ReturnType<
+      typeof this.stripeClient.webhooks.constructEvent
+    >;
     try {
       eventStripe = this.stripeClient.webhooks.constructEvent(
         req['rawBody'],
@@ -56,8 +60,8 @@ export class PaymentsService {
     }
 
     if (eventStripe.type === 'charge.succeeded') {
-      console.debug({ eventStripe });
-      console.debug(eventStripe.data);
+      const chargeSucceeded = eventStripe.data.object;
+      console.debug({ metadata: chargeSucceeded.metadata });
     } else {
       console.debug(
         `Event --> ${eventStripe.type}, out of range or not handled`,
