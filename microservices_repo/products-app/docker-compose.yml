@@ -21,7 +21,7 @@ services:
     command: npm run start:dev
     environment:
       - PORT=${CLIENT_GATEWAY_PORT}
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
     restart: always
 
 # =================================================
@@ -39,7 +39,7 @@ services:
     command: npm run start:dev
     environment:
       - PORT=${PRODUCTS_APP_PORT}
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - DATABASE_URL=file:./dev.db
     restart: always
 
@@ -54,7 +54,7 @@ services:
     command: npm run start:dev
     environment:
       - PORT=${ORDERS_APP_PORT}
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@orders-db:5432/${DB_NAME}?schema=public
     restart: always
     depends_on:
@@ -73,7 +73,7 @@ services:
     command: npm run start:dev
     environment:
       - PORT=${PAYMENTS_APP_PORT}
-      - NATS_SERVERS=nats://nats-server:4222
+      - NATS_SERVERS=${NATS_SERVERS}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
       - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
