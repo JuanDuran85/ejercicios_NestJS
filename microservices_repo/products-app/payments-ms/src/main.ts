@@ -1,8 +1,26 @@
+import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { envs } from './config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const logger: Logger = new Logger('Payments Microservice');
+
+  const { port } = envs;
+
+  const app: INestApplication<any> = await NestFactory.create(AppModule);
+  
+  app.setGlobalPrefix('api/v1');
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true,
+  });
+
+  await app.listen(port ?? 3000);
+
+  logger.debug(`Payments Microservice running on port ${port}`);
 }
 bootstrap();
