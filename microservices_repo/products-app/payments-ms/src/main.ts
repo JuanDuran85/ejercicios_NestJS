@@ -36,9 +36,11 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,
     options: {
-      servers: envs.natsServers
-    }
+      servers: envs.natsServers,
+    },
   });
+
+  await app.startAllMicroservices();
 
   await app.listen(port ?? 3000);
 
