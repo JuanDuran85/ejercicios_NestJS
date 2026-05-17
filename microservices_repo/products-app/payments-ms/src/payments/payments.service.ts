@@ -13,7 +13,7 @@ export class PaymentsService {
 
   public async createPaymentSession(
     paymentSessionDto: PaymentSessionDto,
-  ): Promise<Checkout.Session> {
+  ): Promise<Partial<Checkout.Session>> {
     const { orderId, currency, items } = paymentSessionDto;
 
     const lineItems: LineItems[] = items.map(({ name, price, quantity }) => ({
@@ -28,7 +28,7 @@ export class PaymentsService {
       quantity,
     }));
 
-    return await this.stripeClient.checkout.sessions.create({
+    const resultSession = await this.stripeClient.checkout.sessions.create({
       payment_intent_data: {
         metadata: {
           orderId,
@@ -39,6 +39,13 @@ export class PaymentsService {
       success_url: this.envs.stripeSuccessUrl,
       cancel_url: this.envs.stripeCancelUrl,
     });
+
+    return {
+      cancel_url: resultSession.cancel_url,
+      success_url: resultSession.success_url,
+      id: resultSession.id,
+      url: resultSession.url,
+    };
   }
 
   public async stripeWebhook(req: Request, res: Response) {
