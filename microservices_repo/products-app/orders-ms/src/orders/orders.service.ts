@@ -1,4 +1,4 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { NATS_SERVICE } from '../config';
@@ -8,6 +8,7 @@ import {
   CreateOrderDto,
   OrderItemDto,
   OrderPaginationDto,
+  PaidOrderDto,
 } from './dto';
 import {
   AllFilterOrderResponse,
@@ -19,6 +20,7 @@ import {
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
   constructor(
     private readonly prismaService: PrismaService,
     @Inject(NATS_SERVICE) private readonly natsClient: ClientProxy,
@@ -162,6 +164,26 @@ export class OrdersService {
       url,
       id,
     };
+  }
+
+  public async paidOrder(paidOrderDto: PaidOrderDto): Promise<OrderClient> {
+    this.logger.debug({ paidOrderDto });
+    const { orderId, receiptUrl, stripePaymentId } = paidOrderDto;
+    const orderUpdated: OrderClient = await this.prismaService.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'PAID',
+        paid: true,
+        paidAt: new Date(),
+        stripeChargeId: stripePaymentId,
+        orderReceipts: {
+          create: {
+            receiptUrl,
+          },
+        },
+      },
+    });
+    return orderUpdated;
   }
 
   private getTotalItems(createOrderDto: CreateOrderDto): number {

@@ -4,6 +4,7 @@ import {
   ChangeOrderStatusFto,
   CreateOrderDto,
   OrderPaginationDto,
+  PaidOrderDto,
 } from './dto';
 import {
   AllFilterOrderResponse,
@@ -54,8 +55,7 @@ export class OrdersController {
   }
 
   @EventPattern('payment.succeeded')
-  public paidOrder(@Payload() paidOrderDto: any) {
-    console.debug({ paidOrderDto });
-    return 'Event handled';
+  public paidOrder(@Payload() paidOrderDto: PaidOrderDto) {
+    return this.ordersService.paidOrder(paidOrderDto);
   }
 }
