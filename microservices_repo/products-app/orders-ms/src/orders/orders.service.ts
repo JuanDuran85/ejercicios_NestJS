@@ -1,4 +1,4 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { NATS_SERVICE } from '../config';
@@ -8,18 +8,22 @@ import {
   CreateOrderDto,
   OrderItemDto,
   OrderPaginationDto,
+  PaidOrderDto,
 } from './dto';
 import {
   AllFilterOrderResponse,
   OrderClient,
+  OrderItemClient,
+  PaymentSessionResponse,
   ProductResponse,
 } from './interfaces';
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
   constructor(
     private readonly prismaService: PrismaService,
-    @Inject(NATS_SERVICE) private readonly client: ClientProxy,
+    @Inject(NATS_SERVICE) private readonly natsClient: ClientProxy,
   ) {}
 
   public async create(createOrderDto: CreateOrderDto): Promise<OrderClient> {
@@ -47,7 +51,7 @@ export class OrdersService {
 
       return this.mapperResponseOrder(orderCreated, productsFound);
     } catch (error) {
-      throw new RpcException(error as unknown as object);
+      throw new RpcException(error as object);
     }
   }
 
@@ -55,7 +59,7 @@ export class OrdersService {
     productsIds: number[],
   ): Promise<ProductResponse[]> {
     return await firstValueFrom(
-      this.client.send({ cmd: 'validate_products' }, productsIds),
+      this.natsClient.send({ cmd: 'validate_products' }, productsIds),
     );
   }
 
@@ -135,6 +139,51 @@ export class OrdersService {
       where: { id },
       data: { status },
     });
+  }
+
+  public async createPaymentSession(
+    orderCreate: OrderClient,
+  ): Promise<PaymentSessionResponse> {
+    const paymentSession = await firstValueFrom(
+      this.natsClient.send('create.payment.session', {
+        orderId: orderCreate.id,
+        currency: 'usd',
+        items: orderCreate.OrderItem?.map((item: OrderItemClient) => ({
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      }),
+    );
+
+    const { cancel_url, success_url, url, id } = paymentSession;
+
+    return {
+      cancelUrl: cancel_url,
+      successUrl: success_url,
+      url,
+      id,
+    };
+  }
+
+  public async paidOrder(paidOrderDto: PaidOrderDto): Promise<OrderClient> {
+    this.logger.debug({ paidOrderDto });
+    const { orderId, receiptUrl, stripePaymentId } = paidOrderDto;
+    const orderUpdated: OrderClient = await this.prismaService.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'PAID',
+        paid: true,
+        paidAt: new Date(),
+        stripeChargeId: stripePaymentId,
+        orderReceipts: {
+          create: {
+            receiptUrl,
+          },
+        },
+      },
+    });
+    return orderUpdated;
   }
 
   private getTotalItems(createOrderDto: CreateOrderDto): number {
