@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { Request, Response } from 'express';
 import Stripe, { Checkout } from 'stripe';
-import { ConfigEnvs, envs } from '../config';
+import { ConfigEnvs, envs, NATS_SERVICE } from '../config';
 import { PaymentSessionDto } from './dto/payment-session.dto';
 import { LineItems } from './interfaces';
+
 @Injectable()
 export class PaymentsService {
   private readonly envs: ConfigEnvs = envs;
   private readonly stripeClient = new Stripe(envs.stripeSecretKey);
+  private readonly logger: Logger = new Logger(PaymentsService.name);
 
-  constructor() {}
+  constructor(@Inject(NATS_SERVICE) private readonly natsClient: ClientProxy) {}
 
   public async createPaymentSession(
     paymentSessionDto: PaymentSessionDto,
@@ -67,10 +70,15 @@ export class PaymentsService {
     }
 
     if (eventStripe.type === 'charge.succeeded') {
-      const chargeSucceeded = eventStripe.data.object;
-      console.debug({ metadata: chargeSucceeded.metadata });
+      const { id, metadata, receipt_url } = eventStripe.data.object;
+      const payload = {
+        stripePaymentId: id,
+        orderId: metadata.orderId,
+        receiptUrl: receipt_url,
+      };
+      this.natsClient.emit('payment.succeeded', payload);
     } else {
-      console.debug(
+      this.logger.warn(
         `Event --> ${eventStripe.type}, out of range or not handled`,
       );
     }
