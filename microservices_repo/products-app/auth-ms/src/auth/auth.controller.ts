@@ -8,16 +8,16 @@ export class AuthController {
 
   @MessagePattern('auth.register.user')
   public registerUser() {
-    return 'register user...';
+    return this.authService.registerUser();
   }
 
   @MessagePattern('auth.login.user')
   public loginUser() {
-    return 'register user...';
+    return this.authService.loginUser();
   }
 
   @MessagePattern('auth.verify.user')
   public verifyToken() {
-    return 'verify user...';
+    return this.authService.verifyToken();
   }
 }
