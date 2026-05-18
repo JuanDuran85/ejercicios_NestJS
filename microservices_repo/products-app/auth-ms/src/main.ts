@@ -1,21 +1,21 @@
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import { INestMicroservice, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { envs } from './config';
 
 async function bootstrap() {
   const logger: Logger = new Logger('Auth Microservice');
 
-  const { port } = envs;
-  const app: INestApplication<any> = await NestFactory.create(AppModule);
-  app.setGlobalPrefix('api/v1');
-  app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-    credentials: true,
-  });
+  const { port, natsServers } = envs;
+  const app: INestMicroservice =
+    await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
+      transport: Transport.NATS,
+      options: {
+        servers: natsServers,
+      },
+    });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -26,7 +26,8 @@ async function bootstrap() {
       },
     }),
   );
-  await app.listen(port ?? 3000);
+
+  await app.listen();
 
   logger.debug(`Payments Microservice running on port ${port}`);
 }
