@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -15,8 +15,10 @@ export class AuthService {
     private readonly bcryptJsAdapter: BcryptJsAdapter,
   ) {}
 
-  public async registerUser(registerUserDto: RegisterUserDto) {
-    const { email, name, password } = registerUserDto;
+  public async registerUser(
+    registerUserDto: RegisterUserDto,
+  ): Promise<unknown> {
+    const { name, password, email } = registerUserDto;
 
     try {
       const userFound = await this.userModel.findOne({ email });
@@ -31,10 +33,14 @@ export class AuthService {
         password: this.bcryptJsAdapter.hash(password),
       });
 
-      const { password: __, ...rest } = newUser;
+      const { name: userName, email: userEmail, id: userId } = newUser;
 
       return {
-        user: rest,
+        user: {
+          name: userName,
+          email: userEmail,
+          id: userId,
+        },
         token: 'abc-Token',
       };
     } catch (error) {
@@ -46,8 +52,39 @@ export class AuthService {
     }
   }
 
-  public loginUser(loginUserDto: LoginUserDto) {
-    return loginUserDto;
+  public async loginUser(loginUserDto: LoginUserDto) {
+    console.debug({ loginUserDto });
+    const { password, email } = loginUserDto;
+
+    try {
+      const userFound = await this.userModel.findOne({ email });
+
+      if (!userFound) throw new Error('Invalid credentials');
+
+      const isPasswordValid: boolean = this.bcryptJsAdapter.check(
+        password,
+        userFound.password,
+      );
+      
+      if (!isPasswordValid) throw new Error('Invalid credentials');
+
+      const { name: userName, email: userEmail, id: userId } = userFound;
+
+      return {
+        user: {
+          name: userName,
+          email: userEmail,
+          id: userId,
+        },
+        token: 'abc-Token',
+      };
+    } catch (error) {
+      const finalError = error as Error;
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: finalError.message,
+      });
+    }
   }
 
   public verifyToken() {
