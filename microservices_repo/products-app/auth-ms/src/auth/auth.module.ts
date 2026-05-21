@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BcryptJsAdapter } from '../common';
 import { NatsModule } from '../transports/nats.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -11,7 +12,7 @@ import { UserSchema } from './schemas';
     NatsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, BcryptJsAdapter],
   exports: [],
 })
 export class AuthModule {}
