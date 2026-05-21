@@ -7,14 +7,14 @@ export class AuthService {
   constructor(@Inject(NATS_SERVICE) private readonly natsClient: ClientProxy) {}
 
   public registerUser() {
-    return this.natsClient.send('auth.register', {}).pipe();
+    return 'register user...'
   }
 
   public loginUser() {
-    return 'register user...';
+    return 'login user...';
   }
 
   public verifyToken() {
-    return 'register user...';
+    return 'verify token...';
   }
 }
