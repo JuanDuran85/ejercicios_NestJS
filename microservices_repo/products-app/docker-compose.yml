@@ -92,6 +92,7 @@ services:
     environment:
       - PORT=${AUTH_APP_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_MONGO_URL=${DATABASE_MONGO_URL}
     restart: always
 
 # =================================================
