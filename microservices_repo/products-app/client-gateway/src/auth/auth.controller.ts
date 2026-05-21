@@ -1,7 +1,8 @@
-import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
 import { NATS_SERVICE } from '../config';
+import { LoginUserDto, RegisterUserDto } from './dto';
 
 @Controller('auth')
 export class AuthController {
@@ -11,25 +12,21 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  public registerUser() {
-    return this.natsClient
-      .send('auth.register.user', { msg: 'message from register-client' })
-      .pipe(
-        catchError((error) => {
-          throw new RpcException(error as object);
-        }),
-      );
+  public registerUser(@Body() registerUserDto: RegisterUserDto) {
+    return this.natsClient.send('auth.register.user', registerUserDto).pipe(
+      catchError((error) => {
+        throw new RpcException(error as object);
+      }),
+    );
   }
 
   @Post('login')
-  public loginUser() {
-    return this.natsClient
-      .send('auth.login.user', { msg: 'message from login-client' })
-      .pipe(
-        catchError((error) => {
-          throw new RpcException(error as object);
-        }),
-      );
+  public loginUser(@Body() loginUserDto: LoginUserDto) {
+    return this.natsClient.send('auth.login.user', loginUserDto).pipe(
+      catchError((error) => {
+        throw new RpcException(error as object);
+      }),
+    );
   }
 
   @Get('verify')
