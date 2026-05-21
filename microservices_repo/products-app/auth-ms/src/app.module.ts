@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
+import { envs } from './config';
 
+const { databaseUrl } = envs;
 @Module({
-  imports: [MongooseModule.forRoot(process.env.DATABASE_URL!, {
-    autoCreate: true,
-  }),AuthModule],
+  imports: [
+    MongooseModule.forRoot(databaseUrl, {
+      autoCreate: true,
+    }),
+    AuthModule,
+  ],
   controllers: [],
   providers: [],
   exports: [AuthModule],
