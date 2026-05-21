@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NATS_SERVICE } from '../config';
@@ -14,7 +14,27 @@ export class AuthService {
   ) {}
 
   public async registerUser(registerUserDto: RegisterUserDto) {
-    return await this.userModel.create(registerUserDto);
+    const { email, name, password } = registerUserDto;
+
+    try {
+      const userFound = await this.userModel.findOne({ email });
+
+      if (userFound) {
+        throw new Error('User already exists');
+      }
+
+      const newUser = await this.userModel.create({ email, name, password });
+
+      return {
+        user: newUser,
+      };
+    } catch (error) {
+      const finalError = error as Error;
+      throw new RpcException({
+        status: 400,
+        message: finalError.message,
+      });
+    }
   }
 
   public loginUser(loginUserDto: LoginUserDto) {

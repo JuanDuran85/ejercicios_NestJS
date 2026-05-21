@@ -29,6 +29,6 @@ async function bootstrap() {
 
   await app.listen();
 
-  logger.debug(`Payments Microservice running on port ${port}`);
+  logger.debug(`Auth Microservice running on port ${port}`);
 }
 bootstrap();
