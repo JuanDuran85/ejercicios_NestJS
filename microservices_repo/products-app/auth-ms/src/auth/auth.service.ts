@@ -14,9 +14,7 @@ export class AuthService {
   ) {}
 
   public async registerUser(registerUserDto: RegisterUserDto) {
-    const userSaved = (await this.userModel.create(registerUserDto)).save();
-    console.debug(userSaved);
-    return userSaved;
+    return await this.userModel.create(registerUserDto);
   }
 
   public loginUser(loginUserDto: LoginUserDto) {
