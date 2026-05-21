@@ -5,9 +5,11 @@ import { LoginUserDto, RegisterUserDto } from './dto';
 
 @Injectable()
 export class AuthService {
-  constructor(@Inject(NATS_SERVICE) private readonly natsClient: ClientProxy) {}
+  constructor(
+    @Inject(NATS_SERVICE) private readonly natsClient: ClientProxy,
+  ) {}
 
-  public registerUser(registerUserDto: RegisterUserDto) {
+  public async registerUser(registerUserDto: RegisterUserDto) {
     return registerUserDto;
   }
 
