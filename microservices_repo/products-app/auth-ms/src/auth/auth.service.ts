@@ -104,7 +104,7 @@ export class AuthService {
       const {sub, iat, exp, ...user} = this.jwtService.verify(token, {
         secret: envs.jwtSecret,
       });
-      console.debug({ sub, iat, exp, ...user });
+
       return {
         user,
         token: await this.singJwt(user),
