@@ -4,7 +4,7 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BcryptJsAdapter } from '../common';
-import { NATS_SERVICE } from '../config';
+import { envs, NATS_SERVICE } from '../config';
 import { LoginUserDto, RegisterUserDto } from './dto';
 import { JwtPayload } from './interfaces';
 import { User } from './schemas';
@@ -99,8 +99,23 @@ export class AuthService {
     }
   }
 
-  public verifyToken() {
-    return 'verify token...';
+  public async verifyToken(token: string) {
+    try {
+      const {sub, iat, exp, ...user} = this.jwtService.verify(token, {
+        secret: envs.jwtSecret,
+      });
+      console.debug({ sub, iat, exp, ...user });
+      return {
+        user,
+        token: await this.singJwt(user),
+      };
+    } catch (error) {
+      console.error(error);
+      throw new RpcException({
+        status: HttpStatus.UNAUTHORIZED,
+        message: 'Token not valid',
+      });
+    }
   }
 
   public async singJwt(payload: JwtPayload) {
