@@ -4,15 +4,15 @@ import {
   Get,
   Inject,
   Post,
-  Req,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import type { Request } from 'express';
 import { catchError } from 'rxjs';
 import { NATS_SERVICE } from '../config';
+import { Token, User } from './decorators';
 import { LoginUserDto, RegisterUserDto } from './dto';
 import { AuthGuard } from './guards';
+import type { CurrentUser } from './interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -41,17 +41,10 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('verify')
-  public verifyUser(@Req() req: Request) {
-    console.debug(req.headers);
-    const user = req['user'];
-    const token = req['token'];
-    console.debug({
-      user,
-      token,
-    });
+  public verifyUser(@User() user: CurrentUser, @Token() token: string) {
     return {
       user,
-      token,
+      token
     };
     /* return this.natsClient
       .send('auth.verify.user', { msg: 'message from verify-client' })
