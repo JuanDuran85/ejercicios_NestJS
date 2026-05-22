@@ -62,7 +62,6 @@ export class AuthService {
   }
 
   public async loginUser(loginUserDto: LoginUserDto) {
-    console.debug({ loginUserDto });
     const { password, email } = loginUserDto;
 
     try {
