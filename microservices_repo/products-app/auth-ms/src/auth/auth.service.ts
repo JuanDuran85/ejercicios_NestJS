@@ -1,18 +1,23 @@
-import { HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { BcryptJsAdapter } from '../common';
 import { NATS_SERVICE } from '../config';
 import { LoginUserDto, RegisterUserDto } from './dto';
+import { JwtPayload } from './interfaces';
 import { User } from './schemas';
 
 @Injectable()
 export class AuthService {
+  private readonly logger: Logger = new Logger(AuthService.name);
+
   constructor(
     @Inject(NATS_SERVICE) private readonly natsClient: ClientProxy,
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly bcryptJsAdapter: BcryptJsAdapter,
+    private readonly jwtService: JwtService,
   ) {}
 
   public async registerUser(
@@ -41,7 +46,11 @@ export class AuthService {
           email: userEmail,
           id: userId,
         },
-        token: 'abc-Token',
+        token: await this.singJwt({
+          id: userId,
+          name: userName,
+          email: userEmail,
+        }),
       };
     } catch (error) {
       const finalError = error as Error;
@@ -65,7 +74,7 @@ export class AuthService {
         password,
         userFound.password,
       );
-      
+
       if (!isPasswordValid) throw new Error('Invalid credentials');
 
       const { name: userName, email: userEmail, id: userId } = userFound;
@@ -76,7 +85,11 @@ export class AuthService {
           email: userEmail,
           id: userId,
         },
-        token: 'abc-Token',
+        token: await this.singJwt({
+          id: userId,
+          name: userName,
+          email: userEmail,
+        }),
       };
     } catch (error) {
       const finalError = error as Error;
@@ -89,5 +102,9 @@ export class AuthService {
 
   public verifyToken() {
     return 'verify token...';
+  }
+
+  public async singJwt(payload: JwtPayload) {
+    return this.jwtService.sign(payload);
   }
 }
