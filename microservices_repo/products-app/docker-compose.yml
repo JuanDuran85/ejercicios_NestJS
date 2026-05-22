@@ -93,6 +93,7 @@ services:
       - PORT=${AUTH_APP_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
       - DATABASE_URL=${DATABASE_MONGO_URL}
+      - JWT_SECRET=${JWT_SECRET}
     restart: always
 
 # =================================================
