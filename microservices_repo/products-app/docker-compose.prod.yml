@@ -15,7 +15,7 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
-    image: client-gateway-prod
+    image: southamerica-west1-docker.pkg.dev/store-microservice-497220/image-registry/client-gateway-prod
     environment:
       - PORT=${CLIENT_GATEWAY_PORT}
       - NATS_SERVERS=${NATS_SERVERS}
@@ -30,7 +30,7 @@ services:
     build: 
       context: ./products-ms
       dockerfile: Dockerfile.prod
-    image: products-ms-prod
+    image: southamerica-west1-docker.pkg.dev/store-microservice-497220/image-registry/products-ms-prod
     ports:
       - ${PRODUCTS_APP_PORT}:${PRODUCTS_APP_PORT}
     environment:
@@ -46,7 +46,7 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - ORDERS_DATABASE_URL=${ORDERS_DATABASE_URL}
-    image: orders-ms-prod
+    image: southamerica-west1-docker.pkg.dev/store-microservice-497220/image-registry/orders-ms-prod
     ports:
       - ${ORDERS_APP_PORT}:${ORDERS_APP_PORT}
     environment:
@@ -60,7 +60,7 @@ services:
     build: 
       context: ./payments-ms
       dockerfile: Dockerfile.prod
-    image: payments-ms-prod
+    image: southamerica-west1-docker.pkg.dev/store-microservice-497220/image-registry/payments-ms-prod
     ports:
       - ${PAYMENTS_APP_PORT}:${PAYMENTS_APP_PORT}
     environment:
@@ -77,7 +77,7 @@ services:
     build: 
       context: ./auth-ms
       dockerfile: Dockerfile.prod
-    image: auth-ms-prod
+    image: southamerica-west1-docker.pkg.dev/store-microservice-497220/image-registry/auth-ms-prod
     ports:
       - ${AUTH_APP_PORT}:${AUTH_APP_PORT}
     environment:
