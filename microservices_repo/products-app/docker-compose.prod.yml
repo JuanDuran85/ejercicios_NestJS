@@ -40,23 +40,20 @@ services:
     restart: always
 
   # Order MicroService
-  # orders-app:
-  #   container_name: orders_ms
-  #   build: ./orders-ms
-  #   ports:
-  #     - ${ORDERS_APP_PORT}:3002
-  #   volumes:
-  #     - ./orders-ms/src:/usr/src/app/src
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=${ORDERS_APP_PORT}
-  #     - NATS_SERVERS=${NATS_SERVERS}
-  #     - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@orders-db:5432/${DB_NAME}?schema=public
-  #   restart: always
-  #   depends_on:
-  #     orders-db:
-  #       condition: service_healthy
-  #       restart: true
+  orders-app:
+    build: 
+      context: ./orders-ms
+      dockerfile: Dockerfile.prod
+      args:
+        - ORDERS_DATABASE_URL=${ORDERS_DATABASE_URL}
+    image: orders-ms-prod
+    ports:
+      - ${ORDERS_APP_PORT}:${ORDERS_APP_PORT}
+    environment:
+      - PORT=${ORDERS_APP_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${ORDERS_DATABASE_URL}
+    restart: always
 
   # Payments MicroService
   payments-app:
