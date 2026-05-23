@@ -26,19 +26,18 @@ services:
 # =================================================
 
   # Products MicroService
-  # products-app:
-  #   container_name: products_ms
-  #   build: ./products-ms
-  #   ports:
-  #     - ${PRODUCTS_APP_PORT}:3001
-  #   volumes:
-  #     - ./products-ms/src:/usr/src/app/src
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=${PRODUCTS_APP_PORT}
-  #     - NATS_SERVERS=${NATS_SERVERS}
-  #     - DATABASE_URL=file:./dev.db
-  #   restart: always
+  products-app:
+    build: 
+      context: ./products-ms
+      dockerfile: Dockerfile.prod
+    image: products-ms-prod
+    ports:
+      - ${PRODUCTS_APP_PORT}:${PRODUCTS_APP_PORT}
+    environment:
+      - PORT=${PRODUCTS_APP_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=file:./dev.db
+    restart: always
 
   # Order MicroService
   # orders-app:
@@ -60,59 +59,33 @@ services:
   #       restart: true
 
   # Payments MicroService
-  # payments-app:
-  #   container_name: payments_ms
-  #   build: ./payments-ms
-  #   ports:
-  #     - ${PAYMENTS_APP_PORT}:3003
-  #   volumes:
-  #     - ./payments-ms/src:/usr/src/app/src
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=${PAYMENTS_APP_PORT}
-  #     - NATS_SERVERS=${NATS_SERVERS}
-  #     - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-  #     - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
-  #     - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
-  #     - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
-  #   restart: always
+  payments-app:
+    build: 
+      context: ./payments-ms
+      dockerfile: Dockerfile.prod
+    image: payments-ms-prod
+    ports:
+      - ${PAYMENTS_APP_PORT}:${PAYMENTS_APP_PORT}
+    environment:
+      - PORT=${PAYMENTS_APP_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
+    restart: always
 
   # Auth Microservice
-  # auth-app:
-  #   container_name: auth_ms
-  #   build: ./auth-ms
-  #   ports:
-  #     - ${AUTH_APP_PORT}:3004
-  #   volumes:
-  #     - ./auth-ms/src:/usr/src/app/src
-  #   command: npm run start:dev
-  #   environment:
-  #     - PORT=${AUTH_APP_PORT}
-  #     - NATS_SERVERS=${NATS_SERVERS}
-  #     - DATABASE_URL=${DATABASE_MONGO_URL}
-  #     - JWT_SECRET=${JWT_SECRET}
-  #   restart: always
-
-# =================================================
-# Database configuration
-# =================================================
-
-    # Orders database
-  # orders-db:
-  #   image: postgres:17
-  #   container_name: orders_database
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: ${DB_USERNAME}
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: ${DB_NAME} 
-  #   volumes:
-  #     - ./orders-ms/postgres-db:/var/lib/postgresql/data
-  #   ports:
-  #     - ${DB_PORT}:5432
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
-  #     interval: 10s
-  #     retries: 5
-  #     start_period: 30s
-  #     timeout: 10s
+  auth-app:
+    build: 
+      context: ./auth-ms
+      dockerfile: Dockerfile.prod
+    image: auth-ms-prod
+    ports:
+      - ${AUTH_APP_PORT}:${AUTH_APP_PORT}
+    environment:
+      - PORT=${AUTH_APP_PORT}
+      - NATS_SERVERS=${NATS_SERVERS}
+      - DATABASE_URL=${DATABASE_MONGO_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: always
