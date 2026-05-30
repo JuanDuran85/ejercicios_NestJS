@@ -34,5 +34,6 @@ async function bootstrap() {
   app.useGlobalFilters(new RpcCustomExceptionFilter());
   await app.listen(port ?? 3000);
   logger.debug(`Gateway running on port ${port}`);
+  logger.debug(`--- Health Check Configured ---`);
 }
 bootstrap();
