@@ -1,4 +1,9 @@
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import {
+  INestApplication,
+  Logger,
+  RequestMethod,
+  ValidationPipe,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
@@ -13,7 +18,14 @@ async function bootstrap() {
     rawBody: true,
   });
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api/v1', {
+    exclude: [
+      {
+        path: '',
+        method: RequestMethod.GET,
+      },
+    ],
+  });
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
