@@ -5,15 +5,13 @@ import { AppModule } from './app.module';
 import { envs } from './config';
 
 async function bootstrap() {
-  const { port } = envs;
+  const { port, natsServers } = envs;
   const logger: Logger = new Logger('OrderMSBootstrap');
   const app: INestMicroservice =
     await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-      transport: Transport.TCP,
+      transport: Transport.NATS,
       options: {
-        port,
-        retryAttempts: 5,
-        retryDelay: 3000,
+        servers: natsServers,
       },
     });
   app.useGlobalPipes(
@@ -27,6 +25,6 @@ async function bootstrap() {
     }),
   );
   await app.listen();
-  logger.log(`Order Microservice running on port ${port}`);
+  logger.debug(`Order Microservice running on port ${port}`);
 }
 bootstrap();
