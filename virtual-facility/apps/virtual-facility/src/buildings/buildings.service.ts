@@ -18,6 +18,7 @@ export class BuildingsService {
     const buildingCreated: Building = this.buildingRepository.create({
       ...createBuildingDto,
     });
+
     const newBuildingEntity: Building =
       await this.buildingRepository.save(buildingCreated);
 
