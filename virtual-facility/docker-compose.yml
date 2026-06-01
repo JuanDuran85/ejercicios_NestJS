@@ -11,7 +11,7 @@ services:
   # Microservices
   # =================================================
 
-  # Workflows Service
+  # Workflows
   workflows-service:
     build:
       context: .
@@ -74,7 +74,7 @@ services:
 
   # ========================================================================================
 
-  # Alarm Service
+  # Alarm
   alarms-service:
     build:
       context: .
@@ -95,6 +95,9 @@ services:
       - nats-server
     restart: unless-stopped
 
+  # ========================================================================================
+  
+  # Alarm Generator
   alarms-generator:
     build:
       context: .
@@ -111,6 +114,52 @@ services:
       - ./package.json:/usr/src/app/package.json
       - ./tsconfig.json:/usr/src/app/tsconfig.json
       - ./apps/alarms-generator:/usr/src/app/apps/alarms-generator
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
+  # ========================================================================================
+
+  # Alarms Classifier
+  alarms-classifier-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=alarms-classifier-service
+    command: npm run start:dev -- alarms-classifier-service
+    environment:
+      - PORT=3005
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/alarms-classifier-service:/usr/src/app/apps/alarms-classifier-service
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
+  # ========================================================================================
+
+    # Notification Service
+  notifications-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=notifications-service
+    command: npm run start:dev -- notifications-service
+    environment:
+      - PORT=3004
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/notifications-service:/usr/src/app/apps/notifications-service
     depends_on:
       - nats-server
     restart: unless-stopped
