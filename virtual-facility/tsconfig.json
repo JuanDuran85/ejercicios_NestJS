@@ -19,9 +19,15 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      "@app/workflows": [
+        "./libs/workflows/src"
+      ],
+      "@app/workflows/*": [
+        "./libs/workflows/src/*"
+      ]
+    },
   },
-
   "exclude": [
     "node_modules",
     "dist"

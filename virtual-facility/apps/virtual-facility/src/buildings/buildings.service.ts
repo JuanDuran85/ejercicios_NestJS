@@ -1,3 +1,4 @@
+import { CreateWorkflowDto } from '@app/workflows';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -58,12 +59,22 @@ export class BuildingsService {
   }
 
   public async createWorkflow(buildingId: number) {
-    return fetch('http://workflows-service:3001/workflows', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    console.debug(JSON.stringify({ name: 'My Workflow', buildingId }));
+    const response: Response = await fetch(
+      'http://workflows-service:3001/workflows',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'My Workflow',
+          buildingId,
+        }),
       },
-      body: JSON.stringify({ name: 'My Workflow', buildingId }),
-    }).then((res) => res.text());
+    );
+    const newWorkflow = (await response.json()) as CreateWorkflowDto;
+    console.debug({ newWorkflow });
+    return newWorkflow;
   }
 }
