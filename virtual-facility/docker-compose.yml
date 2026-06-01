@@ -1,8 +1,10 @@
 services:
   # =================================================
-  #
+  # External Services
   # =================================================
-
+  # NATS Server
+  nats-server:
+    image: nats:latest
   # =================================================
   # Microservices
   # =================================================
@@ -25,6 +27,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD_WF}
       - POSTGRES_DB=${DB_NAME_WF}
       - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -32,6 +35,7 @@ services:
       - ./apps/workflows-service:/usr/src/app/apps/workflows-service
     depends_on:
       - workflows-db
+      - nats-server
     restart: unless-stopped
 
   # ========================================================================================
@@ -54,6 +58,7 @@ services:
       - POSTGRES_USER=${DB_USERNAME_VF}
       - POSTGRES_PASSWORD=${DB_PASSWORD_VF}
       - POSTGRES_DB=${DB_NAME_VF}
+      - NATS_URL=${NATS_SERVER_URL}
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -62,6 +67,8 @@ services:
     depends_on:
       - virtual-facility-db
       - workflows-service
+      - nats-server
+    restart: unless-stopped
 
   # =================================================
   # Database
