@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkflowsServiceController } from './workflows-service.controller';
 import { WorkflowsServiceService } from './workflows-service.service';
 import { WorkflowsModule } from './workflows/workflows.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST_WF || 'localhost',
@@ -19,6 +22,7 @@ import { WorkflowsModule } from './workflows/workflows.module';
       logging: true,
     }),
     WorkflowsModule,
+    HealthModule,
   ],
   controllers: [WorkflowsServiceController],
   providers: [WorkflowsServiceService],

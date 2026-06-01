@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BuildingsModule } from './buildings/buildings.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST_VF || 'localhost',
@@ -19,6 +22,7 @@ import { BuildingsModule } from './buildings/buildings.module';
       logging: true,
     }),
     BuildingsModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
