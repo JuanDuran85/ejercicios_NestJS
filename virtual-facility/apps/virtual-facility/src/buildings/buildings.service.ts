@@ -1,17 +1,21 @@
-
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
+import { lastValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
+import { CreateWorkflowDto } from '../../../../libs/workflows/src/dto/create-workflow.dto';
+import { WORKFLOWS_SERVICE } from '../constants';
 import { CreateBuildingDto } from './dto/create-building.dto';
 import { UpdateBuildingDto } from './dto/update-building.dto';
 import { Building } from './entities/building.entity';
-import { CreateWorkflowDto } from '../../../../libs/workflows/src/dto/create-workflow.dto';
 
 @Injectable()
 export class BuildingsService {
   constructor(
     @InjectRepository(Building)
     private readonly buildingRepository: Repository<Building>,
+    @Inject(WORKFLOWS_SERVICE)
+    private readonly workflowsClient: ClientProxy,
   ) {}
 
   public async create(createBuildingDto: CreateBuildingDto): Promise<Building> {
@@ -61,22 +65,18 @@ export class BuildingsService {
   }
 
   public async createWorkflow(buildingId: number) {
-    console.debug(JSON.stringify({ name: 'My Workflow', buildingId }));
-    const response: Response = await fetch(
-      'http://workflows-service:3001/workflows',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+    try {
+      const newWorkflow: CreateWorkflowDto = await lastValueFrom(
+        this.workflowsClient.send('workflows.create', {
           name: 'My Workflow',
           buildingId,
         }),
-      },
-    );
-    const newWorkflow = (await response.json()) as CreateWorkflowDto;
-    console.debug({ newWorkflow });
-    return newWorkflow;
+      );
+      console.debug({ newWorkflow });
+      return newWorkflow;
+    } catch (error) {
+      console.error(error);
+      throw new RpcException(error as object);
+    }
   }
 }
