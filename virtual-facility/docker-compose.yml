@@ -1,0 +1,99 @@
+services:
+  # =================================================
+  #
+  # =================================================
+
+  # =================================================
+  # Microservices
+  # =================================================
+
+  # Workflows Service
+  workflows-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=workflows-service
+    command: npm run start:dev -- workflows-service
+    ports:
+      - 3001:3001
+    environment:
+      - PORT=3001
+      - POSTGRES_HOST=${DB_HOST_WF}
+      - POSTGRES_PORT=${DB_PORT_WF}
+      - POSTGRES_USER=${DB_USERNAME_WF}
+      - POSTGRES_PASSWORD=${DB_PASSWORD_WF}
+      - POSTGRES_DB=${DB_NAME_WF}
+      - NODE_ENV=development
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/workflows-service:/usr/src/app/apps/workflows-service
+    depends_on:
+      - workflows-db
+    restart: unless-stopped
+
+  # ========================================================================================
+
+  # Virtual Facility
+  virtual-facility:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=virtual-facility
+    command: npm run start:dev -- virtual-facility
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - POSTGRES_HOST=${DB_HOST_VF}
+      - POSTGRES_PORT=${DB_PORT_VF}
+      - POSTGRES_USER=${DB_USERNAME_VF}
+      - POSTGRES_PASSWORD=${DB_PASSWORD_VF}
+      - POSTGRES_DB=${DB_NAME_VF}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/virtual-facility:/usr/src/app/apps/virtual-facility
+    depends_on:
+      - virtual-facility-db
+      - workflows-service
+
+  # =================================================
+  # Database
+  # =================================================
+
+  # Workflows Database
+  workflows-db:
+    image: postgres:17
+    container_name: workflows_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME_WF}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_WF}
+      POSTGRES_DB: ${DB_NAME_WF}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME_WF}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+   # Virtual Facility Database
+  virtual-facility-db:
+    image: postgres:17
+    container_name: virtual_facility_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME_VF}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_VF}
+      POSTGRES_DB: ${DB_NAME_VF}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME_VF}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
