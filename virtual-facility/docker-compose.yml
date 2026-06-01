@@ -2,9 +2,11 @@ services:
   # =================================================
   # External Services
   # =================================================
+
   # NATS Server
   nats-server:
     image: nats:latest
+
   # =================================================
   # Microservices
   # =================================================
@@ -70,6 +72,49 @@ services:
       - nats-server
     restart: unless-stopped
 
+  # ========================================================================================
+
+  # Alarm Service
+  alarms-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=alarms-service
+    command: npm run start:dev -- alarms-service
+    environment:
+      - PORT=3002
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/alarms-service:/usr/src/app/apps/alarms-service
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
+  alarms-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=alarms-generator
+    command: npm run start:dev -- alarms-generator
+    environment:
+      - PORT=3003
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/alarms-generator:/usr/src/app/apps/alarms-generator
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
   # =================================================
   # Database
   # =================================================
@@ -89,8 +134,7 @@ services:
       timeout: 5s
       retries: 5
 
-
-   # Virtual Facility Database
+    # Virtual Facility Database
   virtual-facility-db:
     image: postgres:17
     container_name: virtual_facility_db

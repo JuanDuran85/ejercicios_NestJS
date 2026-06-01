@@ -127,6 +127,18 @@ A pipe is a class annotated with the @Injectable() decorator, which implements t
         docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
    ```
 
+6. To build all the images without cache
+
+   ```
+        docker compose build --no-cache
+   ```
+
+7. To build images and start containers
+
+   ```
+        docker compose up --build
+   ```
+
 # Windows: Environment Variables
 
 Windows users only: Environment Variables
