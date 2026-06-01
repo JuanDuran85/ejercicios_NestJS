@@ -1,4 +1,3 @@
-import { CreateWorkflowDto, UpdateWorkflowDto } from '@app/workflows';
 import {
   Body,
   Controller,
@@ -8,6 +7,8 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { CreateWorkflowDto } from '../../../../libs/workflows/src/dto/create-workflow.dto';
+import { UpdateWorkflowDto } from '../../../../libs/workflows/src/dto/update-workflow.dto';
 import { WorkflowsService } from './workflows.service';
 
 @Controller('workflows')
