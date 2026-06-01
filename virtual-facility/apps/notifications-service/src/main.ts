@@ -28,7 +28,7 @@ async function bootstrap() {
     },
     { inheritAppConfig: true },
   );
-  app.startAllMicroservices();
+  await app.startAllMicroservices();
   const port = process.env.PORT ?? 3004;
   await app.listen(port);
   logger.debug(`Notifications Service running on port ${port}`);
