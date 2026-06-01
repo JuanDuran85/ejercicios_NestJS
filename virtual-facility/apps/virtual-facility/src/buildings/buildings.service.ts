@@ -26,7 +26,7 @@ export class BuildingsService {
   }
 
   public async createWorkflow(buildingId: number) {
-    return fetch('http://localhost:3001/workflows', {
+    return fetch('http://workflows-service:3001/workflows', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
