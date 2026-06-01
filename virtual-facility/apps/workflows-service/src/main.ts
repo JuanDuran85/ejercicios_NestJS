@@ -34,7 +34,7 @@ async function bootstrap() {
   app.startAllMicroservices();
 
   const port = process.env.PORT ?? 3001;
-  await app.listen(port, '0.0.0.0');
+  await app.listen(port);
   logger.debug(`Workflows Service running on port ${port}`);
 }
 bootstrap();

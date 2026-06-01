@@ -28,6 +28,8 @@ services:
       - POSTGRES_DB=${DB_NAME_WF}
       - NODE_ENV=development
       - NATS_URL=${NATS_SERVER_URL}
+    deploy:
+      replicas: 3
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
