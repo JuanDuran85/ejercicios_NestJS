@@ -17,6 +17,7 @@ export class WorkflowsController {
 
   @MessagePattern('workflows.create')
   public create(@Payload() createWorkflowDto: CreateWorkflowDto) {
+    console.debug({createWorkflowDto});
     return this.workflowsService.create(createWorkflowDto);
   }
 

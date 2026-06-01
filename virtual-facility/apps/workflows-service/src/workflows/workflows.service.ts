@@ -1,12 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Workflow } from './entities/workflow.entity';
 import { CreateWorkflowDto } from '../../../../libs/workflows/src/dto/create-workflow.dto';
 import { UpdateWorkflowDto } from '../../../../libs/workflows/src/dto/update-workflow.dto';
+import { Workflow } from './entities/workflow.entity';
 
 @Injectable()
 export class WorkflowsService {
+  private readonly logger: Logger = new Logger(WorkflowsService.name);
   constructor(
     @InjectRepository(Workflow)
     private readonly workflowsRepository: Repository<Workflow>,
@@ -32,6 +33,9 @@ export class WorkflowsService {
     });
     const newWorkflowEntity: Workflow =
       await this.workflowsRepository.save(workflow);
+    this.logger.debug(
+      `Workflow created with id: ${newWorkflowEntity.id} for building ${newWorkflowEntity.buildingId}`,
+    );
     return newWorkflowEntity;
   }
 

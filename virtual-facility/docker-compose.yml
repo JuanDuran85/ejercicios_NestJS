@@ -17,8 +17,6 @@ services:
       args:
         - APP_NAME=workflows-service
     command: npm run start:dev -- workflows-service
-    ports:
-      - 3001:3001
     environment:
       - PORT=3001
       - POSTGRES_HOST=${DB_HOST_WF}
