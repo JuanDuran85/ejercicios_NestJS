@@ -25,6 +25,7 @@ async function bootstrap() {
       transport: Transport.NATS,
       options: {
         servers: process.env.NATS_URL,
+        queue: 'workflows-service',
       },
     },
     {
