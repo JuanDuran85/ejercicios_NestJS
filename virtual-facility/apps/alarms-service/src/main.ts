@@ -29,7 +29,7 @@ async function bootstrap() {
       inheritAppConfig: true,
     },
   );
-  app.startAllMicroservices();
+  await app.startAllMicroservices();
 
   const port = process.env.PORT ?? 3002;
   await app.listen(port);
