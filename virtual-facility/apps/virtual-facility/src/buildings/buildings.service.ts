@@ -1,28 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateBuildingDto } from './dto/create-building.dto';
 import { UpdateBuildingDto } from './dto/update-building.dto';
+import { Building } from './entities/building.entity';
 
 @Injectable()
 export class BuildingsService {
-  public async create(createBuildingDto: CreateBuildingDto) {
-    await this.createWorkflow(1);
-    return 'This action adds a new building';
+  constructor(
+    @InjectRepository(Building)
+    private readonly buildingRepository: Repository<Building>,
+  ) {}
+
+  public async create(createBuildingDto: CreateBuildingDto): Promise<Building> {
+    const buildingCreated: Building = this.buildingRepository.create({
+      ...createBuildingDto,
+    });
+    const newBuildingEntity: Building =
+      await this.buildingRepository.save(buildingCreated);
+
+    await this.createWorkflow(newBuildingEntity.id);
+    return newBuildingEntity;
   }
 
-  public findAll() {
-    return `This action returns all buildings`;
+  public findAll(): Promise<Building[]> {
+    return this.buildingRepository.find();
   }
 
-  public findOne(id: number) {
-    return `This action returns a #${id} building`;
+  public async findOne(id: number): Promise<Building> {
+    const buildingFound: Building | null =
+      await this.buildingRepository.findOneBy({ id });
+    if (!buildingFound) {
+      throw new NotFoundException(`Building not found by id: ${id}`);
+    }
+    return buildingFound;
   }
 
-  public update(id: number, updateBuildingDto: UpdateBuildingDto) {
-    return `This action updates a #${id} building`;
+  public async update(
+    id: number,
+    updateBuildingDto: UpdateBuildingDto,
+  ): Promise<Building> {
+    const buildCreated: Building | undefined =
+      await this.buildingRepository.preload({
+        id: +id,
+        ...updateBuildingDto,
+      });
+
+    if (!buildCreated)
+      throw new NotFoundException(`Building not found by id: ${id}`);
+
+    return this.buildingRepository.save(buildCreated);
   }
 
-  public remove(id: number) {
-    return `This action removes a #${id} building`;
+  public async remove(id: number): Promise<Building> {
+    const buildFound: Building = await this.findOne(id);
+    return this.buildingRepository.remove(buildFound);
   }
 
   public async createWorkflow(buildingId: number) {

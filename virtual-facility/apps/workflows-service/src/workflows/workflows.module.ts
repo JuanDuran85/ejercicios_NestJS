@@ -3,7 +3,8 @@ import { WorkflowsService } from './workflows.service';
 import { WorkflowsController } from './workflows.controller';
 
 @Module({
-  controllers: [WorkflowsController],
+  controllers: [
+    WorkflowsController],
   providers: [WorkflowsService],
 })
 export class WorkflowsModule {}
