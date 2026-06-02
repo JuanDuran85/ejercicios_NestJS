@@ -10,7 +10,7 @@ export class AlarmsGeneratorService {
     @Inject(ALARMS_SERVICE)
     private readonly alarmServiceClient: ClientProxy,
   ) {}
-  @Interval(10_000)
+  //@Interval(10_000)
   public generateAlarm() {
     const alarmCreatedEvent = {
       name: `Alarm #${Math.floor(Math.random() * 1000) + 1}`,
