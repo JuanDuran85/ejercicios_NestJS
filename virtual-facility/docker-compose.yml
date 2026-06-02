@@ -164,7 +164,7 @@ services:
       - NODE_ENV=development
       - RABBITMQ_URL=${RABBITMQ_URL}
     deploy:
-      replicas: 3
+      replicas: 1
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
