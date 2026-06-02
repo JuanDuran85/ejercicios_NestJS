@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BuildingsModule } from './buildings/buildings.module';
 import { HealthModule } from './health/health.module';
+import { OutboxModule } from './outbox/outbox.module';
+import { OutboxService } from './outbox/outbox.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST_VF || 'localhost',
@@ -18,11 +22,11 @@ import { HealthModule } from './health/health.module';
       database: process.env.DB_NAME_VF || 'postgres',
       autoLoadEntities: true,
       synchronize: true,
-      logger: 'advanced-console',
-      logging: true,
+      logging: false,
     }),
     BuildingsModule,
     HealthModule,
+    OutboxModule,
   ],
   controllers: [AppController],
   providers: [AppService],

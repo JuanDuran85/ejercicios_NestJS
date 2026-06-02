@@ -2,9 +2,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
-import { Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { CreateWorkflowDto } from '../../../../libs/workflows/src/dto/create-workflow.dto';
 import { WORKFLOWS_SERVICE } from '../constants';
+import { Outbox } from '../outbox/entities/outbox.entity';
 import { CreateBuildingDto } from './dto/create-building.dto';
 import { UpdateBuildingDto } from './dto/update-building.dto';
 import { Building } from './entities/building.entity';
@@ -16,18 +17,44 @@ export class BuildingsService {
     private readonly buildingRepository: Repository<Building>,
     @Inject(WORKFLOWS_SERVICE)
     private readonly workflowsClient: ClientProxy,
+    private readonly dataSource: DataSource,
   ) {}
 
   public async create(createBuildingDto: CreateBuildingDto): Promise<Building> {
-    const buildingCreated: Building = this.buildingRepository.create({
-      ...createBuildingDto,
-    });
+    const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const newBuildingEntity: Building =
-      await this.buildingRepository.save(buildingCreated);
+    const buildingsRepository: Repository<Building> =
+      queryRunner.manager.getRepository(Building);
+    const outboxRepository: Repository<Outbox> =
+      queryRunner.manager.getRepository(Outbox);
 
-    await this.createWorkflow(newBuildingEntity.id);
-    return newBuildingEntity;
+    try {
+      const buildingCreated: Building = buildingsRepository.create({
+        ...createBuildingDto,
+      });
+
+      const newBuildingEntity: Building =
+        await buildingsRepository.save(buildingCreated);
+
+      await outboxRepository.save({
+        type: 'workflows.create',
+        payload: {
+          name: 'My workflow',
+          buildingId: newBuildingEntity.id,
+        },
+        target: WORKFLOWS_SERVICE.description,
+      });
+      await queryRunner.commitTransaction();
+      return newBuildingEntity;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.error(error);
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   public findAll(): Promise<Building[]> {
