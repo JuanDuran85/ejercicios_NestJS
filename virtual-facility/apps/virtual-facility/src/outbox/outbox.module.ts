@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WORKFLOWS_SERVICE } from '../constants';
 import { Outbox } from './entities/outbox.entity';
+import { OutboxEntitySubscriber } from './outbox.entity-subscriber';
 import { OutboxProcessor } from './outbox.processor';
 import { OutboxService } from './outbox.service';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { ConfigModule } from '@nestjs/config';
       },
     ]),
   ],
-  providers: [OutboxService, OutboxProcessor],
+  providers: [OutboxService, OutboxProcessor, OutboxEntitySubscriber],
 })
 export class OutboxModule {}
