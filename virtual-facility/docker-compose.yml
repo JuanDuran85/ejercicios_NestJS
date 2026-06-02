@@ -92,6 +92,7 @@ services:
       - PORT=3002
       - NODE_ENV=development
       - NATS_URL=${NATS_SERVER_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
@@ -99,6 +100,7 @@ services:
       - ./apps/alarms-service:/usr/src/app/apps/alarms-service
     depends_on:
       - nats-server
+      - rabbitmq
     restart: unless-stopped
 
   # ========================================================================================
@@ -160,14 +162,16 @@ services:
     environment:
       - PORT=3004
       - NODE_ENV=development
-      - NATS_URL=${NATS_SERVER_URL}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+    deploy:
+      replicas: 3
     volumes:
       - ./libs:/usr/src/app/libs
       - ./package.json:/usr/src/app/package.json
       - ./tsconfig.json:/usr/src/app/tsconfig.json
       - ./apps/notifications-service:/usr/src/app/apps/notifications-service
     depends_on:
-      - nats-server
+      - rabbitmq
     restart: unless-stopped
 
   # =================================================
