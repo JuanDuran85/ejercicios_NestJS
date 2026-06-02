@@ -1,5 +1,5 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 
 @Controller()
 export class NotificationsServiceController {
@@ -8,11 +8,22 @@ export class NotificationsServiceController {
   );
 
   @EventPattern('notification.send')
-  public sendNotification(@Payload() data: unknown) {
+  public sendNotification(
+    @Payload() data: unknown,
+    @Ctx() context: RmqContext,
+  ) {
     this.logger.debug(
       `Received new "notification.send" event with data: ${JSON.stringify(data)}`,
     );
 
-    throw new Error('Failed to send notification');
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+
+    if (originalMsg.fields.redelivered) {
+      this.logger.verbose(`Message was already redelivered, skipping...`);
+      return channel.ack(originalMsg);
+    }
+
+    channel.ack(originalMsg);
   }
 }
