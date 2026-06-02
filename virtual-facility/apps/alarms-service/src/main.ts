@@ -1,15 +1,12 @@
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { WorkflowsServiceModule } from './workflows-service.module';
+import { AlarmsServiceModule } from './alarms-service.module';
 
 async function bootstrap() {
-  const logger: Logger = new Logger('Workflows Service');
-
-  const app: INestApplication<any> = await NestFactory.create(
-    WorkflowsServiceModule,
-  );
-
+  const logger: Logger = new Logger('Alarms Service');
+  const app: INestApplication<any> =
+    await NestFactory.create(AlarmsServiceModule);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -25,7 +22,7 @@ async function bootstrap() {
       transport: Transport.NATS,
       options: {
         servers: process.env.NATS_URL,
-        queue: 'workflows-service',
+        queue: 'alarms-service',
       },
     },
     {
@@ -34,8 +31,8 @@ async function bootstrap() {
   );
   await app.startAllMicroservices();
 
-  const port = process.env.PORT ?? 3001;
+  const port = process.env.PORT ?? 3002;
   await app.listen(port);
-  logger.debug(`Workflows Service running on port ${port}`);
+  logger.debug(`Alarms Service running on port ${port}`);
 }
 bootstrap();

@@ -2,14 +2,16 @@ services:
   # =================================================
   # External Services
   # =================================================
+
   # NATS Server
   nats-server:
     image: nats:latest
+
   # =================================================
   # Microservices
   # =================================================
 
-  # Workflows Service
+  # Workflows
   workflows-service:
     build:
       context: .
@@ -17,8 +19,6 @@ services:
       args:
         - APP_NAME=workflows-service
     command: npm run start:dev -- workflows-service
-    ports:
-      - 3001:3001
     environment:
       - PORT=3001
       - POSTGRES_HOST=${DB_HOST_WF}
@@ -72,6 +72,98 @@ services:
       - nats-server
     restart: unless-stopped
 
+  # ========================================================================================
+
+  # Alarm
+  alarms-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=alarms-service
+    command: npm run start:dev -- alarms-service
+    environment:
+      - PORT=3002
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/alarms-service:/usr/src/app/apps/alarms-service
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
+  # ========================================================================================
+  
+  # Alarm Generator
+  alarms-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=alarms-generator
+    command: npm run start:dev -- alarms-generator
+    environment:
+      - PORT=3003
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/alarms-generator:/usr/src/app/apps/alarms-generator
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
+  # ========================================================================================
+
+  # Alarms Classifier
+  alarms-classifier-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=alarms-classifier-service
+    command: npm run start:dev -- alarms-classifier-service
+    environment:
+      - PORT=3005
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/alarms-classifier-service:/usr/src/app/apps/alarms-classifier-service
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
+  # ========================================================================================
+
+    # Notification Service
+  notifications-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_NAME=notifications-service
+    command: npm run start:dev -- notifications-service
+    environment:
+      - PORT=3004
+      - NODE_ENV=development
+      - NATS_URL=${NATS_SERVER_URL}
+    volumes:
+      - ./libs:/usr/src/app/libs
+      - ./package.json:/usr/src/app/package.json
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./apps/notifications-service:/usr/src/app/apps/notifications-service
+    depends_on:
+      - nats-server
+    restart: unless-stopped
+
   # =================================================
   # Database
   # =================================================
@@ -91,8 +183,7 @@ services:
       timeout: 5s
       retries: 5
 
-
-   # Virtual Facility Database
+    # Virtual Facility Database
   virtual-facility-db:
     image: postgres:17
     container_name: virtual_facility_db
