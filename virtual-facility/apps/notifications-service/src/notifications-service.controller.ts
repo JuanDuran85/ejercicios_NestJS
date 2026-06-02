@@ -12,5 +12,7 @@ export class NotificationsServiceController {
     this.logger.debug(
       `Received new "notification.send" event with data: ${JSON.stringify(data)}`,
     );
+
+    throw new Error('Failed to send notification');
   }
 }

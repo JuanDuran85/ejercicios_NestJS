@@ -10,6 +10,7 @@ export class AlarmsGeneratorService {
     @Inject(ALARMS_SERVICE)
     private readonly alarmServiceClient: ClientProxy,
   ) {}
+
   @Interval(10_000)
   public generateAlarm() {
     const alarmCreatedEvent = {
@@ -17,6 +18,6 @@ export class AlarmsGeneratorService {
       buildingId: Math.floor(Math.random() * 100) + 1,
     };
     this.alarmServiceClient.emit('alarm.created', alarmCreatedEvent);
-    this.logger.debug(`Alarm created: ${JSON.stringify(alarmCreatedEvent)}`);
+    this.logger.log(`Alarm created: ${JSON.stringify(alarmCreatedEvent)}`);
   }
 }
