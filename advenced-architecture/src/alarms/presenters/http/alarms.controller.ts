@@ -1,34 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AlarmsService } from '../../../alarms/application/alarms.service';
+import { CreateAlarmCommand } from '../../application/commands/create-alarm.command';
 import { CreateAlarmDto } from './dto/create-alarm.dto';
-import { UpdateAlarmDto } from './dto/update-alarm.dto';
 
 @Controller('alarms')
 export class AlarmsController {
   constructor(private readonly alarmsService: AlarmsService) {}
-
   @Post()
-  create(@Body() createAlarmDto: CreateAlarmDto) {
-    return this.alarmsService.create(createAlarmDto);
+  public create(@Body() createAlarmDto: CreateAlarmDto) {
+    return this.alarmsService.create(
+      new CreateAlarmCommand(createAlarmDto.name, createAlarmDto.severity),
+    );
   }
-
   @Get()
-  findAll() {
+  public findAll() {
     return this.alarmsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.alarmsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlarmDto: UpdateAlarmDto) {
-    return this.alarmsService.update(+id, updateAlarmDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.alarmsService.remove(+id);
   }
 }
