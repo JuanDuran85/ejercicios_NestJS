@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AlarmsService } from './alarms.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { AlarmsService } from '../../../alarms/application/alarms.service';
 import { CreateAlarmDto } from './dto/create-alarm.dto';
 import { UpdateAlarmDto } from './dto/update-alarm.dto';
 

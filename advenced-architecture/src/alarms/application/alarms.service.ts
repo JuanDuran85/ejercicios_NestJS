@@ -1,26 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAlarmDto } from './dto/create-alarm.dto';
-import { UpdateAlarmDto } from './dto/update-alarm.dto';
+import { CreateAlarmDto } from '../presenters/http/dto/create-alarm.dto';
+import { UpdateAlarmDto } from '../presenters/http/dto/update-alarm.dto';
 
 @Injectable()
 export class AlarmsService {
-  create(createAlarmDto: CreateAlarmDto) {
+  public create(createAlarmDto: CreateAlarmDto) {
     return 'This action adds a new alarm';
   }
 
-  findAll() {
+  public findAll() {
     return `This action returns all alarms`;
   }
 
-  findOne(id: number) {
+  public findOne(id: number) {
     return `This action returns a #${id} alarm`;
   }
 
-  update(id: number, updateAlarmDto: UpdateAlarmDto) {
+  public update(id: number, updateAlarmDto: UpdateAlarmDto) {
     return `This action updates a #${id} alarm`;
   }
 
-  remove(id: number) {
+  public remove(id: number) {
     return `This action removes a #${id} alarm`;
   }
 }

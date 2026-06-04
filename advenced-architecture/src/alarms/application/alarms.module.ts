@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
+import { AlarmsController } from '../presenters/http/alarms.controller';
 import { AlarmsService } from './alarms.service';
-import { AlarmsController } from './alarms.controller';
+
 
 @Module({
   controllers: [AlarmsController],
