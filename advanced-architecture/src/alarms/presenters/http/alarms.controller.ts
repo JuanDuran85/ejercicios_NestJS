@@ -11,8 +11,9 @@ export class AlarmsController {
   @Post()
   public create(@Body() createAlarmDto: CreateAlarmDto) {
     this.logger.log(`Creating alarm: ${JSON.stringify(createAlarmDto)}`);
+    const { items, name, severity, triggeredAt } = createAlarmDto;
     return this.alarmsService.create(
-      new CreateAlarmCommand(createAlarmDto.name, createAlarmDto.severity),
+      new CreateAlarmCommand(name, severity, triggeredAt, items),
     );
   }
   @Get()

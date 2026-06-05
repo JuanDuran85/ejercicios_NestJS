@@ -1,15 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { Alarm } from '../alarm';
+import { AlarmItem } from '../alarm-item';
 import { AlarmSeverity } from '../value-objects/alarm-severity';
 
 @Injectable()
 export class AlarmFactory {
-  public create(name: string, severity: string): Alarm {
+  private readonly logger: Logger = new Logger(AlarmFactory.name);
+  public create(
+    name: string,
+    severity: string,
+    triggeredAt: Date,
+    items: Array<{ name: string; type: string }>,
+  ): Alarm {
     const alarmId = randomUUID();
     const alarmSeverity: AlarmSeverity = new AlarmSeverity(
       severity as AlarmSeverity['value'],
     );
-    return new Alarm(alarmId, name, alarmSeverity);
+    const alarm: Alarm = new Alarm(alarmId, name, alarmSeverity, triggeredAt);
+
+    items
+      .map((item) => new AlarmItem(randomUUID(), item.name, item.type))
+      .forEach((item: AlarmItem) => alarm.addItem(item));
+    
+    this.logger.log(`Alarm created: ${JSON.stringify(alarm)}`);
+    return alarm;
   }
 }
