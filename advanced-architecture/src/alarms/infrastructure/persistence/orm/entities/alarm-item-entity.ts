@@ -12,7 +12,7 @@ export class AlarmItemEntity {
   @Column()
   type: string;
 
-  @ManyToOne(() => AlarmEntity, (alarm: AlarmEntity) => alarm.items)
+  @ManyToOne(() => AlarmEntity, (alarm: AlarmEntity) => alarm.items, { nullable: true })
   alarm!: AlarmEntity;
 
   constructor(id: string, name: string, type: string) {

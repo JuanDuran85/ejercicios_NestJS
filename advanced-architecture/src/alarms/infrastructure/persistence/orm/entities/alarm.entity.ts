@@ -20,6 +20,7 @@ export class AlarmEntity {
 
   @OneToMany(() => AlarmItemEntity, (item: AlarmItemEntity) => item.alarm, {
     cascade: true,
+    nullable: true,
   })
   items: AlarmItemEntity[];
 
