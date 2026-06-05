@@ -12,15 +12,15 @@ export class AlarmEntity {
   @Column()
   severity: string;
 
-  @Column()
+  @Column({default: () => 'NOW()'})
   triggeredAt: Date;
 
-  @Column()
+  @Column({default: false})
   isAcknowledged: boolean;
 
   @OneToMany(() => AlarmItemEntity, (item: AlarmItemEntity) => item.alarm, {
     cascade: true,
-    nullable: true,
+    nullable: false,
   })
   items: AlarmItemEntity[];
 
