@@ -8,19 +8,15 @@ import { GetAlarmsQueryHandler } from './queries/get-alarms.query-handler';
 
 @Module({
   controllers: [AlarmsController],
-  providers: [
-    AlarmsService,
-    AlarmFactory,
-    CreateAlarmCommandHandler,
-    GetAlarmsQueryHandler,
-    AlarmCreateEventHandler,
-  ],
+  providers: [AlarmsService, AlarmFactory, AlarmCreateEventHandler],
 })
 export class AlarmsModule {
   public static withInfrastructure(infrastructureModule: Type | DynamicModule) {
     return {
       module: AlarmsModule,
       imports: [infrastructureModule],
+      providers: [CreateAlarmCommandHandler, GetAlarmsQueryHandler],
+      exports: [infrastructureModule],
     };
   }
 }
