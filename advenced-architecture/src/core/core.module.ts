@@ -18,6 +18,7 @@ export class CoreModule {
               autoLoadEntities: true,
               synchronize: true,
             }),
+            MongooseModule.forRoot('mongodb://localhost:27017/vf-read-db')
           ]
         : [];
 
