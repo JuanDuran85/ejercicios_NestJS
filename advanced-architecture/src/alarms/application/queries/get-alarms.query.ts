@@ -1,7 +1,7 @@
 import { Query } from '@nestjs/cqrs';
-import { Alarm } from '../../domain/alarm';
+import { AlarmReadModel } from '../../domain/read-models/alarm.read-model';
 
-export class GetAlarmsQuery extends Query<Alarm[]> {
+export class GetAlarmsQuery extends Query<AlarmReadModel[]> {
   constructor() {
     super();
   }
