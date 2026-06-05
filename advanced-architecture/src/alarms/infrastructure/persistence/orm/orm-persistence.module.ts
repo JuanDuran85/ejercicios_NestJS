@@ -7,6 +7,8 @@ import { UpsertMaterializedAlarmRepository } from '../../../application/ports/up
 import { AlarmItemEntity } from './entities/alarm-item-entity';
 import { AlarmEntity } from './entities/alarm.entity';
 import { OrmCreateAlarmRepository } from './repositories/create-alarm.repository';
+import { OrmFindAlarmsRepository } from './repositories/file-alarms.repository';
+import { OrmUpsertMaterializedAlarmRepository } from './repositories/upsert-materialized-alarm.repository';
 import {
   MaterializedAlarmView,
   MaterializedAlarmViewSchema,
@@ -30,11 +32,11 @@ import {
     },
     {
       provide: FindAlarmsRepository,
-      useClass: OrmCreateAlarmRepository,
+      useClass: OrmFindAlarmsRepository,
     },
     {
       provide: UpsertMaterializedAlarmRepository,
-      useClass: OrmCreateAlarmRepository,
+      useClass: OrmUpsertMaterializedAlarmRepository,
     },
   ],
   exports: [
