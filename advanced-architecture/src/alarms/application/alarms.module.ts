@@ -9,6 +9,7 @@ import { AlarmAcknowledgedEventHandler } from './event-handler/alarm-acknowledge
 import { AlarmCreateEventHandler } from './event-handler/alarm-created.event-handler';
 import { GetAlarmsQueryHandler } from './queries/get-alarms.query-handler';
 import { CascadingAlarmsSaga } from './sagas/cascading-alarms.saga';
+import { UnacknowledgedAlarmsSaga } from './sagas/unacknowledged-alarms.saga';
 
 @Module({
   controllers: [AlarmsController],
@@ -20,6 +21,7 @@ import { CascadingAlarmsSaga } from './sagas/cascading-alarms.saga';
     AlarmAcknowledgedEventHandler,
     CascadingAlarmsSaga,
     NotifyFacilitySupervisorCommandHandler,
+    UnacknowledgedAlarmsSaga,
   ],
 })
 export class AlarmsModule {

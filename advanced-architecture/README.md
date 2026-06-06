@@ -28,3 +28,18 @@ curl --location --request POST 'localhost:3000/alarms' \
 curl http://localhost:3000/alarms | json_pp
 
 curl -X PATCH http://localhost:3000/alarms/50281871-364d-4312-96c3-92be36322220/acknowledge
+
+
+curl --location --request POST 'localhost:3000/alarms' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Alarm 1",
+    "severity": "HIGH",
+    "triggeredAt": "2021-01-01T00:00:00.000Z",
+    "items": [
+        {
+            "name": "Item 1",
+            "type": "TYPE_1"
+        }
+    ]
+}' | json_pp
