@@ -9,7 +9,7 @@ curl -X GET http://localhost:3000/alarms
 curl --location --request POST 'localhost:3000/alarms' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "name": "Alarm 1",
+    "name": "Alarm Number X",
     "severity": "HIGH",
     "triggeredAt": "2021-01-01T00:00:00.000Z",
     "items": [
