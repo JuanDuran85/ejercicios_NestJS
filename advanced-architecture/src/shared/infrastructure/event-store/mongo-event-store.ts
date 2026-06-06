@@ -1,17 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model } from 'mongoose';
+import { MongoError } from 'typeorm/browser/driver/mongodb/typings.js';
 import { EVENT_STORE_CONNECTION } from '../../../core/core.constants';
+import { EventStore } from '../../application/ports/event-store';
 import { SerializableEvent } from '../../domain/interfaces/serializable-event';
+import { EventDeserializer } from './deserializers/event.deserializer';
 import { Event } from './schemas/event.schema';
 
 @Injectable()
-export class MongoEventStore {
+export class MongoEventStore implements EventStore {
   private readonly logger: Logger = new Logger(MongoEventStore.name);
 
   constructor(
     @InjectModel(Event.name, EVENT_STORE_CONNECTION)
     private readonly eventStore: Model<Event>,
+    private readonly eventDeserializer: EventDeserializer,
   ) {}
 
   public async persist(
@@ -30,16 +34,32 @@ export class MongoEventStore {
       this.logger.debug(`Events inserted successfully to the event store`);
     } catch (error) {
       await session.abortTransaction();
-
+      const finalError = error as MongoError;
       const UNIQUE_CONSTRAINT_ERROR_CODE = 11_000;
-      if (error?.code === UNIQUE_CONSTRAINT_ERROR_CODE) {
+      if (finalError?.code === UNIQUE_CONSTRAINT_ERROR_CODE) {
         this.logger.error(`Events could not be persisted. Aggregate is stale.`);
-        console.error(error.writeErrors?.[0]?.err?.errmsg);
+        console.error(error);
       } else {
         throw error;
       }
     } finally {
       await session.endSession();
     }
+  }
+
+  public async getEventsByStreamId(
+    streamId: string,
+  ): Promise<SerializableEvent[]> {
+    const events = await this.eventStore
+      .find({ streamId })
+      .sort({ position: 1 });
+
+    if (events.length === 0) {
+      throw new Error(`Aggregate with id ${streamId} does not exist`);
+    }
+
+    return events.map((event) =>
+      this.eventDeserializer.deserialize(event.toJSON()),
+    );
   }
 }

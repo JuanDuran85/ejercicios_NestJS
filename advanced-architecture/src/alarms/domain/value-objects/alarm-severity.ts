@@ -6,4 +6,8 @@ export class AlarmSeverity {
   public equals(severity: AlarmSeverity): boolean {
     return this.value === severity.value;
   }
+
+  public toJSON(): 'critical' | 'high' | 'medium' | 'low' {
+    return this.value;
+  }
 }
