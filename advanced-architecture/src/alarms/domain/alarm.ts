@@ -1,7 +1,8 @@
+import { VersionedAggregateRoot } from '../../shared/domain/aggregate-root';
 import { AlarmItem } from './alarm-item';
 import { AlarmSeverity } from './value-objects/alarm-severity';
 
-export class Alarm {
+export class Alarm extends VersionedAggregateRoot {
   public name: string;
   public severity: AlarmSeverity;
   public triggeredAt: Date;
@@ -14,6 +15,7 @@ export class Alarm {
     severity: AlarmSeverity,
     triggeredAt: Date = new Date(),
   ) {
+    super(id);
     this.id = id;
     this.name = name;
     this.severity = severity;
