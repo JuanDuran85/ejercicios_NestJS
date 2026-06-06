@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { Alarm } from '../alarm';
 import { AlarmItem } from '../alarm-item';
+import { AlarmCreatedEvent } from '../events/alarm-created.event';
 import { AlarmSeverity } from '../value-objects/alarm-severity';
 
 @Injectable()
@@ -22,8 +23,9 @@ export class AlarmFactory {
     items
       .map((item) => new AlarmItem(randomUUID(), item.name, item.type))
       .forEach((item: AlarmItem) => alarm.addItem(item));
-    
+
     this.logger.log(`Alarm created: ${JSON.stringify(alarm)}`);
+    alarm.apply(new AlarmCreatedEvent(alarm), { skipHandler: true });
     return alarm;
   }
 }

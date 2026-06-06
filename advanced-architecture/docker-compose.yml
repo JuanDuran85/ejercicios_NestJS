@@ -22,3 +22,15 @@ services:
       - 27017:27017
     environment:
       - MONGODB_DATABASE="vf-read-db"
+
+  event-store:
+    image: mongo:8.0
+    restart: always
+    ports:
+      - 27018:27017
+    environment:
+      - MONGODB_DATABASE="vf-event-store"
+    command: mongod --replSet vf-event-store-repl-set
+    container_name: advanced_event_store
+    volumes:
+      - ./scripts/event-store-mongoinit.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
