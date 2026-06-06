@@ -26,3 +26,5 @@ curl --location --request POST 'localhost:3000/alarms' \
 
 
 curl http://localhost:3000/alarms | json_pp
+
+curl -X PATCH http://localhost:3000/alarms/50281871-364d-4312-96c3-92be36322220/acknowledge
