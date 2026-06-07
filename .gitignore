@@ -196,3 +196,4 @@ microservices_repo/products-app/orders-ms/prisma/migrations
 .github/agents/senior-engineer.agent.md
 advanced-architecture/postgres-db
 advanced-architecture/mongo-db
+auth-extension/postgres-db

@@ -1,0 +1,31 @@
+import 'dotenv/config';
+import * as joi from 'joi';
+import { ConfigEnvs, EnvVars } from './interfaces.config';
+
+export const envSchema: joi.ObjectSchema<EnvVars> = joi
+  .object({
+    PORT: joi.number().required(),
+    POSTGRES_USER: joi.string().required(),
+    POSTGRES_PASSWORD: joi.string().required(),
+    POSTGRES_HOST: joi.string().required(),
+    POSTGRES_PORT: joi.string().required(),
+    POSTGRES_DB: joi.string().required(),
+  })
+  .unknown(true);
+
+const { error, value } = envSchema.validate(process.env);
+
+if (error) {
+  throw new Error(`Config validation error: ${error.message}`);
+}
+
+export const envVars: EnvVars = value;
+
+export const envs: ConfigEnvs = {
+  port: envVars.PORT,
+  postgresUser: envVars.POSTGRES_USER,
+  postgresPassword: envVars.POSTGRES_PASSWORD,
+  postgresHost: envVars.POSTGRES_HOST,
+  postgresPort: envVars.POSTGRES_PORT,
+  postgresDb: envVars.POSTGRES_DB,
+};
