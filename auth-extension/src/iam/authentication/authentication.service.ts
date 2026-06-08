@@ -12,6 +12,7 @@ import jwtConfig from '../../config/jwt.config';
 import { User } from '../../users';
 import { HashingService } from '../hashing';
 import { SignInDto, SignUpDto } from './dto';
+import { ActiveUserData } from '../interfaces';
 
 @Injectable()
 export class AuthenticationService {
@@ -62,7 +63,7 @@ export class AuthenticationService {
       {
         sub: userFound.id,
         email: userFound.email,
-      },
+      } as ActiveUserData,
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
