@@ -11,8 +11,8 @@ import { Repository } from 'typeorm';
 import jwtConfig from '../../config/jwt.config';
 import { User } from '../../users';
 import { HashingService } from '../hashing';
-import { SignInDto, SignUpDto } from './dto';
 import { ActiveUserData } from '../interfaces';
+import { SignInDto, SignUpDto } from './dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -44,7 +44,7 @@ export class AuthenticationService {
     }
   }
 
-  public async signIn(signInDto: SignInDto): Promise<Record<string, string>> {
+  public async signIn(signInDto: SignInDto): Promise<Record<string, unknown>> {
     const userFound: User | null = await this.userRepository.findOne({
       where: {
         email: signInDto.email,
@@ -59,11 +59,30 @@ export class AuthenticationService {
     );
     if (!isEqual) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
 
-    const accessToken: string = await this.jwrService.signAsync(
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signToken<Partial<ActiveUserData>>(
+        userFound.id,
+        this.jwtConfiguration.accessTokenTtl,
+      ),
+      this.signToken(userFound.id, this.jwtConfiguration.refreshTokenTtl),
+    ]);
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  private async signToken<T>(
+    userId: number,
+    expiresIn: number,
+    payload?: T,
+  ): Promise<string> {
+    return await this.jwrService.signAsync(
       {
-        sub: userFound.id,
-        email: userFound.email,
-      } as ActiveUserData,
+        sub: userId,
+        ...payload,
+      },
       {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
@@ -71,9 +90,5 @@ export class AuthenticationService {
         expiresIn: this.jwtConfiguration.accessTokenTtl,
       },
     );
-
-    return {
-      accessToken,
-    };
   }
 }

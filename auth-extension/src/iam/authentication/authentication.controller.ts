@@ -9,8 +9,8 @@ import {
 import type { Response } from 'express';
 import { User } from '../../users';
 import { AuthenticationService } from './authentication.service';
-import { SignUpDto } from './dto';
 import { Auth } from './decorators/auth.decorator';
+import { SignUpDto } from './dto';
 import { AuthType } from './enums/auth-type.enum';
 
 @Auth(AuthType.None)
@@ -29,9 +29,10 @@ export class AuthenticationController {
     @Res({ passthrough: true }) response: Response,
     @Body() signInDto: SignUpDto,
   ): Promise<void> {
-    const accessToken: Record<string, string> =
+    const { accessToken, refreshToken } =
       await this.authService.signIn(signInDto);
-    console.debug(accessToken);
+    console.debug({ accessToken });
+    console.debug({ refreshToken });
     response.cookie('accessToken', accessToken, {
       secure: true,
       httpOnly: true,
