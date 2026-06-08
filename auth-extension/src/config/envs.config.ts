@@ -10,6 +10,10 @@ export const envSchema: joi.ObjectSchema<EnvVars> = joi
     POSTGRES_HOST: joi.string().required(),
     POSTGRES_PORT: joi.string().required(),
     POSTGRES_DB: joi.string().required(),
+    JWT_SECRET: joi.string().required(),
+    JWT_TOKEN_AUDIENCE: joi.string().required(),
+    JWT_TOKEN_ISSUER: joi.string().required(),
+    JWT_ACCESS_TOKEN_TTL: joi.string().required(),
   })
   .unknown(true);
 
@@ -28,4 +32,8 @@ export const envs: ConfigEnvs = {
   postgresHost: envVars.POSTGRES_HOST,
   postgresPort: envVars.POSTGRES_PORT,
   postgresDb: envVars.POSTGRES_DB,
+  jwtSecret: envVars.JWT_SECRET,
+  jwtTokenAudience: envVars.JWT_TOKEN_AUDIENCE,
+  jwtTokenIssuer: envVars.JWT_TOKEN_ISSUER,
+  jwtAccessTokenTtl: envVars.JWT_ACCESS_TOKEN_TTL,
 };

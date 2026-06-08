@@ -7,6 +7,7 @@ import { CommonModule } from './common';
 import { envs } from './config';
 import { IamModule } from './iam';
 import { UsersModule } from './users';
+import { ConfigModule } from '@nestjs/config';
 
 const {
   postgresDb,
@@ -17,6 +18,7 @@ const {
 } = envs;
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     CoffeesModule,
     UsersModule,
     TypeOrmModule.forRoot({

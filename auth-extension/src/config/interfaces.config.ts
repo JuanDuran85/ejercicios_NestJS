@@ -5,6 +5,10 @@ export interface EnvVars {
   POSTGRES_HOST: string;
   POSTGRES_PORT: string;
   POSTGRES_DB: string;
+  JWT_SECRET: string;
+  JWT_TOKEN_AUDIENCE: string;
+  JWT_TOKEN_ISSUER: string;
+  JWT_ACCESS_TOKEN_TTL: string;
 }
 
 export interface ConfigEnvs {
@@ -14,4 +18,8 @@ export interface ConfigEnvs {
   postgresHost: string;
   postgresPort: string;
   postgresDb: string;
+  jwtSecret: string;
+  jwtTokenAudience: string;
+  jwtTokenIssuer: string;
+  jwtAccessTokenTtl: string;
 }

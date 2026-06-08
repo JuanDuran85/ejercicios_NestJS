@@ -1,6 +1,14 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
+import type { ConfigType } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import jwtConfig from '../../config/jwt.config';
 import { User } from '../../users';
 import { HashingService } from '../hashing';
 import { SignInDto, SignUpDto } from './dto';
@@ -13,6 +21,9 @@ export class AuthenticationService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly hashingService: HashingService,
+    private readonly jwrService: JwtService,
+    @Inject(jwtConfig.KEY)
+    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
   public async signUp(signUpDto: SignUpDto): Promise<Partial<User>> {
@@ -32,7 +43,7 @@ export class AuthenticationService {
     }
   }
 
-  public async signIn(signInDto: SignInDto): Promise<Partial<User>> {
+  public async signIn(signInDto: SignInDto): Promise<Record<string, string>> {
     const userFound: User | null = await this.userRepository.findOne({
       where: {
         email: signInDto.email,
@@ -47,9 +58,21 @@ export class AuthenticationService {
     );
     if (!isEqual) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
 
+    const accessToken: string = await this.jwrService.signAsync(
+      {
+        sub: userFound.id,
+        email: userFound.email,
+      },
+      {
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+        secret: this.jwtConfiguration.secret,
+        expiresIn: this.jwtConfiguration.accessTokenTtl,
+      },
+    );
+
     return {
-      email: userFound.email,
-      id: userFound.id,
+      accessToken,
     };
   }
 }
