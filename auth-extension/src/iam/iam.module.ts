@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from '../common';
@@ -9,6 +10,7 @@ import {
   AuthenticationController,
   AuthenticationService,
 } from './authentication';
+import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
 import { BcryptjsService, HashingService } from './hashing';
 
 @Module({
@@ -16,6 +18,10 @@ import { BcryptjsService, HashingService } from './hashing';
     {
       provide: HashingService,
       useClass: BcryptjsService,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
     },
     AuthenticationService,
   ],

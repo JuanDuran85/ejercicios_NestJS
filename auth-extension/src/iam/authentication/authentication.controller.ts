@@ -28,6 +28,7 @@ export class AuthenticationController {
   ): Promise<void> {
     const accessToken: Record<string, string> =
       await this.authService.signIn(signInDto);
+    console.debug(accessToken);
     response.cookie('accessToken', accessToken, {
       secure: true,
       httpOnly: true,
