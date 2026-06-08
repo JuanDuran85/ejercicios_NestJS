@@ -8,6 +8,7 @@ import jwtConfig from '../config/jwt.config';
 import { User } from '../users';
 import {
   AuthenticationController,
+  AuthenticationGuard,
   AuthenticationService,
 } from './authentication';
 import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
@@ -21,8 +22,9 @@ import { BcryptjsService, HashingService } from './hashing';
     },
     {
       provide: APP_GUARD,
-      useClass: AccessTokenGuard,
+      useClass: AuthenticationGuard,
     },
+    AccessTokenGuard,
     AuthenticationService,
   ],
   imports: [

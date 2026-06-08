@@ -36,8 +36,6 @@ export class AccessTokenGuard implements CanActivate {
       );
 
       request[REQUEST_USER_KEY] = payload;
-
-      this.logger.debug(`User verified: ${JSON.stringify(payload, null, 2)}`);
     } catch (error) {
       const finalError = error as Error;
       this.logger.error(`Error verifying access token: ${finalError.message}`);
