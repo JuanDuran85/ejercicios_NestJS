@@ -11,8 +11,8 @@ import { Repository } from 'typeorm';
 import jwtConfig from '../../config/jwt.config';
 import { User } from '../../users';
 import { HashingService } from '../hashing';
-import { ActiveUserData } from '../interfaces';
-import { SignInDto, SignUpDto } from './dto';
+import { ActiveUserData, TokenResponse } from '../interfaces';
+import { RefreshTokenDto, SignInDto, SignUpDto } from './dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -44,7 +44,7 @@ export class AuthenticationService {
     }
   }
 
-  public async signIn(signInDto: SignInDto): Promise<Record<string, unknown>> {
+  public async signIn(signInDto: SignInDto): Promise<TokenResponse> {
     const userFound: User | null = await this.userRepository.findOne({
       where: {
         email: signInDto.email,
@@ -59,6 +59,10 @@ export class AuthenticationService {
     );
     if (!isEqual) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
 
+    return await this.generateTokens(userFound);
+  }
+
+  public async generateTokens(userFound: User): Promise<TokenResponse> {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         userFound.id,
@@ -71,6 +75,30 @@ export class AuthenticationService {
       accessToken,
       refreshToken,
     };
+  }
+
+  public async refreshToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<TokenResponse> {
+    try {
+      const { sub } = await this.jwrService.verifyAsync<
+        Pick<ActiveUserData, 'sub'>
+      >(refreshTokenDto.refreshToken, {
+        secret: this.jwtConfiguration.secret,
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+      });
+
+      const userFound: User = await this.userRepository.findOneByOrFail({
+        id: Number(sub),
+      });
+
+      return this.generateTokens(userFound);
+    } catch (error) {
+      const finalError = error as Error;
+      this.logger.error(`Error Refreshing Token - ${finalError.message}`);
+      throw new UnauthorizedException();
+    }
   }
 
   private async signToken<T>(

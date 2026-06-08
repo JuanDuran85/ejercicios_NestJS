@@ -8,9 +8,10 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { User } from '../../users';
+import { TokenResponse } from '../interfaces';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorator';
-import { SignUpDto } from './dto';
+import { RefreshTokenDto, SignUpDto } from './dto';
 import { AuthType } from './enums/auth-type.enum';
 
 @Auth(AuthType.None)
@@ -28,15 +29,15 @@ export class AuthenticationController {
   public async signIn(
     @Res({ passthrough: true }) response: Response,
     @Body() signInDto: SignUpDto,
-  ): Promise<void> {
-    const { accessToken, refreshToken } =
-      await this.authService.signIn(signInDto);
-    console.debug({ accessToken });
-    console.debug({ refreshToken });
-    response.cookie('accessToken', accessToken, {
-      secure: true,
-      httpOnly: true,
-      sameSite: true,
-    });
+  ): Promise<TokenResponse> {
+    return await this.authService.signIn(signInDto);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-token')
+  public async refreshToken(
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ): Promise<TokenResponse> {
+    return this.authService.refreshToken(refreshTokenDto);
   }
 }
