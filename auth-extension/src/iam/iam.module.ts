@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CommonModule } from '../common/common.module';
-import { BcryptjsService } from './hashing/bcryptjs.service';
-import { HashingService } from './hashing/hashing.service';
-import { AuthenticationController } from './authentication/authentication.controller';
-import { AuthenticationService } from './authentication/authentication.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from '../common';
+import { User } from '../users';
+import {
+  AuthenticationController,
+  AuthenticationService,
+} from './authentication';
+import { BcryptjsService, HashingService } from './hashing';
 
 @Module({
   providers: [
@@ -13,7 +16,7 @@ import { AuthenticationService } from './authentication/authentication.service';
     },
     AuthenticationService,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, TypeOrmModule.forFeature([User])],
   exports: [],
   controllers: [AuthenticationController],
 })
