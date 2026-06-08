@@ -2,7 +2,9 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  Logger
+  HttpException,
+  HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Request, Response } from 'express';
@@ -10,25 +12,47 @@ import { Request, Response } from 'express';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger: Logger = new Logger(GlobalExceptionFilter.name);
-  private readonly pgUniqueViolationErrorCode: string = '23505';
-  public catch(exception: any, host: ArgumentsHost) {
+
+  public catch(exception: unknown, host: ArgumentsHost): void {
     const ctx: HttpArgumentsHost = host.switchToHttp();
-    const request: Request = ctx.getRequest();
-    const response: Response = ctx.getResponse();
+    const request: Request = ctx.getRequest<Request>();
+    const response: Response = ctx.getResponse<Response>();
 
-    console.debug(exception.response);
-    console.error(request.url);
-    console.error(request.statusCode);
-    console.error(exception.message);
-    console.error(exception.stack);
-    console.error(exception.name);
-    console.error(exception.cause);
+    if (exception instanceof HttpException) {
+      const status: number = exception.getStatus();
+      const exceptionResponse: string | object = exception.getResponse();
 
-    if (exception.message.includes(this.pgUniqueViolationErrorCode)) {
-      response.status(400).json({ message: exception.message });
+      response.status(status).json({
+        statusCode: status,
+        message:
+          typeof exceptionResponse === 'string'
+            ? exceptionResponse
+            : (exceptionResponse as Record<string, unknown>).message,
+        error: HttpStatus[status] ?? 'Error',
+        path: request.url,
+        method: request.method,
+        timestamp: new Date().toISOString(),
+      });
       return;
     }
 
-    response.status(500).json({ message: exception.message });
+    const errorMessage: string =
+      exception instanceof Error ? exception.message : 'Unknown Error';
+    const errorStack: string | undefined =
+      exception instanceof Error ? exception.stack : undefined;
+
+    this.logger.error(
+      `${request.method} ${request.url} → 500: ${errorMessage}`,
+      errorStack,
+    );
+
+    response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Internal Server Error',
+      error: 'Internal Server Error',
+      path: request.url,
+      method: request.method,
+      timestamp: new Date().toISOString(),
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../users';
@@ -8,34 +8,37 @@ import { SignInDto, SignUpDto } from './dto';
 @Injectable()
 export class AuthenticationService {
   private readonly ERROR_USER_SIGN_IN = 'User not found or Invalid Password';
+  private readonly logger: Logger = new Logger(AuthenticationService.name);
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly hashingService: HashingService,
   ) {}
 
-  public async signUp(signUpDto: SignUpDto): Promise<User> {
+  public async signUp(signUpDto: SignUpDto): Promise<Partial<User>> {
     const { email, password } = signUpDto;
     try {
       const newUser: User = new User();
       newUser.email = email;
       newUser.password = this.hashingService.hash(password);
       await this.userRepository.save(newUser);
-      return newUser;
+      return {
+        email: newUser.email,
+        id: newUser.id,
+      };
     } catch (error) {
-      console.debug(error);
+      this.logger.error('Error Creating User');
       throw error;
     }
   }
 
-  public async signIn(signInDto: SignInDto): Promise<User> {
+  public async signIn(signInDto: SignInDto): Promise<Partial<User>> {
     const userFound: User | null = await this.userRepository.findOne({
       where: {
         email: signInDto.email,
       },
     });
 
-    console.debug({userFound});
     if (!userFound) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
 
     const isEqual: boolean = this.hashingService.compare(
@@ -44,6 +47,9 @@ export class AuthenticationService {
     );
     if (!isEqual) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
 
-    return userFound;
+    return {
+      email: userFound.email,
+      id: userFound.id,
+    };
   }
 }
