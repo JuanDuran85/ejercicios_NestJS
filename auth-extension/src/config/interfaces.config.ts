@@ -9,6 +9,7 @@ export interface EnvVars {
   JWT_TOKEN_AUDIENCE: string;
   JWT_TOKEN_ISSUER: string;
   JWT_ACCESS_TOKEN_TTL: string;
+  JWT_REFRESH_TOKEN_TTL: string;
 }
 
 export interface ConfigEnvs {
@@ -22,4 +23,6 @@ export interface ConfigEnvs {
   jwtTokenAudience: string;
   jwtTokenIssuer: string;
   jwtAccessTokenTtl: string;
+  jwtRefreshTokenTtl: string;
 }
+
