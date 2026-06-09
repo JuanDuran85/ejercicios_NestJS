@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  coffee_user_db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+    container_name: coffee_user_db
+    volumes:
+      - ./postgres-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    restart: always
+    container_name: redis
