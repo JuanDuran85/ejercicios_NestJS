@@ -6,13 +6,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from '../common';
 import jwtConfig from '../config/jwt.config';
 import { User } from '../users';
+import { ApiKey } from '../users/api-key/entities/api-key.entity';
 import {
   AuthenticationController,
   AuthenticationGuard,
   AuthenticationService,
 } from './authentication';
+import { ApiKeyService } from './authentication/api-key/api-key.service';
 import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
-import { PermissionGuard } from './authorization/guards/permissions.guard';
+import { ApiKeyGuard } from './authentication/guards/api-key/api-key.guard';
+import { PoliciesGuard } from './authorization/guards/policy.guard';
+import { FrameworkContributorPolicyHandler } from './authorization/policies/frameworkcontributor-handler.policy';
+import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
 import { BcryptjsService, HashingService } from './hashing';
 
 @Module({
@@ -27,14 +32,18 @@ import { BcryptjsService, HashingService } from './hashing';
     },
     {
       provide: APP_GUARD,
-      useClass: PermissionGuard, //RolesGuard,
+      useClass: PoliciesGuard, //RolesGuard,
     },
     AccessTokenGuard,
     AuthenticationService,
+    PolicyHandlerStorage,
+    FrameworkContributorPolicyHandler,
+    ApiKeyService,
+    ApiKeyGuard,
   ],
   imports: [
     CommonModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ApiKey]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
   ],
