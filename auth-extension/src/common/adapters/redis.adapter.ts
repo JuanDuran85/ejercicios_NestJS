@@ -32,7 +32,9 @@ export class RedisAdapter
     data: number | string,
     token: string,
   ): Promise<boolean> {
-    const storedId = await this.redisClient.get(this.getKey(data));
+    const storedId: string | null = await this.redisClient.get(
+      this.getKey(data),
+    );
     return storedId === token;
   }
 

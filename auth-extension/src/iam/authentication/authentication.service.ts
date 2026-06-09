@@ -15,6 +15,7 @@ import { User } from '../../users';
 import { HashingService } from '../hashing';
 import { ActiveUserData, TokenResponse } from '../interfaces';
 import { RefreshTokenDto, SignInDto, SignUpDto } from './dto';
+import { InvalidatedRefreshTokenError } from './invalidated-refresh-token-error';
 
 @Injectable()
 export class AuthenticationService {
@@ -72,11 +73,9 @@ export class AuthenticationService {
         userFound.id,
         this.jwtConfiguration.accessTokenTtl,
       ),
-      this.signToken(
-        userFound.id,
-        this.jwtConfiguration.refreshTokenTtl,
-        {refreshTokenId},
-      ),
+      this.signToken(userFound.id, this.jwtConfiguration.refreshTokenTtl, {
+        refreshTokenId,
+      }),
     ]);
 
     await this.refreshTokenService.insert(userFound.id, refreshTokenId);
@@ -111,13 +110,16 @@ export class AuthenticationService {
       if (isValid) {
         await this.refreshTokenService.invalidate(userFound.id);
       } else {
-        throw new Error('Refresh token not valid');
+        throw new InvalidatedRefreshTokenError();
       }
 
       return this.generateTokens(userFound);
     } catch (error) {
       const finalError = error as Error;
       this.logger.error(`Error Refreshing Token - ${finalError.message}`);
+      if (error instanceof InvalidatedRefreshTokenError) {
+        throw new UnauthorizedException('Access Denied');
+      }
       throw new UnauthorizedException();
     }
   }
