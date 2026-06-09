@@ -12,6 +12,7 @@ import {
   AuthenticationService,
 } from './authentication';
 import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
+import { RolesGuard } from './authorization/guards/roles.guard';
 import { BcryptjsService, HashingService } from './hashing';
 
 @Module({
@@ -23,6 +24,10 @@ import { BcryptjsService, HashingService } from './hashing';
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     AccessTokenGuard,
     AuthenticationService,
