@@ -13,12 +13,14 @@ import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Roles } from '../iam/authorization/decorators/role.decorator';
 import { Role } from '../users/enums/roles.enum';
+import { Permission } from '../iam/authorization/permission.type';
+import { Permissions } from '../iam/authorization/decorators/permissions.decorator';
 
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
-  @Roles(Role.Admin)
+  @Permissions(Permission.CreateCoffee)
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
     return this.coffeesService.create(createCoffeeDto);
