@@ -7,7 +7,9 @@ import {
 import type { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { randomUUID } from 'node:crypto';
 import { Repository } from 'typeorm';
+import { RedisAdapter } from '../../common';
 import jwtConfig from '../../config/jwt.config';
 import { User } from '../../users';
 import { HashingService } from '../hashing';
@@ -25,6 +27,7 @@ export class AuthenticationService {
     private readonly jwrService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly refreshTokenService: RedisAdapter,
   ) {}
 
   public async signUp(signUpDto: SignUpDto): Promise<Partial<User>> {
@@ -63,13 +66,20 @@ export class AuthenticationService {
   }
 
   public async generateTokens(userFound: User): Promise<TokenResponse> {
+    const refreshTokenId = randomUUID();
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         userFound.id,
         this.jwtConfiguration.accessTokenTtl,
       ),
-      this.signToken(userFound.id, this.jwtConfiguration.refreshTokenTtl),
+      this.signToken(
+        userFound.id,
+        this.jwtConfiguration.refreshTokenTtl,
+        {refreshTokenId},
+      ),
     ]);
+
+    await this.refreshTokenService.insert(userFound.id, refreshTokenId);
 
     return {
       accessToken,
@@ -81,8 +91,8 @@ export class AuthenticationService {
     refreshTokenDto: RefreshTokenDto,
   ): Promise<TokenResponse> {
     try {
-      const { sub } = await this.jwrService.verifyAsync<
-        Pick<ActiveUserData, 'sub'>
+      const { sub, refreshTokenId } = await this.jwrService.verifyAsync<
+        Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
       >(refreshTokenDto.refreshToken, {
         secret: this.jwtConfiguration.secret,
         audience: this.jwtConfiguration.audience,
@@ -92,6 +102,17 @@ export class AuthenticationService {
       const userFound: User = await this.userRepository.findOneByOrFail({
         id: Number(sub),
       });
+
+      const isValid: boolean = await this.refreshTokenService.validate(
+        userFound.id,
+        refreshTokenId,
+      );
+
+      if (isValid) {
+        await this.refreshTokenService.invalidate(userFound.id);
+      } else {
+        throw new Error('Refresh token not valid');
+      }
 
       return this.generateTokens(userFound);
     } catch (error) {

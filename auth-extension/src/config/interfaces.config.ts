@@ -10,6 +10,8 @@ export interface EnvVars {
   JWT_TOKEN_ISSUER: string;
   JWT_ACCESS_TOKEN_TTL: string;
   JWT_REFRESH_TOKEN_TTL: string;
+  REDIS_HOST: string;
+  REDIS_PORT: string;
 }
 
 export interface ConfigEnvs {
@@ -24,5 +26,7 @@ export interface ConfigEnvs {
   jwtTokenIssuer: string;
   jwtAccessTokenTtl: string;
   jwtRefreshTokenTtl: string;
+  redisHost: string;
+  redisPort: string;
 }
 

@@ -15,6 +15,8 @@ export const envSchema: joi.ObjectSchema<EnvVars> = joi
     JWT_TOKEN_ISSUER: joi.string().required(),
     JWT_ACCESS_TOKEN_TTL: joi.string().required(),
     JWT_REFRESH_TOKEN_TTL: joi.string().required(),
+    REDIS_HOST: joi.string().required(),
+    REDIS_PORT: joi.string().required(),
   })
   .unknown(true);
 
@@ -38,4 +40,6 @@ export const envs: ConfigEnvs = {
   jwtTokenIssuer: envVars.JWT_TOKEN_ISSUER,
   jwtAccessTokenTtl: envVars.JWT_ACCESS_TOKEN_TTL,
   jwtRefreshTokenTtl: envVars.JWT_REFRESH_TOKEN_TTL,
+  redisHost: envVars.REDIS_HOST,
+  redisPort: envVars.REDIS_PORT,
 };
