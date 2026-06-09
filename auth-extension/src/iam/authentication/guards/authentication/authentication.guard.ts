@@ -9,19 +9,25 @@ import { Observable } from 'rxjs';
 import { AUTH_TYPE_KEY } from '../../decorators/auth.decorator';
 import { AuthType } from '../../enums/auth-type.enum';
 import { AccessTokenGuard } from '../access-token/access-token.guard';
+import { ApiKeyGuard } from '../api-key/api-key.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
   private static readonly defaultAuthType = AuthType.Bearer;
-
+  private authTypeGuardMap = {} as Record<
+    AuthType,
+    CanActivate | CanActivate[]
+  >;
   constructor(
     private readonly reflector: Reflector,
     private readonly accessTokenGuard: AccessTokenGuard,
+    private readonly apiKeyGuard: ApiKeyGuard,
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    const authTypeGuardMap: Record<AuthType, CanActivate | CanActivate[]> = {
+    this.authTypeGuardMap = {
       [AuthType.Bearer]: this.accessTokenGuard,
+      [AuthType.ApiKey]: this.apiKeyGuard,
       [AuthType.None]: { canActivate: () => true },
     };
     const authTypes: AuthType[] = this.reflector.getAllAndOverride<AuthType[]>(
@@ -30,7 +36,7 @@ export class AuthenticationGuard implements CanActivate {
     ) ?? [AuthenticationGuard.defaultAuthType];
 
     const guards: CanActivate[] = authTypes.flatMap(
-      (type) => authTypeGuardMap[type],
+      (type) => this.authTypeGuardMap[type],
     );
     let error: UnauthorizedException = new UnauthorizedException();
 
