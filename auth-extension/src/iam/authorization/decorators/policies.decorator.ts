@@ -1,0 +1,8 @@
+import { CustomDecorator, SetMetadata } from '@nestjs/common';
+import { Policy } from '../policies/interfaces/policy.interface';
+
+export const POLICIES_KEY = 'policies';
+
+export const Policies: (...policies: Policy[]) => CustomDecorator<string> = (
+  ...policies: Policy[]
+) => SetMetadata(POLICIES_KEY, policies);

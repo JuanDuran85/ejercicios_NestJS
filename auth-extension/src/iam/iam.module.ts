@@ -12,7 +12,9 @@ import {
   AuthenticationService,
 } from './authentication';
 import { AccessTokenGuard } from './authentication/guards/access-token/access-token.guard';
-import { PermissionGuard } from './authorization/guards/permissions.guard';
+import { PoliciesGuard } from './authorization/guards/policy.guard';
+import { FrameworkContributorPolicyHandler } from './authorization/policies/frameworkcontributor-handler.policy';
+import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
 import { BcryptjsService, HashingService } from './hashing';
 
 @Module({
@@ -27,10 +29,12 @@ import { BcryptjsService, HashingService } from './hashing';
     },
     {
       provide: APP_GUARD,
-      useClass: PermissionGuard, //RolesGuard,
+      useClass: PoliciesGuard, //RolesGuard,
     },
     AccessTokenGuard,
     AuthenticationService,
+    PolicyHandlerStorage,
+    FrameworkContributorPolicyHandler,
   ],
   imports: [
     CommonModule,
