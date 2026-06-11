@@ -35,7 +35,7 @@ export class User {
   @Column({ nullable: true })
   googleId!: string;
 
-  //@JoinTable()
+  @JoinTable()
   @OneToMany((type) => ApiKey, (apiKey: ApiKey) => apiKey.user)
   apiKeys!: ApiKey[];
 
