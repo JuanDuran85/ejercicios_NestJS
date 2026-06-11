@@ -42,8 +42,9 @@ export class GoogleAuthenticationService {
         `User: ${this.email} logged in with googleId: ${this.sub}`,
       );
       const user: User | null = await this.userRepository.findOneBy({
-        googleId: this.sub,
+        email: this.email,
       });
+
       if (user) {
         return this.authService.generateTokens(user);
       } else {

@@ -84,6 +84,9 @@ export class AuthenticationService {
     ]);
 
     await this.refreshTokenService.insert(userFound.id, refreshTokenId);
+    this.logger.debug(`Tokens Generated for user: ${userFound.email}`);
+    this.logger.debug({accessToken});
+    this.logger.debug({refreshToken});
 
     return {
       accessToken,
