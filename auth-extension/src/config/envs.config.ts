@@ -17,6 +17,9 @@ export const envSchema: joi.ObjectSchema<EnvVars> = joi
     JWT_REFRESH_TOKEN_TTL: joi.string().required(),
     REDIS_HOST: joi.string().required(),
     REDIS_PORT: joi.string().required(),
+    TFA_APP_NAME: joi.string().required(),
+    GOOGLE_CLIENT_ID: joi.string().required(),
+    GOOGLE_CLIENT_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -42,4 +45,7 @@ export const envs: ConfigEnvs = {
   jwtRefreshTokenTtl: envVars.JWT_REFRESH_TOKEN_TTL,
   redisHost: envVars.REDIS_HOST,
   redisPort: envVars.REDIS_PORT,
+  tfaAppName: envVars.TFA_APP_NAME,
+  googleClientId: envVars.GOOGLE_CLIENT_ID,
+  googleClientSecret: envVars.GOOGLE_CLIENT_SECRET,
 };

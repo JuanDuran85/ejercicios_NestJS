@@ -12,6 +12,9 @@ export interface EnvVars {
   JWT_REFRESH_TOKEN_TTL: string;
   REDIS_HOST: string;
   REDIS_PORT: string;
+  TFA_APP_NAME: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
 }
 
 export interface ConfigEnvs {
@@ -28,5 +31,7 @@ export interface ConfigEnvs {
   jwtRefreshTokenTtl: string;
   redisHost: string;
   redisPort: string;
+  tfaAppName: string;
+  googleClientId: string;
+  googleClientSecret: string;
 }
-
