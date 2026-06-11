@@ -24,6 +24,7 @@ export class TypeOrmExceptionFilter implements ExceptionFilter<QueryFailedError>
     const ctx: HttpArgumentsHost = host.switchToHttp();
     const request: Request = ctx.getRequest<Request>();
     const response: Response = ctx.getResponse<Response>();
+    this.logger.error(exception);
 
     const pgError = exception.driverError as unknown as PostgresError;
     const { status, message } = this.mapPostgresError(pgError);

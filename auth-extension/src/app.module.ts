@@ -29,7 +29,7 @@ const {
       password: postgresPassword,
       database: postgresDb,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       logging: true,
       logger: 'debug',
     }),
