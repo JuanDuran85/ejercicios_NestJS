@@ -26,6 +26,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors();
+
   await app.listen(port ?? 3000);
   logger.log(`Server running on port ${port ?? 3000}`);
 }

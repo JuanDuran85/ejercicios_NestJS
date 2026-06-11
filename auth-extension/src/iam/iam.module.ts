@@ -19,6 +19,8 @@ import { PoliciesGuard } from './authorization/guards/policy.guard';
 import { FrameworkContributorPolicyHandler } from './authorization/policies/frameworkcontributor-handler.policy';
 import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
 import { BcryptjsService, HashingService } from './hashing';
+import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
+import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
 
 @Module({
   providers: [
@@ -40,6 +42,7 @@ import { BcryptjsService, HashingService } from './hashing';
     FrameworkContributorPolicyHandler,
     ApiKeyService,
     ApiKeyGuard,
+    GoogleAuthenticationService,
   ],
   imports: [
     CommonModule,
@@ -48,6 +51,6 @@ import { BcryptjsService, HashingService } from './hashing';
     ConfigModule.forFeature(jwtConfig),
   ],
   exports: [],
-  controllers: [AuthenticationController],
+  controllers: [AuthenticationController, GoogleAuthenticationController],
 })
 export class IamModule {}
