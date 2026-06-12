@@ -21,6 +21,7 @@ import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.s
 import { BcryptjsService, HashingService } from './hashing';
 import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
 import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
+import { OtpAuthenticationService } from './authentication/otp-authentication.service';
 
 @Module({
   providers: [
@@ -43,6 +44,7 @@ import { GoogleAuthenticationController } from './authentication/social/google-a
     ApiKeyService,
     ApiKeyGuard,
     GoogleAuthenticationService,
+    OtpAuthenticationService,
   ],
   imports: [
     CommonModule,
