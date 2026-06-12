@@ -13,7 +13,7 @@ import { ActivateUser } from '../decorators';
 import type { ActiveUserData, TokenResponse } from '../interfaces';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorator';
-import { RefreshTokenDto, SignUpDto } from './dto';
+import { RefreshTokenDto, SignInDto, SignUpDto } from './dto';
 import { AuthType } from './enums/auth-type.enum';
 import { OtpAuthenticationService } from './otp-authentication.service';
 
@@ -34,7 +34,7 @@ export class AuthenticationController {
   @Post('sign-in')
   public async signIn(
     @Res({ passthrough: true }) response: Response,
-    @Body() signInDto: SignUpDto,
+    @Body() signInDto: SignInDto,
   ): Promise<TokenResponse> {
     return await this.authService.signIn(signInDto);
   }

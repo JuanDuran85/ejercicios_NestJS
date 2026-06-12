@@ -1,4 +1,9 @@
-import { IsEmail, MinLength } from "class-validator";
+import {
+  IsEmail,
+  IsNumberString,
+  IsOptional,
+  MinLength
+} from 'class-validator';
 
 export class SignInDto {
   @IsEmail()
@@ -7,8 +12,13 @@ export class SignInDto {
   @MinLength(10)
   password: string;
 
-  constructor(email: string, password: string) {
+  @IsOptional()
+  @IsNumberString()
+  tfaCode?: string;
+
+  constructor(email: string, password: string, tfaCode?: string) {
     this.email = email;
     this.password = password;
+    this.tfaCode = tfaCode;
   }
 }

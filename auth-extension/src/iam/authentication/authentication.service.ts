@@ -16,6 +16,7 @@ import { HashingService } from '../hashing';
 import { ActiveUserData, TokenResponse } from '../interfaces';
 import { RefreshTokenDto, SignInDto, SignUpDto } from './dto';
 import { InvalidatedRefreshTokenError } from './invalidated-refresh-token-error';
+import { OtpAuthenticationService } from './otp-authentication.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -29,6 +30,7 @@ export class AuthenticationService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenService: RedisAdapter,
+    private readonly otpAuthService: OtpAuthenticationService,
   ) {}
 
   public async signUp(signUpDto: SignUpDto): Promise<Partial<User>> {
@@ -54,7 +56,6 @@ export class AuthenticationService {
         email: signInDto.email,
       },
     });
-
     if (!userFound) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
 
     const isEqual: boolean = this.hashingService.compare(
@@ -62,6 +63,17 @@ export class AuthenticationService {
       userFound.password,
     );
     if (!isEqual) throw new UnauthorizedException(this.ERROR_USER_SIGN_IN);
+
+    if (userFound.isTfaEnabled) {
+      const isValid: boolean = await this.otpAuthService.verifyCode(
+        signInDto.tfaCode!,
+        userFound.tfaSecret,
+      );
+
+      if (!isValid) {
+        throw new UnauthorizedException('Invalid TFA Code');
+      }
+    }
 
     return await this.generateTokens(userFound);
   }
@@ -85,8 +97,8 @@ export class AuthenticationService {
 
     await this.refreshTokenService.insert(userFound.id, refreshTokenId);
     this.logger.debug(`Tokens Generated for user: ${userFound.email}`);
-    this.logger.debug({accessToken});
-    this.logger.debug({refreshToken});
+    this.logger.debug({ accessToken });
+    this.logger.debug({ refreshToken });
 
     return {
       accessToken,

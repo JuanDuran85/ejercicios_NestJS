@@ -26,17 +26,20 @@ export class OtpAuthenticationService {
     return { secret, uri };
   }
 
-  public verifyCode(code: string, secret: string) {
-    return verify({
-      token: code,
+  public async verifyCode(code: string, secret: string) {
+    const {valid} = await verify({
+      token: code || '123456',
       secret,
     });
+    return valid;
   }
 
   public async enableTfaForUser(email: string, secret: string) {
     const userResult: User = await this.userRepository.findOneByOrFail({
       email,
     });
+
+    console.debug({ userResult });
 
     await this.userRepository.update(userResult.id, {
       isTfaEnabled: true,
