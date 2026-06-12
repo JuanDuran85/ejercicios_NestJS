@@ -4,7 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as session from 'express-session';
-import * as passport from 'passport';
+import passport from 'passport';
 import { CommonModule } from '../common';
 import { envs } from '../config';
 import jwtConfig from '../config/jwt.config';
