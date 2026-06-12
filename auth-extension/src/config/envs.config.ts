@@ -20,6 +20,7 @@ export const envSchema: joi.ObjectSchema<EnvVars> = joi
     TFA_APP_NAME: joi.string().required(),
     GOOGLE_CLIENT_ID: joi.string().required(),
     GOOGLE_CLIENT_SECRET: joi.string().required(),
+    SESSION_SECRET: joi.string().required(),
   })
   .unknown(true);
 
@@ -48,4 +49,5 @@ export const envs: ConfigEnvs = {
   tfaAppName: envVars.TFA_APP_NAME,
   googleClientId: envVars.GOOGLE_CLIENT_ID,
   googleClientSecret: envVars.GOOGLE_CLIENT_SECRET,
+  sessionSecret: envVars.SESSION_SECRET,
 };

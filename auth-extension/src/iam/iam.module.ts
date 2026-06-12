@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import { CommonModule } from '../common';
+import { envs } from '../config';
 import jwtConfig from '../config/jwt.config';
 import { User } from '../users';
 import { ApiKey } from '../users/api-key/entities/api-key.entity';
@@ -71,7 +72,7 @@ export class IamModule implements NestModule {
     consumer
       .apply(
         session.default({
-          secret: 'keyboard cat',
+          secret: envs.sessionSecret,
           resave: false,
           saveUninitialized: false,
           cookie: {
@@ -79,8 +80,8 @@ export class IamModule implements NestModule {
             httpOnly: true,
           },
         }),
-        passport.initialize,
-        passport.session,
+        passport.initialize(),
+        passport.session(),
       )
       .forRoutes('*');
   }

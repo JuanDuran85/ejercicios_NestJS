@@ -15,6 +15,7 @@ export interface EnvVars {
   TFA_APP_NAME: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
+  SESSION_SECRET: string;
 }
 
 export interface ConfigEnvs {
@@ -34,4 +35,5 @@ export interface ConfigEnvs {
   tfaAppName: string;
   googleClientId: string;
   googleClientSecret: string;
+  sessionSecret: string;
 }
