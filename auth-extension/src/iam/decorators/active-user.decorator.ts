@@ -9,7 +9,7 @@ export const ActivateUser = createParamDecorator(
     const http: HttpArgumentsHost = ctx.switchToHttp();
     const request: Request = http.getRequest<Request>();
 
-    const user: ActiveUserData = request[REQUEST_USER_KEY];
-    return field ? user[field] : user;
+    const user = request[REQUEST_USER_KEY];
+    return field ? user![field] : user;
   },
 );
