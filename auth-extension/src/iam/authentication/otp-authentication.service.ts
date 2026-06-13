@@ -38,9 +38,6 @@ export class OtpAuthenticationService {
     const userResult: User = await this.userRepository.findOneByOrFail({
       email,
     });
-
-    console.debug({ userResult });
-
     await this.userRepository.update(userResult.id, {
       isTfaEnabled: true,
       tfaSecret: secret,
