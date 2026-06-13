@@ -3,9 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {RedisStore} from 'connect-redis';  
 import * as session from 'express-session';
-import { Redis } from 'ioredis';   
 import passport from 'passport';
 import { CommonModule } from '../common';
 import { envs } from '../config';
@@ -71,17 +69,9 @@ import { BcryptjsService, HashingService } from './hashing';
 })
 export class IamModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
-    const redisClient: Redis = new Redis({
-      host: envs.redisHost,
-      port: Number(envs.redisPort),
-    });
-
-    redisClient.on('error', (err) => console.error('Redis Client Error', err));
-
     consumer
       .apply(
         session.default({
-          store: new RedisStore({ client: redisClient }),
           secret: envs.sessionSecret,
           resave: false,
           saveUninitialized: false,
