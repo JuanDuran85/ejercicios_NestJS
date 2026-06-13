@@ -34,7 +34,6 @@ export class SessionAuthenticationController {
     @Body() signInDto: SignInDto,
   ): Promise<void> {
     const user: User | null = await this.sessionAuthService.signIn(signInDto);
-    console.debug(request.logIn);
     if (typeof request.logIn !== 'function') {
       throw new InternalServerErrorException(
         'Passport session not initialized',

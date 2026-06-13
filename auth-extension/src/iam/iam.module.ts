@@ -3,8 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as createRedisStore from 'connect-redis';
 import * as session from 'express-session';
-import * as passport from 'passport';
+import Redis from 'ioredis';
+import passport from 'passport';
 import { CommonModule } from '../common';
 import { envs } from '../config';
 import jwtConfig from '../config/jwt.config';
@@ -72,6 +74,9 @@ export class IamModule implements NestModule {
     consumer
       .apply(
         session.default({
+          store: new createRedisStore.RedisStore({
+            client: new Redis(Number(envs.redisPort), envs.redisHost),
+          }),
           secret: envs.sessionSecret,
           resave: false,
           saveUninitialized: false,
