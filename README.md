@@ -57,6 +57,7 @@ A pipe is a class annotated with the @Injectable() decorator, which implements t
    ```
        npm run start:dev
    ```
+   User NEST_DEBUG=true before starting the server to enable additional debug information
 
 3. To generate classes
 
@@ -92,6 +93,18 @@ A pipe is a class annotated with the @Injectable() decorator, which implements t
 
    ```bash
         nest g app name_app_service
+   ```
+
+9. To found circular dependencies
+
+   ```bash
+        npx madge dist/main.js --circular
+   ```
+
+10. To found circular dependencies and generate a graph report
+
+   ```bash
+        npx madge dist/main.js --image graph.png
    ```
 
 # Using Docker PostgreSQL
