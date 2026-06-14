@@ -1,12 +1,14 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { FibonacciWorkerHost } from './fibonacci-worker.host';
+import { resolve } from 'node:path';
+import Piscina from 'piscina';
 
 @Controller('fibonacci')
 export class FibonacciController {
-
-  constructor(private readonly fibonacciWorkerHost: FibonacciWorkerHost){}
+  public fibonacciWorker: Piscina<any, any> = new Piscina({
+    filename: resolve(__dirname, 'fibonacci.worker.js'),
+  });
   @Get()
-  public fibonacci(@Query('n') n: number = 10) {
-    return this.fibonacciWorkerHost.run(n)
+  public fibonacci(@Query('n') n: number = 10): Promise<any> {
+    return this.fibonacciWorker.run(n);
   }
 }
