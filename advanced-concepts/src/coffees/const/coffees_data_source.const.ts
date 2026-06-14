@@ -1,0 +1,1 @@
+export const COFFEES_DATA_SOURCE = Symbol('COFFEE_DATA_SOURCE');
