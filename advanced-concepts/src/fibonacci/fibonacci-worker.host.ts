@@ -22,7 +22,7 @@ export class FibonacciWorkerHost
   constructor() {}
 
   public onApplicationBootstrap() {
-    this.worker = new Worker(join(__dirname, 'fibonacci.worker.ts'));
+    this.worker = new Worker(join(__dirname, 'fibonacci.worker.js'));
     this.message$ = fromEvent(this.worker, 'message') as unknown as Observable<{
       id: string;
       result: number;
