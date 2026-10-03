@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LazyModuleLoader, ModuleRef } from '@nestjs/core';
+import { RewardsService } from '../rewards/rewards.service';
 import { COFFEES_DATA_SOURCE } from './const/coffees_data_source.const';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
@@ -24,7 +25,7 @@ export class CoffeesService {
     );
 
     const { RewardsService } = await import('../rewards/rewards.service.js');
-    const rewardsService = rewardsModuleRef.get(RewardsService);
+    const rewardsService: RewardsService = rewardsModuleRef.get(RewardsService);
 
     console.timeEnd('createCoffee');
 
