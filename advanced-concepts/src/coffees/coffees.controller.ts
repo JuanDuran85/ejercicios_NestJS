@@ -10,9 +10,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CircuitBreakerInterceptor } from '../common/interceptors/circuit-breaker.interceptor';
+import { EntityExistsPipe } from '../common/pipes/entity-exists/entity-exists.pipe';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
+import { Coffee } from './entities/coffee.entity';
 
 @UseInterceptors(CircuitBreakerInterceptor)
 @Controller('coffees')
@@ -39,6 +41,7 @@ export class CoffeesController {
 
   @Patch(':id')
   public update(
+    //@Param('id', EntityExistsPipe(Coffee)) id: string,
     @Param('id') id: string,
     @Body() updateCoffeeDto: UpdateCoffeeDto,
   ): string {
