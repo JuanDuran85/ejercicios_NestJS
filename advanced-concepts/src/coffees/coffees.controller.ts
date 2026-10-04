@@ -1,34 +1,55 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  RequestTimeoutException,
+  UseInterceptors,
+} from '@nestjs/common';
+import { CircuitBreakerInterceptor } from '../common/interceptors/circuit-breaker.interceptor';
+import { EntityExistsPipe } from '../common/pipes/entity-exists/entity-exists.pipe';
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
+import { Coffee } from './entities/coffee.entity';
 
+@UseInterceptors(CircuitBreakerInterceptor)
 @Controller('coffees')
 export class CoffeesController {
   constructor(private readonly coffeesService: CoffeesService) {}
 
   @Post()
-  create(@Body() createCoffeeDto: CreateCoffeeDto) {
+  public create(@Body() createCoffeeDto: CreateCoffeeDto): Promise<string> {
     return this.coffeesService.create(createCoffeeDto);
   }
 
   @Get()
-  findAll() {
-    return this.coffeesService.findAll();
+  public findAll(): void {
+    console.debug('Find all Executed...');
+    throw new RequestTimeoutException('Error: Request Timeout Exception');
+
+    //return this.coffeesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  public findOne(@Param('id') id: string): string {
     return this.coffeesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCoffeeDto: UpdateCoffeeDto) {
+  public update(
+    //@Param('id', EntityExistsPipe(Coffee)) id: string,
+    @Param('id') id: string,
+    @Body() updateCoffeeDto: UpdateCoffeeDto,
+  ): string {
     return this.coffeesService.update(+id, updateCoffeeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  public remove(@Param('id') id: string): string {
     return this.coffeesService.remove(+id);
   }
 }
